@@ -34,6 +34,7 @@ python -m http.server 8731
 | 9 | Irrigação convencional | Mesma página para o carretel: área por mês, velocidade na linha e parte em vinhaça |
 | 10 | Irrigação por região | A convencional aberta por região, 2025 contra 2026, painéis na mesma escala |
 | 11 | Região x região | Duas regiões escolhidas lado a lado numa safra, com a diferença mês a mês |
+| 12 | Disponibilidade mecânica | Disponibilidade % da frota mês a mês, 2025 x 2026, com filtro de grupo e especialidade |
 
 ### A página 4
 
@@ -261,6 +262,40 @@ total de cada região-mês é a soma das linhas de fazenda, então o modal fecha
 barra. Os dados ficam em `IRRIGACAO.convencional.regioes`; os blocos de cada região
 saem da coluna BLOCOS da mesma aba (o nome vem só na primeira linha do bloco, em
 célula mesclada, e vale até o próximo).
+
+### A página 12 (disponibilidade mecânica)
+
+**Disponibilidade % = horas fora da oficina ÷ horas do período**, somadas sobre as
+frotas do filtro, de 07/04 a 30/09 nos dois anos. Como toda frota tem as mesmas horas
+no mês (576 h em abril, 744 ou 720 nos demais), a razão entre somas é também a média
+das frotas.
+
+- **Seletor:** frota inteira, um grupo inteiro (TRATOR, CAMINHAO…) ou uma das 66
+  especialidades. O grupo é o prefixo da especialidade (`CAMINHAO - BOMBEIRO` →
+  CAMINHAO): a coluna de agrupamento do cadastro vem vazia em 10 frotas.
+- **Gráfico:** barras de 2025 e 2026 em escala de 0 a 100%, a meta de 85% tracejada e,
+  sob cada mês, a diferença em pontos percentuais. Alternador mês a mês / acumulado (o
+  acumulado é a disponibilidade da safra até aquele mês).
+- **Quadro ao lado:** o que está dentro do filtro, do pior ao melhor na safra 2026, com
+  a variação em p.p. Clicar numa linha filtra por ela (frota inteira → grupo →
+  especialidade); dentro de uma especialidade, o quadro mostra as frotas de menor
+  disponibilidade.
+- **Clicar numa barra** abre o mês frota a frota, da pior para a melhor, com a conta
+  no topo e o total fechando com a barra.
+
+**Em branco não entra na conta.** Frota que não aparece no relatório do mês (as 7 de
+Goiás, por exemplo) fica fora daquele mês — não vale 0%. A aba `GERAL` da planilha
+faz o contrário (média simples das 954 frotas do cadastro, com as ausentes valendo 0)
+e por isso fica até 0,9 p.p. abaixo; a página diz isso no texto. Ficam fora também os
+equipamentos do relatório sem cadastro (40 a 52 por mês: sopradores, geradores,
+motosserras), porque não têm especialidade. Uma frota com mais horas de oficina que o
+período (60906, jul/2026) foi limitada ao período.
+
+Os dados ficam em `window.DISPONIBILIDADE`: horas do período por mês, a lista de
+grupos e especialidades e, por frota, as horas em oficina de cada mês nas duas safras
+(`null` = fora do relatório). Fonte: `DISPONIBILIDADE MANUTENÇÃO - frente - 2025.xlsx` e
+`- 2026.xlsx`, abas ABR a SET (relatório de disponibilidade do veículo) e `Base`
+(cadastro).
 
 ## Atualizar os dados
 
