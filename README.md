@@ -49,8 +49,8 @@ do índice, só a barra de navegação de baixo continua à vista — e entra co
 curta (respeita `prefers-reduced-motion`). Os tamanhos escalam com a janela, do projetor
 16:9 à janela baixa de notebook; em tela estreita a capa vira uma coluna, sem a curva.
 
-- **Topo:** painel branco com a logo, que sangra pela borda esquerda e alinha com o título;
-  à direita, quem apresenta e até que mês vão os dados.
+- **Topo:** a logo direto sobre o fundo escuro, alinhada com a margem do título; à direita,
+  quem apresenta e até que mês vão os dados.
 - **Meio:** o título e, ao lado, a **moagem acumulada do grupo**, 2026 contra 2025 — a curva
   que o setor usa para acompanhar a safra. A faixa dourada entre as duas linhas é a vantagem
   de 2026, e ela deixa de abrir perto do fim.
@@ -60,11 +60,13 @@ Tudo é calculado em tempo de execução a partir de `window.MOAGEM`, e a janela
 setembro") sai de `meses`.
 
 **A logo.** É a logo azul oficial da CRV Industrial (`LOGOMARCA CRV AZUL.png`, do pacote de
-logos da marca), sem recolorir, sobre o painel branco — logo azul em fundo claro. O arquivo
-foi recortado da margem vazia e reduzido a 640 px de largura, em WebP sem perda (21 KB), e
-vai embutido como `data:` URI para o `index.html` continuar sendo um arquivo só, que abre
-sem servidor e sem internet. Para trocar, substitua o `src` do `<img class="capa-logo-img">`
-dentro de `<div class="capa-placa">`.
+logos da marca), sem recolorir, direto sobre o fundo escuro, sem painel em volta. O original
+é transparente por dentro, e sobre o fundo escuro as letras azuis não teriam leitura: por
+isso o interior da moldura (o fundo das letras) foi preenchido de branco e o lado de fora
+ficou transparente. O arquivo foi recortado da margem vazia e reduzido a 640 px de largura,
+em WebP sem perda (14 KB), e vai embutido como `data:` URI para o `index.html` continuar
+sendo um arquivo só, que abre sem servidor e sem internet. Para trocar, substitua o `src` do
+`<img class="capa-logo-img">` dentro de `<div class="capa-placa">`.
 
 ### Tema visual
 
