@@ -42,7 +42,8 @@ do `index.html` — uma página nova entra no módulo acrescentando o id dela al
 | | 11 | Região x região | Duas regiões escolhidas lado a lado numa safra, com a diferença mês a mês |
 | **Manutenção** | 12 | Disponibilidade mecânica | Disponibilidade % da frota mês a mês, 2025 x 2026, com filtro de especialidades |
 | | 13 | Custo por ordem de produção | Consumo em R$ por ordem de produção, 2025 x 2026: economia ou aumento, por preço e por volume |
-| **Projeção** | 14 | Simulador da reta final | Dois cenários editáveis de outubro a dezembro, com o quanto ainda bisa |
+| | 14 | Custo por especialidade | R$ por especialidade de frota (agrupada por grupo) e resumo por ordem de produção, 2025 x 2026 |
+| **Projeção** | 15 | Simulador da reta final | Dois cenários editáveis de outubro a dezembro, com o quanto ainda bisa |
 
 ### A capa
 
@@ -426,7 +427,27 @@ colunas **A = 2025 e B = 2026** (a planilha traz a diferença como B − A). A a
 mi, contra R$ 35,8 mi e R$ 31,5 mi) e por isso não entra na página. Os dados ficam em
 `window.CUSTO_OP`.
 
-### A página 14 (simulador da reta final)
+### A página 14 (custo por especialidade)
+
+A aba **`especialidade`** da mesma planilha de consumo: R$ por especialidade de frota,
+2025 x 2026, agrupada por grupo (o prefixo da especialidade, como na disponibilidade).
+
+- **À esquerda:** a tabela por grupo, da maior economia ao maior aumento, com 2025,
+  2026, a diferença em R$ mil e em %, e uma barrinha em torno do zero (economia para a
+  esquerda, aumento para a direita). Clicar no grupo abre as especialidades dele; o
+  botão do topo abre ou fecha todos.
+- **À direita:** o **resumo por ordem de produção** desta aba. Clicar numa ordem (ou
+  usar o seletor do topo) filtra a tabela; clicar de novo, ou no Total, volta para
+  todas.
+
+Por esta aba, as seis ordens vão de R$ 30,87 mi para R$ 23,67 mi (−R$ 7,19 mi,
+−23,3%), com a maior economia na colhedora (−R$ 3,17 mi). **Esta aba não fecha com a
+`mes`** da página 13 (R$ 35,75 mi e R$ 31,52 mi) — período ou filtro diferentes na
+origem —, e a página avisa isso embaixo do resumo: compare as duas pela tendência, não
+pelo valor. "(Em branco)" na planilha = sem consumo naquela safra (vale 0); uma
+especialidade sem 2025 aparece como "novo". Os dados ficam em `window.CUSTO_ESP`.
+
+### A página 15 (simulador da reta final)
 
 Reproduz a `Projeção Safra.xlsx` em dois cenários lado a lado, para rodar ao vivo na
 reunião. Abril a setembro entram **travados**, com o realizado da CRV-MG (1.717.690 t
