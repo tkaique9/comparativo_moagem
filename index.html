@@ -356,7 +356,7 @@ table.cen-tab input{font:inherit;font-size:12.5px;font-weight:700;color:var(--na
 .cen-prev input{font:inherit;font-size:13px;font-weight:700;color:var(--navy);text-align:right;
   border:1px solid var(--line);border-radius:5px;padding:2px 6px;font-variant-numeric:tabular-nums}
 table.cen-tab input:focus,.cen-prev input:focus{outline:2px solid var(--gold);border-color:var(--gold)}
-.cen-barra{width:100%;height:42px;display:block;flex:none}
+.cen-barra{width:100%;height:48px;display:block;flex:none}
 /* sem margin-top:auto: com ele o vão sobrava no meio da coluna, entre a barra
    e o bloco final; assim o conteúdo flui de cima e a folga fica embaixo */
 .cen-fim{display:flex;flex-direction:column;gap:3px;margin-top:6px}
@@ -374,7 +374,7 @@ table.cen-tab input:focus,.cen-prev input:focus{outline:2px solid var(--gold);bo
 .sim-reset:hover{color:var(--gold);border-color:var(--gold)}
 @media(max-height:780px){
   .cen{gap:4px}
-  .cen-barra{height:34px}
+  .cen-barra{height:38px}
   table.cen-tab td{padding:2px 6px}
   .cen-fim .cf-bisar b{font-size:16px}
   .cen-real{padding:4px 9px}
@@ -382,7 +382,7 @@ table.cen-tab input:focus,.cen-prev input:focus{outline:2px solid var(--gold);bo
 /* tela muito baixa: sem isso a coluna cortava os últimos pixels do bloco final */
 @media(max-height:660px){
   .cen-real i{display:none}
-  .cen-barra{height:26px}
+  .cen-barra{height:30px}
   .cen-fim .cf{padding:1px 8px}
   .cen-fim .cf b{font-size:13px}
   .cen-fim .cf-bisar b{font-size:15px}
@@ -6154,14 +6154,15 @@ function montaSimulador(){
     E.limpa(svg);
     var r=svg.getBoundingClientRect();
     var W=Math.max(320,Math.round(r.width)), H=Math.round(r.height);
-    if(H<78) return;                       // sem folga na coluna: não desenha
+    if(H<42) return;                       // sem folga nenhuma: não desenha
+    var temTitulo = H>=76;                 // em pouco espaço, só as barras
     svg.setAttribute("viewBox","0 0 "+W+" "+H);
     svg.setAttribute("preserveAspectRatio","xMidYMid meet");
 
     var reais = MESES.map(function(_,i){ return SIM_MG.a2026[i]/simDiasRealizado(i); });
     var vals  = reais.concat(tdiaProj);
     var rot   = ["Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-    var padL=8, padR=8, padT=16, padB=14;
+    var padL=8, padR=8, padT=temTitulo?16:5, padB=14;
     var plotW=W-padL-padR, plotH=H-padT-padB, base=padT+plotH;
     var max=E.niceAxis(Math.max.apply(null,vals.concat([precisa]))*1.12,4)||1;
     function y(v){ return base-(v/max)*plotH; }
@@ -6171,7 +6172,9 @@ function montaSimulador(){
       var x=padL+i*slot+(slot-bw)/2, proj=i>=6;
       E.add(svg,"path",{d:E.barraTopo(x,y(v),bw,base-y(v),3),
                         fill:proj?c.cor:"#C8CFDC"});
-      if(plotH>44) E.txt(svg,x+bw/2,y(v)-3,E.fmtInt(v),
+      // em pouco espaço o valor da barra encostaria na linha tracejada; a
+      // tabela logo acima já traz esses mesmos números
+      if(plotH>64) E.txt(svg,x+bw/2,y(v)-3,E.fmtInt(v),
         {"text-anchor":"middle","font-size":8.5,"font-weight":"700",
          fill:proj?E.NAVY:E.MUT});
       E.txt(svg,x+bw/2,base+10,rot[i],
@@ -6190,29 +6193,46 @@ function montaSimulador(){
       E.txt(svg,W-padR-5,yp-2,txt,
         {"text-anchor":"end","font-size":8.5,"font-weight":"700",fill:E.RED});
     }
-    E.txt(svg,padL,10,"Moagem por dia (t) — realizado e projetado",
+    if(temTitulo) E.txt(svg,padL,10,"Moagem por dia (t) — realizado e projetado",
       {"font-size":9,"font-weight":"700",fill:E.MUT});
   }
 
   // barra de progresso: realizado + projetado contra a previsão
   function barra(svg,c,prev,pVol,total){
     E.limpa(svg);
-    var W=560, H=42;
+    // viewBox na medida real do elemento: com preserveAspectRatio="none" e
+    // viewBox fixo o texto saía esticado na horizontal e o rótulo da previsão,
+    // colado no topo, era recortado pela borda do SVG
+    var r=svg.getBoundingClientRect();
+    var W=Math.max(300,Math.round(r.width)), H=Math.max(22,Math.round(r.height));
     svg.setAttribute("viewBox","0 0 "+W+" "+H);
-    svg.setAttribute("preserveAspectRatio","none");
-    var esc=Math.max(prev,total)||1, x=function(v){ return (v/esc)*W; };
-    E.add(svg,"rect",{x:0,y:12,width:W,height:16,rx:4,fill:"#EDEFF3"});
-    E.add(svg,"rect",{x:0,y:12,width:x(SIM_REAL_TON),height:16,rx:4,fill:c.cor});
-    E.add(svg,"rect",{x:x(SIM_REAL_TON),y:12,width:x(pVol),height:16,fill:c.cor,opacity:".45"});
-    if(total<prev){
-      E.add(svg,"rect",{x:x(total),y:12,width:x(prev-total),height:16,fill:"#C0392B",opacity:".22"});
-    }
+    svg.setAttribute("preserveAspectRatio","xMinYMin meet");
+
+    var temRot = H>=36;                       // só rotula a previsão se couber
+    var yBar = temRot ? 16 : 2;
+    var hBar = Math.max(9, H-yBar-12);        // 12px embaixo para os rótulos
+    var yBase = H-3;                          // linha de base dos rótulos de baixo
+    var esc=Math.max(prev,total)||1, x=function(v){ return Math.max(0,Math.min(W,(v/esc)*W)); };
+
+    E.add(svg,"rect",{x:0,y:yBar,width:W,height:hBar,rx:4,fill:"#EDEFF3"});
+    E.add(svg,"rect",{x:0,y:yBar,width:x(SIM_REAL_TON),height:hBar,rx:4,fill:c.cor});
+    E.add(svg,"rect",{x:x(SIM_REAL_TON),y:yBar,width:x(pVol),height:hBar,fill:c.cor,opacity:".45"});
+    if(total<prev)
+      E.add(svg,"rect",{x:x(total),y:yBar,width:x(prev)-x(total),height:hBar,fill:"#C0392B",opacity:".22"});
+
     // marca da previsão
-    E.add(svg,"line",{x1:x(prev),x2:x(prev),y1:6,y2:34,stroke:E.NAVY,"stroke-width":2});
-    E.txt(svg,Math.min(x(prev),W-4),4,"previsão",
-          {"text-anchor":"end","font-size":9,"font-weight":"700",fill:E.NAVY});
-    E.txt(svg,2,40,"realizado",{"font-size":9,fill:E.MUT});
-    E.txt(svg,x(SIM_REAL_TON)+3,40,"projetado",{"font-size":9,fill:E.MUT});
+    var xp=x(prev);
+    E.add(svg,"line",{x1:xp,x2:xp,y1:yBar-3,y2:yBar+hBar+3,stroke:E.NAVY,"stroke-width":2});
+    if(temRot){
+      // perto da borda esquerda o rótulo alinhado à direita sairia do quadro
+      var perto = xp < 62;
+      E.txt(svg, perto ? xp+4 : Math.min(xp,W-2), Math.max(11,yBar-4), "previsão",
+            {"text-anchor": perto?"start":"end", "font-size":9,"font-weight":"700",fill:E.NAVY});
+    }
+    E.txt(svg,2,yBase,"realizado",{"font-size":9,fill:E.MUT});
+    // só rotula "projetado" quando há espaço: senão encosta em "realizado"
+    if(x(SIM_REAL_TON) > 62 && x(pVol) > 46)
+      E.txt(svg,x(SIM_REAL_TON)+3,yBase,"projetado",{"font-size":9,fill:E.MUT});
   }
 
   function texto(r){
