@@ -244,7 +244,7 @@ header.top,nav.toc{flex:0 0 auto}
 <a href="#contribuicao"><b>2</b> Quem puxa, quem trava</a>
 <a href="#unidades"><b>3</b> Unidade a unidade</a>
 <a href="#mes-a-mes"><b>4</b> Mês a mês por empresa</a>
-<span id="toc-frotas"></span>
+<span id="toc-frotas"></span><span id="toc-irriga"></span>
 </nav>
 
 <div class="deck" id="deck">
@@ -365,6 +365,10 @@ header.top,nav.toc{flex:0 0 auto}
 <!-- páginas de frota (colhedora, caminhão, transbordo): montadas por JS a
      partir de PAGINAS, logo acima deste marcador -->
 <div id="frota-slots" hidden></div>
+
+<!-- páginas de irrigação (localizada, convencional): mesmo mecanismo,
+     montadas a partir de PAGINAS_IRRIGA -->
+<div id="irriga-slots" hidden></div>
 
 </div><!-- /deck -->
 
@@ -1632,6 +1636,41 @@ window.FROTA = {
 </script>
 
 <!-- ============================================================
+     DADOS DE IRRIGAÇÃO — área aplicada por mês.
+     Fonte: "Produção localizada - SAFRA 2025/2026.xlsx", aba Banco
+     Localizada (UGS). Janela do início de cada safra até 30/09 — o que
+     passa de 30/09 fica de fora nos dois anos.
+     "dias" são os dias com apontamento no mês e "faz" as fazendas
+     atendidas naquele mês; fazTotal são as fazendas distintas da safra.
+     A convencional entra como mais uma chave deste objeto.
+     ============================================================ -->
+<script>
+window.IRRIGACAO = {
+  localizada: {
+    nome: "Irrigação localizada", unidade: "CRV Minas Gerais",
+    ini2025: "2025-04-19", ini2026: "2026-04-14",
+    fazTotal: [72, 88],
+    a2025: [
+      {ha:106.4, dias:12, faz:4, tanques:218},
+      {ha:1497.4, dias:31, faz:11, tanques:2474},
+      {ha:1637.3, dias:30, faz:12, tanques:2711},
+      {ha:1642.4, dias:31, faz:26, tanques:2747},
+      {ha:1650.0, dias:31, faz:16, tanques:2494},
+      {ha:1161.9, dias:30, faz:12, tanques:2081}
+    ],
+    a2026: [
+      {ha:601.5, dias:17, faz:15, tanques:937},
+      {ha:1841.1, dias:31, faz:27, tanques:3000},
+      {ha:1260.6, dias:28, faz:18, tanques:1827},
+      {ha:1525.2, dias:31, faz:16, tanques:2357},
+      {ha:1461.3, dias:31, faz:14, tanques:2833},
+      {ha:1585.1, dias:30, faz:12, tanques:3109}
+    ]
+  }
+};
+</script>
+
+<!-- ============================================================
      MOTOR — formatação, agregação e primitivas de gráfico SVG
      ============================================================ -->
 <script>(function(){
@@ -2777,6 +2816,193 @@ function montaPaginaFrota(cfg){
     window.replay[cfg.id] = montaPaginaFrota(cfg);
   });
 })();
+
+/* ============================================================
+   PÁGINAS DE IRRIGAÇÃO — localizada e convencional
+   Mesmo esqueleto das páginas de frota: uma entrada em IRRIGACAO
+   com os dados e uma em PAGINAS_IRRIGA montam a página inteira.
+   A janela é do início da safra até 30/09 nos dois anos.
+   ============================================================ */
+var PAGINAS_IRRIGA = [
+  {id:"irriga-localizada", chave:"localizada", num:"08", rotulo:"Irrigação localizada",
+   cor:"#2E86C1", titulo:"Área irrigada — localizada",
+   sub:"Hectares aplicados mês a mês nas duas safras, do início de cada uma até 30/09. Abril depende da data de abertura, então o mês não compara desempenho: compara calendário."}
+];
+
+var irrigaModo = {};   // "mes" ou "acumulado", por página
+
+function somaIrriga(arr){
+  var o = {ha:0, dias:0, tanques:0};
+  arr.forEach(function(m){ o.ha+=m.ha; o.dias+=m.dias; o.tanques+=m.tanques; });
+  return o;
+}
+function acumula(arr){
+  var s=0; return arr.map(function(m){ s+=m.ha; return Math.round(s*10)/10; });
+}
+function dataBR(iso){ return iso.slice(8,10)+"/"+iso.slice(5,7); }
+
+function slideIrrigaHTML(cfg){
+  return "<article class='slide slide-dark' id='"+cfg.id+"' data-title='"+E.esc(cfg.rotulo)+"'>"+
+    "<div class='s-head'><div>"+
+      "<div class='s-eyebrow'>"+cfg.num+" &middot; "+E.esc(cfg.rotulo)+" &middot; CRV Minas Gerais</div>"+
+      "<h2 class='s-title'>"+E.esc(cfg.titulo)+"</h2>"+
+      "<p class='s-sub'>"+cfg.sub+" <span class='js-abertura'></span></p>"+
+    "</div><div class='s-right'>"+
+      "<div class='s-toggle js-modo'>"+
+        "<button type='button' data-modo='mes' class='on'>Mês a mês</button>"+
+        "<button type='button' data-modo='acumulado'>Acumulado</button>"+
+      "</div>"+
+      "<div class='s-chips'>"+
+        "<div class='s-chip'><div class='v js-chip-ha'>–</div><div class='k js-chip-ha-k'></div></div>"+
+        "<div class='s-chip'><div class='v js-chip-faz'>–</div><div class='k js-chip-faz-k'></div></div>"+
+        "<div class='s-chip'><div class='v js-chip-dia'>–</div><div class='k js-chip-dia-k'></div></div>"+
+      "</div>"+
+    "</div></div>"+
+    "<div class='s-legend js-legend'></div>"+
+    "<div class='s-card'><svg class='js-svg'></svg></div>"+
+    "<div class='s-insight js-insight'>carregando&hellip;</div></article>";
+}
+
+function montaPaginaIrriga(cfg){
+  var sl = document.getElementById(cfg.id);
+  var q = function(s){ return sl.querySelector(s); };
+  var D = window.IRRIGACAO[cfg.chave];
+  var s25 = somaIrriga(D.a2025), s26 = somaIrriga(D.a2026);
+  irrigaModo[cfg.id] = "mes";
+
+  function cabecalho(){
+    var v = s26.ha/s25.ha-1;
+    q(".js-chip-ha").textContent = E.fmtInt(s26.ha)+" ha";
+    q(".js-chip-ha-k").innerHTML = "Área aplicada na safra 2026 <b style='color:"+
+      (v>=0?"#7FD79B":"#F0897A")+"'>"+E.pct(v)+"</b>";
+    q(".js-chip-faz").textContent = D.fazTotal[1];
+    q(".js-chip-faz-k").innerHTML = "Fazendas atendidas <b style='color:"+
+      (D.fazTotal[1]>=D.fazTotal[0]?"#7FD79B":"#F0897A")+"'>"+
+      (D.fazTotal[1]-D.fazTotal[0]>=0?"+":"")+(D.fazTotal[1]-D.fazTotal[0])+"</b>";
+    var d25=s25.ha/s25.dias, d26=s26.ha/s26.dias;
+    q(".js-chip-dia").textContent = E.fmtDec(d26,1)+" ha/dia";
+    q(".js-chip-dia-k").innerHTML = "Ritmo médio da safra <b style='color:"+
+      (d26>=d25?"#7FD79B":"#F0897A")+"'>"+E.pct(d26/d25-1)+"</b>";
+    q(".js-abertura").innerHTML = "A safra 2026 abriu em <b>"+dataBR(D.ini2026)+
+      "</b> e a 2025 em <b>"+dataBR(D.ini2025)+"</b>.";
+  }
+
+  function desenha(){
+    var acum = irrigaModo[cfg.id]==="acumulado";
+    var card = q(".s-card"), svg = q(".js-svg");
+    E.limpa(svg);
+    var d = E.medir(card,780,280), W=d.W, H=d.H;
+    svg.setAttribute("viewBox","0 0 "+W+" "+H);
+    svg.setAttribute("preserveAspectRatio","xMidYMid meet");
+
+    var v25 = acum ? acumula(D.a2025) : D.a2025.map(function(m){ return m.ha; });
+    var v26 = acum ? acumula(D.a2026) : D.a2026.map(function(m){ return m.ha; });
+
+    var padL=84, padR=26, padT=48, padB=70;
+    if(H<330){ padT=40; padB=62; }
+    var plotW=W-padL-padR, plotH=H-padT-padB, base=padT+plotH;
+    var n=MESES.length, slot=plotW/n;
+
+    E.tituloSVG(svg,16,20, acum
+      ? "Área irrigada acumulada (ha) — do início da safra até cada mês"
+      : "Área irrigada no mês (ha)", null, W-190);
+    E.txt(svg,16,34, acum
+      ? "a distância entre as barras mostra a vantagem acumulada de 2026"
+      : "barra clara é 2025, barra cheia é 2026; sob cada mês, a variação",
+      {"font-size":10.5,fill:E.MUT});
+
+    var lx=W-padR;
+    [{c:E.C25,n:"Safra 2025"},{c:cfg.cor,n:"Safra 2026"}].slice().reverse().forEach(function(it){
+      lx -= it.n.length*6.1+6;
+      E.txt(svg,lx,24,it.n,{"font-size":11,fill:"#2B2B2B"});
+      lx -= 16;
+      E.add(svg,"rect",{x:lx,y:15,width:11,height:11,rx:2.5,fill:it.c});
+      lx -= 12;
+    });
+
+    var max = E.niceAxis(Math.max.apply(null,v25.concat(v26))*1.2,4);
+    var y = E.eixoY(svg,{max:max,min:0,x0:padL,x1:W-padR,yTop:padT,yBot:base,
+                         fmt:function(v){ return v?E.fmtInt(v):"0"; }});
+
+    var barW=Math.min(slot*0.27,52), gap=Math.min(slot*0.05,9);
+    MESES.forEach(function(mes,i){
+      var cx = padL+i*slot+slot/2;
+      [[cx-gap/2-barW, v25[i], E.C25, E.MUT],[cx+gap/2, v26[i], cfg.cor, E.NAVY]]
+      .forEach(function(b){
+        var h=base-y(b[1]);
+        E.add(svg,"path",{d:E.barraTopo(b[0],y(b[1]),barW,h,4),fill:b[2]});
+        E.txt(svg,b[0]+barW/2,y(b[1])-6,E.fmtInt(b[1]),
+              {"text-anchor":"middle","font-size":11,"font-weight":"700",fill:b[3]});
+      });
+      E.txt(svg,cx,base+20,mes,{"text-anchor":"middle","font-size":12.5,"font-weight":"600",fill:"#2B2B2B"});
+      var dv=v26[i]/v25[i]-1;
+      E.pilula(svg,cx,base+40,E.pct(dv),E.corVar(dv),dv>=0?"#EAF5EE":"#FBEDEB");
+      // no acumulado, a diferença em hectares diz mais que o percentual sozinho
+      if(acum) E.txt(svg,cx,base+60,(v26[i]-v25[i]>=0?"+":"−")+E.fmtInt(Math.abs(v26[i]-v25[i]))+" ha",
+                     {"text-anchor":"middle","font-size":10.5,"font-weight":"700",fill:E.corVar(v26[i]-v25[i])});
+      else E.txt(svg,cx,base+60,E.fmtDec(D.a2026[i].ha/D.a2026[i].dias,1)+" ha/dia",
+                 {"text-anchor":"middle","font-size":10.5,"font-weight":"600",fill:E.MUT});
+    });
+
+    E.legenda(q(".js-legend"),[
+      {cor:E.C25,nome:"Safra 2025"},
+      {cor:cfg.cor,nome:"Safra 2026"},
+      {cor:"#fff",borda:"#8E9AB4",nome:acum?"Sob cada mês":"Sob cada mês",
+       obs:acum?"a diferença acumulada em hectares":"o ritmo de 2026 em hectares por dia"}
+    ]);
+    texto();
+  }
+
+  function texto(){
+    var v = s26.ha/s25.ha-1;
+    var mAbr = D.a2026[0].ha/D.a2025[0].ha-1;
+    var resto25 = s25.ha-D.a2025[0].ha, resto26 = s26.ha-D.a2026[0].ha;
+    // abril fica fora do ranking: ele é efeito da data de abertura, e apontá-lo
+    // como "mês mais forte" contradiria a frase anterior do próprio insight
+    var piores = MESES.map(function(m,i){ return {m:m, d:D.a2026[i].ha/D.a2025[i].ha-1, i:i}; })
+                      .filter(function(x){ return x.i>0; })
+                      .sort(function(a,b){ return a.d-b.d; });
+    var ac25=acumula(D.a2025), ac26=acumula(D.a2026);
+    var virou = -1;
+    for(var i=0;i<6;i++){ if(ac26[i]>=ac25[i]) { virou=i; break; } }
+    q(".js-insight").innerHTML =
+      "<strong>"+E.fmtInt(s26.ha)+" ha</strong> aplicados até 30/09 na safra 2026, contra "+
+      E.fmtInt(s25.ha)+" ha em 2025 — <strong>"+E.pct(v)+"</strong>. "+
+      "<span class='sep'>|</span> Abril salta "+E.pct(mAbr)+" porque a safra abriu em "+
+      dataBR(D.ini2026)+" contra "+dataBR(D.ini2025)+": de maio em diante a variação é "+
+      E.pct(resto26/resto25-1)+". <span class='sep'>|</span> O mês mais fraco foi "+
+      piores[0].m+" ("+E.pct(piores[0].d)+") e o mais forte, "+
+      piores[piores.length-1].m+" ("+E.pct(piores[piores.length-1].d)+"). "+
+      "<span class='sep'>|</span> "+D.fazTotal[1]+" fazendas atendidas contra "+D.fazTotal[0]+
+      " em 2025, com "+E.fmtInt(s26.tanques)+" tanques aplicados ("+
+      E.pct(s26.tanques/s25.tanques-1)+").";
+  }
+
+  q(".js-modo").addEventListener("click",function(e){
+    var b=e.target.closest("button"); if(!b) return;
+    irrigaModo[cfg.id]=b.dataset.modo;
+    Array.prototype.forEach.call(this.children,function(x){ x.classList.toggle("on",x===b); });
+    desenha();
+  });
+
+  cabecalho();
+  return desenha;
+}
+
+(function(){
+  var slot = document.getElementById("irriga-slots");
+  var toc = document.getElementById("toc-irriga");
+  PAGINAS_IRRIGA.forEach(function(cfg){
+    slot.insertAdjacentHTML("beforebegin", slideIrrigaHTML(cfg));
+    toc.insertAdjacentHTML("beforebegin",
+      "<a href='#"+cfg.id+"'><b>"+parseInt(cfg.num,10)+"</b> "+E.esc(cfg.rotulo)+"</a>");
+  });
+  slot.parentNode.removeChild(slot);
+  toc.parentNode.removeChild(toc);
+  window.replay = window.replay || {};
+  PAGINAS_IRRIGA.forEach(function(cfg){ window.replay[cfg.id] = montaPaginaIrriga(cfg); });
+})();
+
 
 /* ============================================================
    REDESENHO

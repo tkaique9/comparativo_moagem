@@ -30,6 +30,7 @@ python -m http.server 8731
 | 5 | Colhedora · CRV-MG | Seis indicadores da frota CH570, safra e mês a mês |
 | 6 | Caminhão canavieiro | Oito indicadores da frota de caminhões, incluindo raio médio |
 | 7 | Transbordo | Sete indicadores da frota de transbordo |
+| 8 | Irrigação localizada | Área aplicada por mês, 2025 contra 2026, com alternador de acumulado |
 
 ### A página 4
 
@@ -146,6 +147,22 @@ colhedora responde por 90% da moagem da CRV-MG em 2026, o caminhão por 91% e o
 transbordo por 87%. Por isso a tonelada dessas páginas não bate com a da página 4,
 e cada uma traz essa ressalva no próprio texto.
 
+### A página 8 (irrigação)
+
+Área irrigada mês a mês nas duas safras, com alternador entre **mês a mês** e
+**acumulado**. A janela vai do início de cada safra até **30/09** nos dois anos — o
+que a base traz de outubro fica de fora, porque outubro/2025 está fechado e
+outubro/2026 tem um dia só.
+
+Abril não compara desempenho, compara calendário: a safra 2026 abriu em 14/04 e a
+2025 em 19/04, o que explica o salto de +465% no mês. Por isso abril fica fora do
+ranking de melhor e pior mês do insight, e o texto traz também a variação de maio em
+diante (+1,1%).
+
+Os dados ficam em `window.IRRIGACAO`, uma chave por tipo. Hoje só existe
+`localizada`; **convencional** entra como mais uma chave e mais uma entrada em
+`PAGINAS_IRRIGA` — a página se monta sozinha, igual às de frota.
+
 ## Atualizar os dados
 
 Todos os números saem de **um único bloco** no `index.html`, marcado com o comentário
@@ -177,7 +194,8 @@ e (nas duas de transporte) `viagens`. Um equipamento novo entra como mais uma ch
 aqui e mais uma entrada em `PAGINAS`, no JS — a página se monta sozinha.
 
 Fonte dos dados: `MOAGEM COMPARATIVO.xlsx` (UGS), abas `Planilha1`, `colhedora`,
-`caminhão` e `transbordo`.
+`caminhão` e `transbordo`; e `Produção localizada - SAFRA 2025/2026.xlsx`, aba
+`Banco Localizada`, para a irrigação.
 
 ## Convenções mantidas do `comparativo_colhedora`
 
