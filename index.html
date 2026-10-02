@@ -346,6 +346,9 @@ header.top,nav.toc{flex:0 0 auto}
   padding:1px 7px;border-radius:9px}
 .cen-prev{margin-left:auto;font-size:11.5px;color:var(--mut);display:flex;align-items:center;gap:5px}
 .cen-prev i{font-style:normal;color:#9AA4B8}
+.cen-prev .cen-pipe{margin:0 3px;color:var(--line)}
+.cen-prev b.js-rit-ef{color:var(--navy);font-size:12px;font-variant-numeric:tabular-nums}
+.cen-ef{font-size:10px;color:var(--mut);margin-left:4px;font-variant-numeric:tabular-nums}
 .cen-prev b.js-prev{color:var(--navy);font-size:13.5px;font-variant-numeric:tabular-nums}
 /* botão que abre as regiões do mês: só um mês fica aberto por vez */
 .cen-abre{font:inherit;font-size:12.5px;color:var(--mut);background:none;border:0;padding:0;
@@ -6161,7 +6164,8 @@ function montaSimulador(){
       var regs = SIM_REG.map(function(r,ri){
         return "<tr class='cen-reg' data-mes='"+i+"' data-reg='"+ri+"' hidden>"+
           "<td class='l reg'>"+E.esc(r.nome)+"</td><td class='reg-dias'>–</td>"+
-          "<td>"+campo("js-rtdia",E.fmtInt(simPadrao(c,r)),74)+"</td>"+
+          "<td>"+campo("js-rtdia",E.fmtInt(simPadrao(c,r)),68)+
+            "<span class='js-ef cen-ef'></span></td>"+
           "<td class='js-rvol'>–</td></tr>";
       }).join("");
       return mes+regs;
@@ -6170,9 +6174,12 @@ function montaSimulador(){
     return "<div class='cen' data-cen='"+ci+"'>"+
       "<div class='cen-top'><span class='cen-tag' style='background:"+c.cor+"'></span>"+
         "<b>"+E.esc(c.rot)+"</b><em class='cen-sub2'>"+E.esc(c.sub)+"</em>"+
-        "<span class='cen-prev'>Estimado "+E.fmtInt(SIM_REG_EST)+" t"+
-          "<i>+</i>"+campo("js-aum",c.aumento,34)+"%"+
-          "<i>=</i><b class='js-prev'>–</b></span></div>"+
+        "<span class='cen-prev'>Estimado"+
+          "<i>+</i>"+campo("js-aum",c.aumento,32)+"%"+
+          "<i>=</i><b class='js-prev'>–</b>"+
+          "<i class='cen-pipe'>|</i>Ritmo"+
+          "<i>+</i>"+campo("js-rit",0,32)+"%"+
+          "<i>=</i><b class='js-rit-ef'>–</b></span></div>"+
       "<div class='cen-real'>Realizado de abril a setembro <b>"+E.fmtInt(SIM_REAL_TON)+" t</b>"+
         "<i>"+SIM_REAL_DIAS+" dias &middot; "+E.fmtInt(SIM_REAL_TON/SIM_REAL_DIAS)+" t/dia</i></div>"+
       "<div class='cen-tabwrap'><table class='cen-tab'><thead><tr><th class='l'>Reta final</th><th>Dias</th>"+
@@ -6201,6 +6208,45 @@ function montaSimulador(){
     "</thead><tbody class='js-qcorpo'></tbody></table>"+
     "<p class='q-nota'></p></div>";
 
+  // Projeta dia a dia respeitando o teto de cada região: ela para quando chega
+  // na estimativa, e a capacidade que sobra naquele dia migra para a região
+  // seguinte que ainda tem cana. Sem isso, uma região "colhia" além do que tem
+  // e aparecia como sobra, enquanto a vizinha continuava devendo.
+  function projeta(diasMes, taxaMes, resta0){
+    var n = SIM_REG.length;
+    var resta = resta0.map(function(v){ return Math.max(0,v); });
+    var feito = SIM_REG.map(function(){ return 0; });
+    var porMes = diasMes.map(function(){ return 0; });
+    var porMesReg = diasMes.map(function(){ return SIM_REG.map(function(){ return 0; }); });
+    var ociosa = 0, diaCorr = 0, diaFim = null;
+    diasMes.forEach(function(nd,m){
+      for(var d=0; d<nd; d++){
+        diaCorr++;
+        var livre = 0;
+        for(var i=0;i<n;i++){
+          var cap = taxaMes[m][i];
+          var faz = Math.min(cap, resta[i]);
+          resta[i]-=faz; feito[i]+=faz; porMes[m]+=faz; porMesReg[m][i]+=faz;
+          livre += cap-faz;
+        }
+        // a capacidade liberada percorre as regiões na ordem até achar cana
+        for(var volta=0; volta<n && livre>1e-6; volta++){
+          for(var k=0;k<n && livre>1e-6;k++){
+            if(resta[k]<=1e-6) continue;
+            var f2=Math.min(livre, resta[k]);
+            resta[k]-=f2; feito[k]+=f2; porMes[m]+=f2; porMesReg[m][k]+=f2; livre-=f2;
+          }
+        }
+        ociosa += livre;      // nenhuma região tinha onde usar
+        // quando toda a cana acaba, o que importa deixa de ser o bisar e passa
+        // a ser em que dia da reta final isso aconteceu
+        if(diaFim===null && resta.every(function(v){ return v<=1e-6; })) diaFim=diaCorr;
+      }
+    });
+    return {resta:resta, feito:feito, porMes:porMes, porMesReg:porMesReg,
+            ociosa:ociosa, diaFim:diaFim, dias:diaCorr};
+  }
+
   function calcula(){
     var resumo=[];
     SIM_CEN.forEach(function(c,ci){
@@ -6209,49 +6255,74 @@ function montaSimulador(){
       var prev = SIM_REG_EST*(1+aum);
       p.querySelector(".js-prev").textContent = E.fmtInt(prev)+" t";
 
-      var dias=[], pDias=0, pVol=0;
-      var porReg = SIM_REG.map(function(){ return 0; });
+      // lê os campos: dias de cada mês e moagem/dia de cada região
+      // o ritmo em % multiplica a moagem/dia digitada em todas as regiões
+      var rit = 1 + numBR(p.querySelector(".js-rit").value.replace("-",""))/100 *
+                    (p.querySelector(".js-rit").value.trim().charAt(0)==="-" ? -1 : 1);
+      if(!(rit>0)) rit = 0;
+      var dias=[], taxa=[], pDias=0, cap=0;
       SIM_FIM.forEach(function(_,i){
         var d = numBR(p.querySelector("tr.cen-mes[data-mes='"+i+"'] .js-dias").value);
         dias.push(d); pDias += d;
-        var somaDia = 0;
+        var linha=[];
         SIM_REG.forEach(function(r,ri){
           var tr = p.querySelector("tr.cen-reg[data-mes='"+i+"'][data-reg='"+ri+"']");
-          var t = numBR(tr.querySelector(".js-rtdia").value);
-          somaDia += t;
-          porReg[ri] += d*t;
-          tr.querySelector(".reg-dias").textContent = E.fmtInt(d);
-          tr.querySelector(".js-rvol").textContent = E.fmtInt(d*t);
+          var t = numBR(tr.querySelector(".js-rtdia").value)*rit;
+          linha.push(t); cap += d*t;
+          // com ritmo diferente de 100%, o valor de fato usado fica ao lado do campo
+          var ef = tr.querySelector(".js-ef");
+          ef.textContent = Math.abs(rit-1)<1e-9 ? "" : "→ "+E.fmtInt(t);
         });
-        var mtr = p.querySelector("tr.cen-mes[data-mes='"+i+"']");
-        mtr.querySelector(".js-mtdia").textContent = E.fmtInt(somaDia);
-        mtr.querySelector(".js-mvol").textContent = E.fmtInt(d*somaDia);
-        pVol += d*somaDia;
+        taxa.push(linha);
       });
 
-      var total=SIM_REAL_TON+pVol, falta=prev-SIM_REAL_TON, bisar=falta-pVol;
+      var aColher = SIM_REG.map(function(r){ return r.estimado*(1+aum)-r.colhido; });
+      var sim = projeta(dias, taxa, aColher);
+      var pVol = sim.feito.reduce(function(a,b){ return a+b; },0);
+
+      // escreve o que cada região e cada mês de fato colhem, já com o teto
+      SIM_FIM.forEach(function(_,i){
+        SIM_REG.forEach(function(r,ri){
+          var tr = p.querySelector("tr.cen-reg[data-mes='"+i+"'][data-reg='"+ri+"']");
+          tr.querySelector(".reg-dias").textContent = E.fmtInt(dias[i]);
+          tr.querySelector(".js-rvol").textContent = E.fmtInt(sim.porMesReg[i][ri]);
+        });
+        var mtr = p.querySelector("tr.cen-mes[data-mes='"+i+"']");
+        var somaDia = taxa[i].reduce(function(a,b){ return a+b; },0);
+        mtr.querySelector(".js-mtdia").textContent = E.fmtInt(somaDia);
+        mtr.querySelector(".js-mvol").textContent = E.fmtInt(sim.porMes[i]);
+      });
+
+      var total=SIM_REAL_TON+pVol, falta=prev-SIM_REAL_TON;
+      var bisar=sim.resta.reduce(function(a,b){ return a+b; },0);
+      p.querySelector(".js-rit-ef").textContent =
+        E.fmtInt(SIM_REG.reduce(function(a,r){ return a+simPadrao(c,r); },0)*rit)+" t/dia";
       p.querySelector(".js-pdias").textContent = E.fmtInt(pDias);
       p.querySelector(".js-ptdia").textContent = pDias ? E.fmtInt(pVol/pDias) : "–";
       p.querySelector(".js-pvol").textContent = E.fmtInt(pVol);
       p.querySelector(".js-total").textContent = E.fmtInt(total)+" t";
       p.querySelector(".js-falta").textContent = E.fmtInt(falta)+" t";
 
-      var sobra = bisar<0;
-      p.querySelector(".js-bisar-rot").textContent = sobra ? "Sobra sobre a previsão" : "Bisar";
+      // com o teto por região não existe mais "sobra": ou a região fecha (0) ou
+      // bisa. O que sobra é capacidade sem cana para colher.
+      var fecha = bisar<1;
+      p.querySelector(".js-bisar-rot").innerHTML = fecha
+        ? "Bisar <i style='font-style:normal;color:#5A6072;font-weight:400'>— cana acaba no dia "+
+          sim.diaFim+" de "+E.fmtInt(sim.dias)+"</i>"
+        : "Bisar";
       var el=p.querySelector(".js-bisar");
-      el.textContent = E.fmtInt(Math.abs(bisar))+" t";
-      el.style.color = sobra ? E.GREEN : E.RED;
-      p.querySelector(".cf-bisar").style.background = sobra ? "#EAF5EE" : "#FBEDEB";
+      el.textContent = E.fmtInt(bisar)+" t";
+      el.style.color = fecha ? E.GREEN : E.RED;
+      p.querySelector(".cf-bisar").style.background = fecha ? "#EAF5EE" : "#FBEDEB";
 
-      // bisar de cada região, com a previsão dela já corrigida pelo aumento
       var regs = SIM_REG.map(function(r,ri){
-        var pr=r.estimado*(1+aum);
-        return {nome:r.nome, prev:pr, colhido:r.colhido, proj:porReg[ri],
-                bisar:pr-r.colhido-porReg[ri]};
+        return {nome:r.nome, prev:r.estimado*(1+aum), colhido:r.colhido,
+                proj:sim.feito[ri], bisar:sim.resta[ri]};
       });
       barra(p.querySelector(".js-barra"), c, prev, pVol, total);
       resumo.push({c:c, prev:prev, pVol:pVol, total:total, bisar:bisar, pDias:pDias,
-                   aum:aum, regs:regs});
+                   aum:aum, regs:regs, cap:cap, ociosa:sim.ociosa,
+                   diaFim:sim.diaFim, dias:sim.dias});
     });
     quadroRegioes(resumo);
     texto(resumo);
@@ -6262,12 +6333,12 @@ function montaSimulador(){
   // dois partem de ritmos diferentes.
   function quadroRegioes(r){
     function cel(g){
-      var bom = g.bisar<=0;
+      var fecha = g.bisar<1;     // a região não colhe além da estimativa dela
       return "<td class='sep'>"+E.fmtInt(g.prev)+"</td>"+
         "<td>"+E.fmtInt(g.prev-g.colhido)+"</td>"+
         "<td>"+E.fmtInt(g.proj)+"</td>"+
-        "<td class='bis' style='color:"+(bom?E.GREEN:E.RED)+"'>"+
-        (bom?"sobra ":"")+E.fmtInt(Math.abs(g.bisar))+"</td>";
+        "<td class='bis' style='color:"+(fecha?E.GREEN:E.RED)+"'>"+
+        E.fmtInt(g.bisar)+"</td>";
     }
     var corpo = SIM_REG.map(function(reg,i){
       var a=r[0].regs[i], b=r[1].regs[i];
@@ -6294,6 +6365,9 @@ function montaSimulador(){
       "agosto e setembro ("+E.fmtInt(SIM_ULT_TDIA)+" t/dia contra "+
       E.fmtInt(SIM_REAL_TON/SIM_REAL_DIAS)+" t/dia), aplicado às regiões na mesma proporção — "+
       "a base traz só o colhido total de cada uma. "+
+      "Nenhuma região colhe além da estimativa: ao zerar, a moagem/dia dela passa "+
+      "para a região seguinte que ainda tem cana, e por isso o projetado de uma "+
+      "região pode passar da sua própria capacidade diária. "+
       "O colhido somado das regiões é "+E.fmtInt(SIM_REG_COLH)+" t, "+
       E.fmtInt(SIM_REAL_TON-SIM_REG_COLH)+" t abaixo da moagem da CRV-MG ("+
       E.fmtInt(SIM_REAL_TON)+" t) usada no total de cada cenário — defasagem de fechamento.";
@@ -6334,12 +6408,18 @@ function montaSimulador(){
         (x.bisar<0 ? "<strong>sobra "+E.fmtInt(-x.bisar)+" t</strong>"
                    : "<strong>bisa "+E.fmtInt(x.bisar)+" t</strong>")+")";
     }
+    function fim(x){
+      return x.diaFim ? "fecha a cana no dia "+x.diaFim+" de "+E.fmtInt(x.dias)
+                      : "não fecha: bisa "+E.fmtInt(x.bisar)+" t";
+    }
     var pior = r[0].regs.slice().sort(function(a,b){ return b.bisar-a.bisar; })[0];
     document.querySelector("#simulador .js-insight").innerHTML =
       frase(r[0])+" <span class='sep'>|</span> "+frase(r[1])+
-      " <span class='sep'>|</span> No cenário 1, a região que mais bisa é <strong>"+
-      E.esc(pior.nome)+"</strong>, com "+E.fmtInt(Math.abs(pior.bisar))+" t"+
-      (pior.bisar<0?" de sobra":"")+". <span class='sep'>|</span> Para zerar o bisar seria preciso <strong>"+
+      " <span class='sep'>|</span> "+E.esc(r[0].c.rot)+" <strong>"+fim(r[0])+"</strong> e "+
+      E.esc(r[1].c.rot)+" <strong>"+fim(r[1])+"</strong>."+
+      (pior.bisar>=1 ? " A região que mais bisa no cenário 1 é <strong>"+E.esc(pior.nome)+
+        "</strong>, com "+E.fmtInt(pior.bisar)+" t." : "")+
+      " <span class='sep'>|</span> Para zerar o bisar seria preciso <strong>"+
       (r[0].pDias ? E.fmtInt((r[0].prev-SIM_REAL_TON)/r[0].pDias)+" t/dia" : "–")+
       "</strong> nos "+E.fmtInt(r[0].pDias)+" dias da reta final, contra "+
       E.fmtInt(SIM_REAL_TON/SIM_REAL_DIAS)+" t/dia de abril a setembro.";
@@ -6365,7 +6445,8 @@ function montaSimulador(){
   card.addEventListener("blur",function(e){
     var t=e.target;
     if(t.tagName!=="INPUT") return;
-    if(!t.classList.contains("js-aum")) t.value=E.fmtInt(numBR(t.value));
+    if(!t.classList.contains("js-aum") && !t.classList.contains("js-rit"))
+      t.value=E.fmtInt(numBR(t.value));
     calcula();
   },true);
 
@@ -6373,6 +6454,7 @@ function montaSimulador(){
     SIM_CEN.forEach(function(c,ci){
       var p=card.querySelector(".cen[data-cen='"+ci+"']");
       p.querySelector(".js-aum").value=c.aumento;
+      p.querySelector(".js-rit").value=0;
       SIM_FIM.forEach(function(m,i){
         p.querySelector("tr.cen-mes[data-mes='"+i+"'] .js-dias").value=m.dias;
         SIM_REG.forEach(function(r,ri){
