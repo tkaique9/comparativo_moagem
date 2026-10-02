@@ -404,6 +404,30 @@ em 177 dias). Outubro, novembro e dezembro são a projeção, com **dias** e
 **moagem/dia** editáveis; a **previsão da safra** também é editável. Tudo recalcula a
 cada tecla, e o botão do cabeçalho devolve os cenários aos valores da planilha.
 
+#### Como se mexe na moagem/dia
+
+Há quatro jeitos de alterar o ritmo, do mais grosso ao mais fino, e eles se compõem:
+
+| Onde | O que faz |
+|---|---|
+| `Ritmo ±%` no topo do cenário | multiplica a moagem/dia de todos os meses e regiões |
+| `±%` na linha do mês | multiplica só aquele mês — um outubro forte e um dezembro fraco no mesmo cenário |
+| Campo de moagem/dia do mês | total digitado à mão, **rateado entre as quatro regiões na proporção do histórico** |
+| Campo de moagem/dia da região | a taxa daquela região naquele mês |
+
+```
+taxa da região no mês = valor digitado na região × ritmo do cenário × ajuste do mês
+```
+
+O total do mês e as regiões ficam sempre coerentes nos dois sentidos: mexer numa região
+recalcula o total do mês; digitar o total desce para as regiões pelo rateio histórico
+(`colhido da região ÷ colhido do grupo`, do cenário em questão), com maior resto para a
+soma das quatro fechar exatamente no número digitado. São as regiões que alimentam a
+projeção — o total do mês é só um atalho para preencher as quatro de uma vez.
+
+Fora de 100%, o valor de fato usado aparece ao lado do campo, em verde se acelerou e
+vermelho se desacelerou.
+
 As contas são as mesmas do Excel:
 
 ```

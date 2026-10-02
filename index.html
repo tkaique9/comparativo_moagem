@@ -363,7 +363,8 @@ table.cen-tab tr.cen-reg input{font-size:11.5px;padding:1px 5px}
 /* ajuste do mês: campo pequeno antes do ritmo já ajustado */
 td.mes-aj{display:flex;align-items:center;justify-content:center;gap:3px}
 td.mes-aj i{font-style:normal;font-size:10px;color:#9AA4B8}
-td.mes-aj b{font-weight:700;color:var(--navy);min-width:48px;text-align:right}
+td.mes-aj input.js-mtot{font-weight:700;color:var(--navy);text-align:right}
+td.mes-aj .js-mef{min-width:46px;text-align:left;margin-left:2px}
 .cen-real{font-size:12px;color:var(--mut);background:var(--bgsoft);border-radius:6px;
   padding:5px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:none}
 .cen-real b{color:var(--navy);font-size:13.5px;font-variant-numeric:tabular-nums}
@@ -6144,6 +6145,24 @@ SIM_REG.forEach(function(r){
   r.padrao2 = Math.round(r.padrao*SIM_FATOR_ULT);
 });
 function simPadrao(c,r){ return c.base==="ult" ? r.padrao2 : r.padrao; }
+function simSomaPadrao(c){
+  return SIM_REG.reduce(function(a,r){ return a+simPadrao(c,r); },0);
+}
+// Rateio do total digitado para o mes entre as regioes, na proporcao do que
+// cada uma colheu no historico do cenario. Maior resto para a soma das quatro
+// fechar exatamente no numero que a diretoria digitou.
+function simRateia(c,total){
+  var base = SIM_REG.map(function(r){ return simPadrao(c,r); });
+  var soma = simSomaPadrao(c) || 1;
+  var bruto = base.map(function(v){ return total*v/soma; });
+  var ints  = bruto.map(function(v){ return Math.floor(v); });
+  var falta = Math.round(total) - ints.reduce(function(a,b){ return a+b; },0);
+  bruto.map(function(v,i){ return {i:i, r:v-Math.floor(v)}; })
+       .sort(function(a,b){ return b.r-a.r; })
+       .slice(0, Math.max(0, Math.min(falta, SIM_REG.length)))
+       .forEach(function(o){ ints[o.i]++; });
+  return ints;
+}
 
 function numBR(txt){
   var t=String(txt).replace(/\s/g,"").replace(/\./g,"").replace(",",".");
@@ -6161,17 +6180,21 @@ function montaSimulador(){
   var card = document.querySelector("#simulador .js-card");
 
   function painel(c,ci){
-    function campo(cls,val,larg){
+    function campo(cls,val,larg,dica){
       return "<input type='text' inputmode='decimal' autocomplete='off' spellcheck='false' "+
-             "class='"+cls+"' value='"+val+"' style='width:"+larg+"px'>";
+             "class='"+cls+"' value='"+val+"' style='width:"+larg+"px'"+
+             (dica ? " title='"+E.esc(dica)+"'" : "")+">";
     }
     var linhas = SIM_FIM.map(function(m,i){
       var mes = "<tr class='cen-mes' data-mes='"+i+"'>"+
         "<td class='l'><button type='button' class='js-abre cen-abre' data-mes='"+i+"'>"+
           "<span class='seta'>&#9656;</span>"+m.mes+"</button></td>"+
         "<td>"+campo("js-dias",m.dias,42)+"</td>"+
-        "<td class='mes-aj'>"+campo("js-mpct",0,34)+"<i>%</i>"+
-          "<b class='js-mtdia'>–</b></td>"+
+        "<td class='mes-aj'>"+campo("js-mpct",0,32)+"<i>%</i>"+
+          campo("js-mtot",E.fmtInt(simSomaPadrao(c)),58,
+                "Digite a moagem/dia do mês: o valor é rateado entre as "+
+                "regiões na proporção do histórico")+
+          "<span class='js-mef cen-ef'></span></td>"+
         "<td class='js-mvol'>–</td></tr>";
       var regs = SIM_REG.map(function(r,ri){
         return "<tr class='cen-reg' data-mes='"+i+"' data-reg='"+ri+"' hidden>"+
@@ -6271,24 +6294,32 @@ function montaSimulador(){
       // o ritmo em % multiplica a moagem/dia de todas as regiões, para os dois
       // lados: 10 acelera, -20 desacelera. O piso é -100%, que zera o ritmo.
       var rit = Math.max(0, 1 + numSig(p.querySelector(".js-rit").value)/100);
-      var dias=[], taxa=[], pDias=0, cap=0, fatorMes=[];
+      var dias=[], taxa=[], pDias=0, cap=0;
       SIM_FIM.forEach(function(_,i){
         var mtr = p.querySelector("tr.cen-mes[data-mes='"+i+"']");
         var d = numBR(mtr.querySelector(".js-dias").value);
         dias.push(d); pDias += d;
         // o ajuste do mês se multiplica com o do cenário
         var fm = Math.max(0, 1 + numSig(mtr.querySelector(".js-mpct").value)/100);
-        fatorMes.push(fm);
-        var f = rit*fm, linha=[];
+        var f = rit*fm, linha=[], somaBase=0;
         SIM_REG.forEach(function(r,ri){
           var tr = p.querySelector("tr.cen-reg[data-mes='"+i+"'][data-reg='"+ri+"']");
-          var t = numBR(tr.querySelector(".js-rtdia").value)*f;
+          var base = numBR(tr.querySelector(".js-rtdia").value);
+          var t = base*f;
+          somaBase += base;
           linha.push(t); cap += d*t;
           // fora de 100%, o valor de fato usado fica ao lado do campo digitado
           tr.querySelector(".js-ef").textContent =
             Math.abs(f-1)<1e-9 ? "" : "→ "+E.fmtInt(t);
         });
         taxa.push(linha);
+        // o total do mes acompanha a soma das regioes, menos enquanto o campo
+        // esta sendo digitado: reescrever ali apagaria o que a pessoa escreve
+        var mtot = mtr.querySelector(".js-mtot");
+        if(document.activeElement!==mtot) mtot.value = E.fmtInt(somaBase);
+        var mef = mtr.querySelector(".js-mef");
+        mef.textContent = Math.abs(f-1)<1e-9 ? "" : "→ "+E.fmtInt(somaBase*f);
+        mef.style.color = f>1.0001 ? E.GREEN : (f<0.9999 ? E.RED : "");
       });
 
       var aColher = SIM_REG.map(function(r){ return r.estimado*(1+aum)-r.colhido; });
@@ -6303,11 +6334,6 @@ function montaSimulador(){
           tr.querySelector(".js-rvol").textContent = E.fmtInt(sim.porMesReg[i][ri]);
         });
         var mtr = p.querySelector("tr.cen-mes[data-mes='"+i+"']");
-        var somaDia = taxa[i].reduce(function(a,b){ return a+b; },0);
-        var el = mtr.querySelector(".js-mtdia");
-        el.textContent = E.fmtInt(somaDia);
-        el.style.color = fatorMes[i]>1.0001 ? E.GREEN
-                       : (fatorMes[i]<0.9999 ? E.RED : "");
         mtr.querySelector(".js-mvol").textContent = E.fmtInt(sim.porMes[i]);
       });
 
@@ -6463,7 +6489,20 @@ function montaSimulador(){
     calcula();
   });
 
-  card.addEventListener("input",function(e){ if(e.target.tagName==="INPUT") calcula(); });
+  card.addEventListener("input",function(e){
+    var t=e.target;
+    if(t.tagName!=="INPUT") return;
+    // total do mes digitado: desce para as quatro regioes pelo historico, e sao
+    // elas que seguem alimentando a projecao
+    if(t.classList.contains("js-mtot")){
+      var p=t.closest(".cen"), c=SIM_CEN[+p.dataset.cen], mes=t.closest("tr").dataset.mes;
+      simRateia(c, numBR(t.value)).forEach(function(v,ri){
+        p.querySelector("tr.cen-reg[data-mes='"+mes+"'][data-reg='"+ri+"'] .js-rtdia")
+         .value = E.fmtInt(v);
+      });
+    }
+    calcula();
+  });
   card.addEventListener("blur",function(e){
     var t=e.target;
     if(t.tagName!=="INPUT") return;
@@ -6481,6 +6520,7 @@ function montaSimulador(){
       SIM_FIM.forEach(function(m,i){
         p.querySelector("tr.cen-mes[data-mes='"+i+"'] .js-dias").value=m.dias;
         p.querySelector("tr.cen-mes[data-mes='"+i+"'] .js-mpct").value=0;
+        p.querySelector("tr.cen-mes[data-mes='"+i+"'] .js-mtot").value=E.fmtInt(simSomaPadrao(c));
         SIM_REG.forEach(function(r,ri){
           p.querySelector("tr.cen-reg[data-mes='"+i+"'][data-reg='"+ri+"'] .js-rtdia")
             .value=E.fmtInt(simPadrao(c,r));
