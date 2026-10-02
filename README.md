@@ -31,6 +31,7 @@ python -m http.server 8731
 | 6 | Caminhão canavieiro | Oito indicadores da frota de caminhões, incluindo raio médio |
 | 7 | Transbordo | Sete indicadores da frota de transbordo |
 | 8 | Irrigação localizada | Área aplicada por mês, 2025 contra 2026, com alternador de acumulado |
+| 9 | Irrigação convencional | Mesma página para o carretel: área por mês, velocidade na linha e parte em vinhaça |
 
 ### A página 4
 
@@ -173,9 +174,32 @@ Abril não compara desempenho, compara calendário: a safra 2026 abriu em 14/04 
 ranking de melhor e pior mês do insight, e o texto traz também a variação de maio em
 diante (+1,1%).
 
-Os dados ficam em `window.IRRIGACAO`, uma chave por tipo. Hoje só existe
-`localizada`; **convencional** entra como mais uma chave e mais uma entrada em
-`PAGINAS_IRRIGA` — a página se monta sozinha, igual às de frota.
+Os dados ficam em `window.IRRIGACAO`, uma chave por tipo (`localizada` e
+`convencional`), e cada página é uma entrada em `PAGINAS_IRRIGA` — a página se
+monta sozinha, igual às de frota. O que muda entre as duas está na própria
+entrada: `taxa` diz qual campo vai na linha (vazão em m³/h na localizada,
+velocidade do carretel em m/h na convencional) e `qtd` qual contagem vai no modal
+(tanques ou puxadas).
+
+### A página 9 (irrigação convencional)
+
+Mesmo molde da página 8: mesma janela (início da safra até 30/09), mesmas duas
+faixas, mesmo alternador e mesmo modal por fazenda. Cada registro da planilha é
+uma **puxada de carretel**, e a área é `puxada × espaçamento ÷ 10.000`.
+
+- **Linha = velocidade do carretel (m/h)**, ponderada pela área como a vazão da
+  localizada. Só entram as puxadas com velocidade entre **3 e 120 m/h**: a
+  planilha traz velocidade zero quando falta a hora final e valores absurdos
+  (negativos, milhares de m/h) quando a hora foi digitada errada. A área dessas
+  puxadas continua nas barras; só sai da média de velocidade. Isso cobre **94% da
+  área em 2025 e só 71% em 2026** — muita puxada de 2026 está sem hora final — e o
+  insight e o rodapé do modal dizem isso. Na safra, a média pondera pela área que
+  entrou na conta (`haVel`), não pela área total.
+- **Água × vinhaça:** o modal traz a coluna de vinhaça por fazenda, e o insight a
+  participação da vinhaça na área (39% em 2026 contra 26% em 2025).
+- **Abril:** aqui a safra 2026 abriu *depois* (07/04 contra 04/04) e mesmo assim
+  abril subiu, então o texto não atribui o salto ao calendário. O insight escolhe a
+  frase conforme a data de abertura e o sinal da variação.
 
 ## Atualizar os dados
 
@@ -208,8 +232,11 @@ e (nas duas de transporte) `viagens`. Um equipamento novo entra como mais uma ch
 aqui e mais uma entrada em `PAGINAS`, no JS — a página se monta sozinha.
 
 Fonte dos dados: `MOAGEM COMPARATIVO.xlsx` (UGS), abas `Planilha1`, `colhedora`,
-`caminhão` e `transbordo`; e `Produção localizada - SAFRA 2025/2026.xlsx`, aba
-`Banco Localizada`, para a irrigação.
+`caminhão` e `transbordo`; `Produção localizada - SAFRA 2025/2026.xlsx`, aba
+`Banco Localizada`, para a irrigação localizada; e `FECHAMENTO FINAL SAFRA 2025.xlsx`
+e `FECHAMENTO IRRIGAÇÃO SAFRA 2026.xlsx`, aba `banco de dados`, para a convencional.
+A aba `COMPARATIVO MES` dessas planilhas não serve de conferência: os meses finais
+de 2025 trazem valores redondos (3.000, 2.800) que não batem com o banco de dados.
 
 ## Convenções mantidas do `comparativo_colhedora`
 

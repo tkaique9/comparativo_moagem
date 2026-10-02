@@ -1649,7 +1649,17 @@ window.FROTA = {
      posicional ("campos" descreve a ordem); "nomes" traduz o código quando a
      planilha de fechamento traz o nome. O total de cada mês é a soma exata
      dessas linhas, para o modal fechar com a barra do gráfico.
-     A convencional entra como mais uma chave deste objeto.
+
+     CONVENCIONAL — fonte: "FECHAMENTO FINAL SAFRA 2025.xlsx" e
+     "FECHAMENTO IRRIGAÇÃO SAFRA 2026.xlsx", aba banco de dados (um registro
+     por puxada de carretel; PROD. = puxada × espaçamento ÷ 10.000, em ha).
+     Mesma janela, até 30/09. "puxadas" conta os registros do mês e "vinhaca"
+     é a parte da área aplicada com vinhaça (o resto é água).
+     "vel" é a velocidade do carretel (m/h), ponderada pela área como a vazão
+     da localizada, mas só das puxadas com velocidade entre 3 e 120 m/h: a
+     planilha traz velocidade zero quando falta a hora final e valores
+     absurdos quando a hora foi digitada errada. "haVel" é a área que entrou
+     nessa conta — cobre 94% da área em 2025 e 71% em 2026.
      ============================================================ -->
 <script>
 window.IRRIGACAO = {
@@ -1859,6 +1869,415 @@ window.IRRIGACAO = {
       ["9368",1,5,43.1,2,85,60.0],
       ["9347",1,5,32.2,2,63,60.0],
       ["9366",1,5,4.5,1,9,60.0]
+    ]
+  },
+  convencional: {
+    nome: "Irrigação convencional", unidade: "CRV Minas Gerais",
+    ini2025: "2025-04-04", ini2026: "2026-04-07",
+    fazTotal: [85, 58],
+    a2025: [
+      {ha:1031.1, vel:19.7, dias:27, faz:18, puxadas:584, vinhaca:246.2, haVel:912.4},
+      {ha:2353.6, vel:21.6, dias:31, faz:33, puxadas:1407, vinhaca:618.6, haVel:2199.7},
+      {ha:2742.7, vel:23.7, dias:30, faz:43, puxadas:1593, vinhaca:656.6, haVel:2577.1},
+      {ha:2758.7, vel:23.5, dias:31, faz:50, puxadas:1603, vinhaca:653.5, haVel:2608.9},
+      {ha:2620.6, vel:22.9, dias:31, faz:44, puxadas:1512, vinhaca:655.0, haVel:2523.4},
+      {ha:2729.8, vel:24.3, dias:30, faz:35, puxadas:1561, vinhaca:907.0, haVel:2613.3}
+    ],
+    a2026: [
+      {ha:1516.1, vel:22.1, dias:24, faz:23, puxadas:852, vinhaca:600.4, haVel:1513.8},
+      {ha:3378.4, vel:25.7, dias:31, faz:34, puxadas:1894, vinhaca:966.5, haVel:2075.0},
+      {ha:2446.4, vel:24.5, dias:30, faz:40, puxadas:1383, vinhaca:866.9, haVel:1689.9},
+      {ha:2182.4, vel:21.4, dias:31, faz:27, puxadas:1319, vinhaca:902.9, haVel:1223.8},
+      {ha:2211.3, vel:22.7, dias:31, faz:22, puxadas:1275, vinhaca:976.7, haVel:1666.9},
+      {ha:1683.0, vel:22.0, dias:30, faz:15, puxadas:980, vinhaca:932.7, haVel:1347.8}
+    ],
+    campos: ["fazenda","ano","mes","ha","dias","puxadas","vel","vinhaca"],
+    nomes: {"9001":"FAZ. PARANAÍBA","9002":"FAZ. CÓRREGO DO QUEIXADA","9003":"FAZ. BONANZA","9004":"FAZ. CÓRREGO DAS FLORES","9005":"FAZ. CÓRREGO DO QUEIXADA","9006":"FAZ. CÓR. DAS FLORES II","9006I":"FAZ. CÓR. DAS FLORES II - Ilha","9010":"FAZ. PRIMAVERA","9303":"BOA ESPERANÇA","9304":"FAZ.ESTANCIA CAROLINA","9308":"FAZ. PONTE NOVA","9309":"FAZ.REDENÇÃO","9310":"FAZENDA PRIMAVERA","9311":"PRIMAVERA","9312":"ESTANCIA CAMPO VERDE","9313":"SANTA MARIA","9317":"CORREGO CANOA I (CARECA)","9319":"RETIRINHO","9321":"SANTA RITA DE CASSIA","9323":"SUCURI (5 IRMÃOS)","9324":"SUCURI ll (5 IRMÃOS)","9326":"RETIRINHO E BOA ESPERANÇA","9328":"FAZENDA BUGRE (TERCON)","9331":"FAZ. SUCURI","9332":"FAZ. SUCURI","9338":"PONTINHAS","9346":"FAZ.SUCURI","9351":"VICTOR HUGO E ANA BEATRIZ","9362":"FAZ. CÓRREGO DO BUGRE","9363":"PONTINHAS","9367":"PONTINHAS","9368":"ROSARIO","9371":"CORREGO DA CANOA","9372":"ESTÂNCIA EVIDENCIA","9373":"ESTÂNCIA SÃO SEBASTIÃO","9374":"FAZ.SUCURI E CAJAMANGA","9375":"FUNDÃO","9378":"PONTE NOVA","9379":"FAZ.PONTE NOVA","9382":"BEIJA FLOR","9403":"FAZ.SUCURI E CAJAMANGA","9405":"SHEKINAH l","9408":"FAZ. COR. DA LAGOA IV (SAMIR T.)","9411":"SÃO PAULO","9412":"FAZ. FUNDÃO","9413":"FAZ. CÓRREGO DA LAGOA III","9414":"FAZ. NOSSA SENHORA DO CARMO","9415":"SANTA ROSA","9416":"FAZ.MOSQUITO","9424":"FAZENDA CORREGO DO AÇUDE E RETIRINHO","9433":"FAZ. BOA VISTA","9444":"FAZENDA BUGRE","9458":"FAZ.PONTAL","9468":"FAZ.PONTAL","9476":"JUPATIS","9479":"DOIS IRMÃOS","9521":"FAZENDA SUCURI","9522":"FAZ. TRES BARRAS (R-3)","9526":"FAZENDA RAMADA","9528":"CÓRREGO DO SUCURI","9529":"SANTA VITORIA","9531":"FAZ. BELA VISTA","9536":"SÃO BENTO (IPIAÇU)","9539":"IPANEMA","9542":"FAZ. LAGOINHA I","9543":"FAZ. TRÊS LAGOAS","9544":"FAZ. EBENEZER 3","9545":"FAZ. FUNDINHO","9550":"FAZ. CASCALHO RICO (BEBEZINHO)","9551":"FAZ. CASCALHO RICO","9552":"FAZ. FUNDÃO","9553":"FAZ. LAGOINHA","9554":"FAZ. LAGOINHA","9555":"FAZ. LAGOINHA","9556":"FAZ. LAGOINHA","9565":"FAZ. COR. DA LAGOA - STA ROSA","9566":"FAZ. TRÊS LAGOAS","9569":"FAZ. FUNDÃO E TRÊS BARRAS","9571":"FAZ. LAGOINHA","9572":"FAZ. LAGOINHA","9575":"FAZ. NOVO HORIZONTE","9577":"FAZ. DAS PRIMAVERAS","9578":"FAZ. NOSSA SRA. APARECIDA","9579":"FAZ. CASCALHO RICO","9580":"FAZ. CASCALHO RICO","9606":"FAZ. LAGOINHA","9607":"CUPIM GRANDE","9608":"FAZ. SERRA AZUL","9802":"FAZ. CÓRREGO DO AÇUDE","9819":"NOSSA SRA DA APARECIDA","9825":"SÃO FRANCISCO"},
+    fazendas: [
+      ["9368",0,0,173.5,17,101,22.8,0],
+      ["9416",0,0,144.3,25,69,22.7,0],
+      ["9408",0,0,122.1,18,60,18.4,0],
+      ["9006",0,0,85.3,16,54,19.3,85.3],
+      ["9001",0,0,70.0,18,40,16.6,70.0],
+      ["9411",0,0,57.8,19,33,14.8,0],
+      ["9415",0,0,48.6,12,24,17.4,0],
+      ["9006I",0,0,44.7,17,26,15.5,0],
+      ["9319",0,0,43.3,10,26,20.7,0],
+      ["9321",0,0,43.0,11,23,21.7,43.0],
+      ["9433",0,0,37.7,12,32,21.6,0],
+      ["9346",0,0,37.6,7,26,22.7,0],
+      ["9351",0,0,31.1,12,19,18.0,0],
+      ["9303",0,0,27.7,8,17,20.9,0],
+      ["9005",0,0,25.1,8,14,16.6,25.1],
+      ["9004",0,0,22.8,5,11,14.7,22.8],
+      ["9405",0,0,15.1,4,8,12.2,0],
+      ["9424",0,0,1.4,1,1,18.7,0],
+      ["9368",0,1,371.6,31,211,22.2,0],
+      ["9006",0,1,250.2,29,155,20.6,250.2],
+      ["9408",0,1,236.1,29,124,20.2,0],
+      ["9004",0,1,146.6,27,75,23.3,146.6],
+      ["9411",0,1,132.1,30,74,18.8,0],
+      ["9528",0,1,126.0,19,81,27.7,0],
+      ["9328",0,1,114.0,25,77,26.1,0],
+      ["9416",0,1,108.6,22,52,20.9,0],
+      ["9321",0,1,98.6,21,55,18.8,98.6],
+      ["9424",0,1,81.3,26,59,18.9,0],
+      ["9319",0,1,69.0,22,49,18.6,0],
+      ["9529",0,1,66.7,11,50,27.3,0],
+      ["9001",0,1,56.7,15,32,24.2,56.7],
+      ["9351",0,1,50.0,8,28,23.8,0],
+      ["9005",0,1,45.6,18,27,19.3,45.6],
+      ["9346",0,1,45.4,7,35,27.1,0],
+      ["9405",0,1,41.1,7,23,26.5,0],
+      ["9303",0,1,40.4,15,24,16.9,0],
+      ["9565",0,1,39.1,15,28,13.1,0],
+      ["9338",0,1,37.9,7,23,19.2,0],
+      ["9367",0,1,31.8,9,19,17.0,0],
+      ["9444",0,1,28.2,8,18,24.6,0],
+      ["9414",0,1,27.7,8,19,14.4,0],
+      ["9479",0,1,21.7,4,15,24.4,0],
+      ["9006I",0,1,20.3,8,13,16.4,0],
+      ["9415",0,1,16.9,4,8,19.2,0],
+      ["9309",0,1,16.8,4,11,24.3,16.8],
+      ["9375",0,1,15.7,7,10,16.8,0],
+      ["9413",0,1,4.8,1,2,3.4,0],
+      ["9476",0,1,4.6,2,5,22.8,0],
+      ["9002",0,1,4.1,2,2,17.1,4.1],
+      ["9362",0,1,2.8,2,2,8.0,0],
+      ["9382",0,1,1.2,1,1,10.1,0],
+      ["9006",0,2,374.8,30,239,26.0,374.8],
+      ["9408",0,2,237.2,28,107,25.6,0],
+      ["9528",0,2,219.2,30,128,28.8,0],
+      ["9003",0,2,156.5,28,87,24.7,74.9],
+      ["9328",0,2,150.6,26,90,27.3,0],
+      ["9368",0,2,147.7,20,91,22.0,0],
+      ["9405",0,2,143.5,18,74,21.5,0],
+      ["9411",0,2,131.9,29,84,23.8,0],
+      ["9321",0,2,94.1,20,48,21.9,94.1],
+      ["9424",0,2,93.1,22,56,18.6,0],
+      ["9367",0,2,76.8,17,42,23.5,0],
+      ["9413",0,2,75.9,15,40,19.1,0],
+      ["9416",0,2,72.6,18,37,15.9,0],
+      ["9313",0,2,71.1,25,51,21.6,0],
+      ["9004",0,2,67.9,17,37,30.7,67.9],
+      ["9607",0,2,61.5,10,35,25.4,0],
+      ["9476",0,2,48.9,12,26,24.8,0],
+      ["9338",0,2,45.3,9,26,23.3,0],
+      ["9363",0,2,39.4,9,21,21.3,0],
+      ["9468",0,2,37.2,12,21,16.3,0],
+      ["9414",0,2,36.9,13,25,14.5,0],
+      ["9551",0,2,32.5,8,22,21.4,0],
+      ["9544",0,2,31.5,13,18,19.0,0],
+      ["9006I",0,2,23.1,9,17,24.2,0],
+      ["9362",0,2,23.0,5,13,26.9,0],
+      ["9565",0,2,22.4,8,17,15.5,0],
+      ["9001",0,2,22.0,4,11,31.4,22.0],
+      ["9458",0,2,21.8,9,14,19.0,0],
+      ["9550",0,2,21.5,8,16,21.2,0],
+      ["9608",0,2,20.1,5,10,24.3,0],
+      ["9005",0,2,18.9,3,10,32.3,18.9],
+      ["9819",0,2,18.0,5,10,16.8,0],
+      ["9375",0,2,17.3,8,14,10.1,0],
+      ["9569",0,2,16.0,4,9,19.2,0],
+      ["9539",0,2,14.1,3,7,19.1,0],
+      ["9553",0,2,12.8,4,8,19.8,0],
+      ["9319",0,2,11.2,3,8,25.8,0],
+      ["9303",0,2,10.2,3,7,14.5,0],
+      ["9444",0,2,7.2,2,4,28.4,0],
+      ["9554",0,2,7.1,4,7,11.7,0],
+      ["9309",0,2,4.0,1,3,24.4,4.0],
+      ["9556",0,2,3.9,2,2,20.9,0],
+      ["9382",0,2,2.0,1,1,null,0],
+      ["9408",0,3,260.3,30,133,23.3,0],
+      ["9006",0,3,250.4,26,151,26.6,250.4],
+      ["9405",0,3,186.9,29,98,24.4,0],
+      ["9476",0,3,161.7,29,92,21.0,0],
+      ["9607",0,3,152.3,27,94,25.6,0],
+      ["9413",0,3,132.6,30,71,18.1,0],
+      ["9001",0,3,123.2,18,67,28.0,123.2],
+      ["9005",0,3,111.8,22,61,32.6,111.8],
+      ["9373",0,3,104.9,17,74,27.0,0],
+      ["9819",0,3,94.7,24,54,22.0,0],
+      ["9368",0,3,85.5,15,51,24.8,0],
+      ["9003",0,3,78.4,23,41,26.0,0],
+      ["9578",0,3,63.2,14,39,18.1,0],
+      ["9550",0,3,58.6,19,40,13.9,0],
+      ["9311",0,3,57.1,10,32,24.1,57.1],
+      ["9362",0,3,56.5,8,30,29.7,0],
+      ["9536",0,3,55.8,19,28,21.9,0],
+      ["9372",0,3,54.8,9,34,25.4,0],
+      ["9375",0,3,50.0,10,30,21.3,0],
+      ["9825",0,3,47.9,15,30,19.6,0],
+      ["9004",0,3,47.7,10,24,23.6,27.4],
+      ["9411",0,3,44.4,17,25,15.8,0],
+      ["9575",0,3,44.2,13,28,22.2,0],
+      ["9544",0,3,39.3,20,24,12.1,0],
+      ["9553",0,3,33.3,12,20,15.8,0],
+      ["9539",0,3,32.0,7,16,19.1,0],
+      ["9313",0,3,31.5,9,19,20.4,0],
+      ["9531",0,3,28.7,7,18,22.7,0],
+      ["9309",0,3,28.2,5,17,26.6,28.2],
+      ["9010",0,3,25.7,9,19,19.3,25.7],
+      ["9321",0,3,22.2,4,11,22.6,22.2],
+      ["9412",0,3,17.4,7,10,16.9,0],
+      ["9522",0,3,16.4,2,15,35.8,0],
+      ["9579",0,3,15.3,5,8,14.9,0],
+      ["9371",0,3,14.3,8,9,19.0,0],
+      ["9528",0,3,14.2,3,9,26.5,0],
+      ["9580",0,3,13.7,6,9,15.8,0],
+      ["9608",0,3,13.2,3,8,24.9,0],
+      ["9323",0,3,13.2,4,8,19.8,0],
+      ["9317",0,3,12.7,9,10,17.0,0],
+      ["9332",0,3,12.3,6,6,20.7,0],
+      ["9521",0,3,11.0,4,8,30.4,0],
+      ["9551",0,3,10.6,5,9,10.4,0],
+      ["9326",0,3,6.8,3,4,13.5,0],
+      ["9324",0,3,6.2,3,3,22.1,0],
+      ["9331",0,3,5.7,2,3,30.5,0],
+      ["9002",0,3,4.2,1,2,22.5,4.2],
+      ["9310",0,3,3.3,4,8,27.0,3.3],
+      ["9468",0,3,2.5,1,2,22.0,0],
+      ["9606",0,3,1.9,1,1,null,0],
+      ["9006",0,4,378.1,31,218,26.1,378.1],
+      ["9408",0,4,280.9,31,134,25.3,0],
+      ["9522",0,4,190.1,31,113,23.3,0],
+      ["9405",0,4,164.4,30,88,21.6,0],
+      ["9413",0,4,134.6,31,88,17.6,0],
+      ["9476",0,4,124.5,28,68,19.0,0],
+      ["9578",0,4,123.6,27,70,21.2,0],
+      ["9607",0,4,114.5,27,72,22.1,0],
+      ["9004",0,4,114.2,24,61,20.7,114.2],
+      ["9003",0,4,109.4,30,58,25.3,0],
+      ["9569",0,4,73.3,19,48,17.1,0],
+      ["9825",0,4,66.6,14,40,19.6,0],
+      ["9539",0,4,62.5,15,40,24.7,0],
+      ["9819",0,4,61.7,12,35,20.8,0],
+      ["9802",0,4,61.6,7,36,36.8,61.6],
+      ["9526",0,4,61.4,10,32,24.2,0],
+      ["9311",0,4,57.1,14,34,17.3,57.1],
+      ["9536",0,4,42.0,16,23,17.6,0],
+      ["9368",0,4,41.4,7,18,27.2,0],
+      ["9608",0,4,31.1,9,17,22.1,0],
+      ["9552",0,4,30.1,7,16,21.3,0],
+      ["9544",0,4,27.6,13,17,25.3,0],
+      ["9324",0,4,25.4,7,17,27.2,0],
+      ["9606",0,4,24.2,10,12,19.6,0],
+      ["9528",0,4,20.8,4,15,25.4,0],
+      ["9332",0,4,20.0,4,12,32.6,0],
+      ["9309",0,4,17.3,4,12,25.0,17.3],
+      ["9010",0,4,15.9,5,12,23.0,15.9],
+      ["9555",0,4,15.8,6,8,12.3,0],
+      ["9572",0,4,14.7,5,10,14.5,0],
+      ["9529",0,4,13.8,3,11,22.5,0],
+      ["9575",0,4,12.8,4,11,19.0,0],
+      ["9323",0,4,11.9,4,8,16.7,0],
+      ["9317",0,4,10.9,5,7,5.5,0],
+      ["9550",0,4,10.0,4,7,9.1,0],
+      ["9577",0,4,9.8,2,5,24.4,0],
+      ["9331",0,4,9.3,2,5,32.5,0],
+      ["9310",0,4,8.9,6,13,19.3,8.9],
+      ["9580",0,4,8.5,4,7,39.2,0],
+      ["9579",0,4,5.8,2,3,8.7,0],
+      ["9571",0,4,5.5,2,3,11.4,0],
+      ["9521",0,4,5.3,2,5,29.0,0],
+      ["9001",0,4,1.9,1,1,20.1,1.9],
+      ["9371",0,4,1.4,2,2,22.9,0],
+      ["9006",0,5,618.7,30,330,26.9,618.7],
+      ["9375",0,5,181.5,27,121,20.5,0],
+      ["9004",0,5,163.4,23,79,28.8,163.4],
+      ["9522",0,5,155.5,26,84,24.6,0],
+      ["9578",0,5,151.4,27,80,22.8,0],
+      ["9476",0,5,124.7,25,69,23.9,0],
+      ["9413",0,5,123.1,24,83,20.5,0],
+      ["9825",0,5,100.0,21,58,21.5,0],
+      ["9312",0,5,97.3,18,62,25.8,0],
+      ["9802",0,5,93.9,10,54,33.3,93.9],
+      ["9367",0,5,89.9,14,48,28.1,0],
+      ["9569",0,5,85.2,25,55,15.1,0],
+      ["9526",0,5,82.2,14,42,24.6,0],
+      ["9006I",0,5,77.9,17,60,23.2,0],
+      ["9408",0,5,72.1,10,35,30.5,0],
+      ["9544",0,5,56.3,19,38,17.4,0],
+      ["9542",0,5,52.3,11,26,21.6,0],
+      ["9415",0,5,39.1,10,20,17.7,0],
+      ["9003",0,5,38.1,6,20,23.5,0],
+      ["9529",0,5,37.6,9,28,20.7,0],
+      ["9405",0,5,36.2,6,18,25.4,0],
+      ["9321",0,5,31.0,5,13,20.5,31.0],
+      ["9351",0,5,28.7,5,17,22.7,0],
+      ["9545",0,5,27.9,8,18,20.4,0],
+      ["9566",0,5,25.2,7,17,17.1,0],
+      ["9414",0,5,24.2,6,13,18.0,0],
+      ["9543",0,5,24.0,11,19,25.8,0],
+      ["9565",0,5,22.4,8,10,18.5,0],
+      ["9479",0,5,20.4,4,14,23.1,0],
+      ["9382",0,5,18.8,7,13,19.0,0],
+      ["9819",0,5,10.2,5,5,24.1,0],
+      ["9338",0,5,8.6,2,4,10.7,0],
+      ["9572",0,5,8.6,2,5,17.8,0],
+      ["9554",0,5,1.8,1,2,22.2,0],
+      ["9556",0,5,1.6,1,1,18.4,0],
+      ["9006",1,0,241.5,22,140,21.3,241.5],
+      ["9408",1,0,207.3,20,108,21.8,0],
+      ["9004",1,0,125.3,12,60,25.6,125.3],
+      ["9321",1,0,116.7,22,57,21.6,116.7],
+      ["9001",1,0,108.5,18,60,24.9,108.5],
+      ["9411",1,0,106.9,19,68,24.0,0],
+      ["9346",1,0,80.5,14,49,27.0,0],
+      ["9476",1,0,70.8,14,43,21.5,0],
+      ["9405",1,0,58.5,14,31,18.1,0],
+      ["9006I",1,0,50.4,10,27,22.4,0],
+      ["9304",1,0,47.5,9,25,22.7,0],
+      ["9368",1,0,44.7,12,29,16.7,0],
+      ["9819",1,0,44.5,13,26,20.9,0],
+      ["9351",1,0,42.4,9,23,23.6,0],
+      ["9825",1,0,39.6,14,24,16.9,0],
+      ["9328",1,0,38.8,9,21,21.4,0],
+      ["9375",1,0,32.3,9,21,22.4,0],
+      ["9414",1,0,23.8,7,16,16.9,0],
+      ["9433",1,0,17.1,5,13,17.7,0],
+      ["90031",1,0,8.4,3,4,23.5,8.4],
+      ["9413",1,0,5.3,2,3,6.8,0],
+      ["9374",1,0,2.8,1,2,17.8,0],
+      ["9444",1,0,2.5,1,2,22.5,0],
+      ["9006",1,1,408.6,31,249,28.0,408.6],
+      ["9408",1,1,371.5,31,175,28.1,0],
+      ["9414",1,1,238.7,30,135,21.4,0],
+      ["9413",1,1,210.9,30,106,22.0,0],
+      ["9321",1,1,203.9,26,100,28.9,203.9],
+      ["9374",1,1,198.4,29,114,26.7,0],
+      ["9476",1,1,185.0,29,97,27.1,0],
+      ["9001",1,1,157.1,22,96,31.6,157.1],
+      ["9328",1,1,142.2,31,88,22.2,0],
+      ["9006I",1,1,119.4,20,69,24.5,0],
+      ["9411",1,1,116.3,26,64,21.3,0],
+      ["9368",1,1,107.8,19,69,20.9,0],
+      ["9403",1,1,101.0,20,56,29.1,0],
+      ["9338",1,1,96.6,17,51,26.5,0],
+      ["9005",1,1,85.2,13,49,33.6,85.2],
+      ["9367",1,1,79.2,13,44,27.1,0],
+      ["9819",1,1,78.0,19,47,22.2,0],
+      ["9825",1,1,67.3,15,42,22.5,0],
+      ["9004",1,1,66.3,9,32,26.0,66.3],
+      ["9405",1,1,59.8,17,37,17.2,0],
+      ["9304",1,1,55.5,12,28,21.4,0],
+      ["9468",1,1,30.0,9,18,26.1,0],
+      ["9444",1,1,28.8,10,17,27.9,0],
+      ["9479",1,1,28.6,6,19,26.9,0],
+      ["9553",1,1,27.9,8,19,24.9,0],
+      ["9309",1,1,24.3,6,18,28.6,24.3],
+      ["9351",1,1,16.5,3,11,26.9,0],
+      ["9458",1,1,16.2,6,11,28.7,0],
+      ["90031",1,1,16.1,4,8,28.3,16.1],
+      ["9415",1,1,14.6,5,8,23.3,0],
+      ["9555",1,1,8.1,1,4,21.7,0],
+      ["9606",1,1,7.7,2,4,34.6,0],
+      ["9375",1,1,5.9,3,4,22.2,0],
+      ["9002",1,1,5.0,2,5,17.0,5.0],
+      ["9006",1,2,304.7,30,185,24.2,304.7],
+      ["9408",1,2,263.1,22,122,27.8,0],
+      ["9321",1,2,224.8,27,118,24.8,224.8],
+      ["9004",1,2,163.6,22,91,27.7,163.6],
+      ["9368",1,2,124.7,13,69,21.1,0],
+      ["9565",1,2,124.4,25,83,22.1,0],
+      ["9328",1,2,114.1,20,67,23.7,0],
+      ["9607",1,2,96.1,16,56,23.2,0],
+      ["9003",1,2,88.9,14,41,24.2,0],
+      ["9001",1,2,78.5,13,50,19.6,78.5],
+      ["9304",1,2,77.3,18,49,24.3,0],
+      ["9414",1,2,57.6,9,38,33.2,0],
+      ["9526",1,2,57.5,10,31,26.1,0],
+      ["9542",1,2,51.8,11,30,25.0,0],
+      ["9378",1,2,50.3,11,29,22.3,0],
+      ["9374",1,2,50.0,10,28,25.8,0],
+      ["9005",1,2,48.8,8,30,30.2,48.8],
+      ["9367",1,2,46.6,9,26,24.0,0],
+      ["90031",1,2,45.1,8,28,21.8,45.1],
+      ["9411",1,2,39.6,16,24,19.2,0],
+      ["9363",1,2,34.3,5,20,27.1,0],
+      ["9415",1,2,33.1,12,18,23.8,0],
+      ["9308",1,2,32.9,6,18,19.8,0],
+      ["9006I",1,2,29.9,6,15,24.1,0],
+      ["9379",1,2,28.2,6,18,24.3,0],
+      ["9413",1,2,27.6,5,15,15.9,0],
+      ["9476",1,2,23.7,4,12,27.1,0],
+      ["9608",1,2,21.8,7,12,22.4,0],
+      ["9375",1,2,19.9,4,13,29.4,0],
+      ["9362",1,2,17.5,4,8,19.2,0],
+      ["9338",1,2,16.1,4,10,25.2,0],
+      ["9553",1,2,13.1,4,7,29.5,0],
+      ["9545",1,2,10.3,3,6,12.5,0],
+      ["9405",1,2,10.1,2,5,14.9,0],
+      ["9403",1,2,6.0,2,3,22.8,0],
+      ["9572",1,2,4.8,3,3,12.3,0],
+      ["9569",1,2,3.6,1,2,null,0],
+      ["9571",1,2,2.4,1,1,null,0],
+      ["9555",1,2,2.2,1,1,9.5,0],
+      ["9002",1,2,1.4,1,1,25.7,1.4],
+      ["9006",1,3,384.5,30,217,23.4,384.5],
+      ["9405",1,3,281.4,31,151,17.4,0],
+      ["9003",1,3,201.0,25,115,24.8,0],
+      ["9004",1,3,196.7,28,104,20.7,196.7],
+      ["9413",1,3,141.7,17,85,19.1,0],
+      ["9607",1,3,111.8,13,70,24.5,0],
+      ["9578",1,3,102.6,20,57,23.3,0],
+      ["9321",1,3,93.0,15,48,21.0,93.0],
+      ["9010",1,3,81.0,15,62,28.9,81.0],
+      ["9569",1,3,80.3,16,55,18.0,0],
+      ["9553",1,3,74.9,16,53,17.0,0],
+      ["9545",1,3,65.0,13,46,16.7,0],
+      ["9308",1,3,57.2,14,31,21.4,0],
+      ["90031",1,3,43.5,9,23,24.4,43.5],
+      ["9001",1,3,42.6,8,26,26.7,42.6],
+      ["9310",1,3,29.9,15,46,23.2,29.9],
+      ["9309",1,3,29.3,5,23,27.9,29.3],
+      ["9606",1,3,25.9,5,13,17.1,0],
+      ["9572",1,3,25.2,9,19,16.8,0],
+      ["9415",1,3,21.0,10,11,17.7,0],
+      ["9571",1,3,20.7,8,11,22.3,0],
+      ["9554",1,3,17.6,4,18,14.9,0],
+      ["9565",1,3,15.4,7,10,17.5,0],
+      ["9608",1,3,14.4,6,9,19.1,0],
+      ["9555",1,3,14.0,3,7,18.0,0],
+      ["9556",1,3,9.4,4,6,17.3,0],
+      ["9002",1,3,2.4,1,3,24.0,2.4],
+      ["9006",1,4,563.9,31,337,26.2,563.9],
+      ["9413",1,4,309.1,31,170,19.3,0],
+      ["9405",1,4,218.9,24,113,17.6,0],
+      ["9003",1,4,189.2,30,93,18.1,0],
+      ["9578",1,4,149.5,25,79,24.6,0],
+      ["9311",1,4,141.9,19,81,29.1,141.9],
+      ["9001",1,4,110.5,19,68,22.6,110.5],
+      ["9569",1,4,105.3,18,61,18.0,0],
+      ["9010",1,4,72.6,13,48,25.4,72.6],
+      ["9819",1,4,62.5,10,39,19.9,0],
+      ["9415",1,4,58.3,24,27,16.5,0],
+      ["9802",1,4,53.1,4,37,46.5,53.1],
+      ["9825",1,4,48.9,10,31,16.9,0],
+      ["9606",1,4,32.4,9,17,18.2,0],
+      ["9572",1,4,27.3,10,19,23.4,0],
+      ["9004",1,4,15.3,4,9,22.8,15.3],
+      ["9555",1,4,13.7,5,8,19.5,0],
+      ["9310",1,4,12.6,9,22,26.1,12.6],
+      ["9571",1,4,10.5,5,6,15.9,0],
+      ["90031",1,4,6.8,3,4,9.1,6.8],
+      ["9565",1,4,6.4,3,4,17.5,0],
+      ["9553",1,4,2.6,1,2,20.3,0],
+      ["9006",1,5,456.4,26,234,22.9,456.4],
+      ["9001",1,5,271.8,23,172,22.2,271.8],
+      ["9569",1,5,136.8,21,86,21.2,0],
+      ["9578",1,5,131.1,24,76,21.6,0],
+      ["9413",1,5,125.7,23,84,17.7,0],
+      ["9006I",1,5,111.3,14,69,20.9,0],
+      ["9802",1,5,90.0,10,62,37.9,90.0],
+      ["9415",1,5,75.4,13,38,23.3,0],
+      ["9003",1,5,59.1,12,30,17.9,0],
+      ["9321",1,5,58.3,7,26,24.8,58.3],
+      ["9005",1,5,56.2,8,34,20.2,56.2],
+      ["9565",1,5,40.7,17,26,15.3,0],
+      ["9819",1,5,33.6,7,20,11.3,0],
+      ["9368",1,5,19.0,6,12,13.6,0],
+      ["9825",1,5,17.6,5,11,13.1,0]
     ]
   }
 };
@@ -3020,24 +3439,34 @@ function montaPaginaFrota(cfg){
 var PAGINAS_IRRIGA = [
   {id:"irriga-localizada", chave:"localizada", num:"08", rotulo:"Irrigação localizada",
    cor:"#2E86C1", titulo:"Área irrigada — localizada",
-   sub:"Hectares aplicados mês a mês nas duas safras, do início de cada uma até 30/09, com a vazão média de cada mês na linha. Clique numa barra para ver as fazendas irrigadas naquele mês. Abril depende da data de abertura, então o mês não compara desempenho: compara calendário."}
+   sub:"Hectares aplicados mês a mês nas duas safras, do início de cada uma até 30/09, com a vazão média de cada mês na linha. Clique numa barra para ver as fazendas irrigadas naquele mês. Abril depende da data de abertura, então o mês não compara desempenho: compara calendário.",
+   taxa:{k:"vazao", nome:"vazão", Nome:"Vazão", un:"m³/h"},
+   qtd:{k:"tanques", nome:"tanques aplicados", col:"Tanques"}},
+  {id:"irriga-convencional", chave:"convencional", num:"09", rotulo:"Irrigação convencional",
+   cor:"#2E86C1", titulo:"Área irrigada — convencional",
+   sub:"Hectares aplicados por carretel mês a mês nas duas safras, do início de cada uma até 30/09, com a velocidade média do carretel na linha. Clique numa barra para ver as fazendas irrigadas naquele mês, com a parte aplicada em vinhaça.",
+   // peso: a velocidade só vale nas puxadas com hora final apontada, então a
+   // média da safra pondera pela área que de fato entrou na conta
+   taxa:{k:"vel", nome:"velocidade", Nome:"Velocidade", un:"m/h", peso:"haVel"},
+   qtd:{k:"puxadas", nome:"puxadas de carretel", col:"Puxadas"}}
 ];
 
 var irrigaModo = {};   // "mes" ou "acumulado", por página
 
 function somaIrriga(arr){
-  var o = {ha:0, dias:0, tanques:0};
-  arr.forEach(function(m){ o.ha+=m.ha; o.dias+=m.dias; o.tanques+=m.tanques; });
+  var o = {ha:0, dias:0};
+  arr.forEach(function(m){ o.ha+=m.ha; o.dias+=m.dias; });
   return o;
 }
 function acumula(arr){
   var s=0; return arr.map(function(m){ s+=m.ha; return Math.round(s*10)/10; });
 }
-// vazão da safra inteira: ponderada pela área de cada mês, para um mês de pouca
-// área não pesar igual a um mês cheio
-function vazaoSafra(arr){
+// taxa da safra inteira (vazão ou velocidade): ponderada pela área de cada mês,
+// para um mês de pouca área não pesar igual a um mês cheio. Com taxa.peso, a
+// ponderação usa só a área que entrou no cálculo da taxa daquele mês.
+function taxaSafra(arr, taxa){
   var ha=0, acc=0;
-  arr.forEach(function(m){ ha+=m.ha; acc+=m.ha*m.vazao; });
+  arr.forEach(function(m){ var p=m[taxa.peso||"ha"]; ha+=p; acc+=p*m[taxa.k]; });
   return ha ? acc/ha : 0;
 }
 function dataBR(iso){ return iso.slice(8,10)+"/"+iso.slice(5,7); }
@@ -3052,31 +3481,44 @@ function detalheIrrigaMes(cfg, ano, mes){
     .map(function(r){ var o={}; D.campos.forEach(function(c,i){ o[c]=r[i]; }); return o; })
     .sort(function(a,b){ return b.ha-a.ha; });
 
+  var tx = cfg.taxa, qt = cfg.qtd;
+  var vin = D.campos.indexOf("vinhaca")>=0;   // só a convencional separa água e vinhaça
+  // fazenda sem nenhuma puxada com velocidade válida fica com "–" na coluna
+  function fmtTaxa(v){ return v==null ? "–" : E.fmtDec(v,1); }
+
   var conta = "<span class='res'>"+E.fmtDec(ag.ha,1)+" ha</span>"+
     "<span class='op'>em</span><b>"+fz.length+"</b> fazendas"+
     "<span class='op'>·</span><b>"+ag.dias+"</b> dias com apontamento"+
-    "<em>"+E.fmtInt(ag.tanques)+" tanques aplicados &middot; vazão média de "+
-    E.fmtDec(ag.vazao,1)+" m³/h no mês</em>";
+    "<em>"+E.fmtInt(ag[qt.k])+" "+qt.nome+" &middot; "+tx.nome+" média de "+
+    E.fmtDec(ag[tx.k],1)+" "+tx.un+" no mês"+
+    (vin ? " &middot; "+E.fmtDec(ag.vinhaca,1)+" ha com vinhaça ("+E.pctAbs(ag.vinhaca/ag.ha,0)+")" : "")+
+    "</em>";
 
   var corpo = "<table><thead><tr><th class='l'>Fazenda</th><th>Dias</th>"+
-    "<th>Tanques</th><th>Vazão</th><th>% do mês</th><th class='key'>Área (ha)</th>"+
+    "<th>"+qt.col+"</th><th>"+tx.Nome+"</th>"+(vin?"<th>Vinhaça (ha)</th>":"")+
+    "<th>% do mês</th><th class='key'>Área (ha)</th>"+
     "</tr></thead><tbody>"+
     fz.map(function(f){
       var nome = D.nomes[f.fazenda];
       return "<tr><td class='l'>"+E.esc(f.fazenda)+
         (nome ? " <span style='color:#5A6072'>— "+E.esc(nome)+"</span>" : "")+"</td>"+
-        "<td>"+f.dias+"</td><td>"+E.fmtInt(f.tanques)+"</td>"+
-        "<td>"+E.fmtDec(f.vazao,1)+"</td>"+
+        "<td>"+f.dias+"</td><td>"+E.fmtInt(f[qt.k])+"</td>"+
+        "<td>"+fmtTaxa(f[tx.k])+"</td>"+
+        (vin ? "<td>"+(f.vinhaca?E.fmtDec(f.vinhaca,1):"–")+"</td>" : "")+
         "<td>"+E.pctAbs(f.ha/ag.ha,1)+"</td>"+
         "<td class='key'>"+E.fmtDec(f.ha,1)+"</td></tr>";
     }).join("")+
     "<tr class='tot'><td class='l'>Total — "+fz.length+" fazendas</td>"+
-    "<td>"+ag.dias+"</td><td>"+E.fmtInt(ag.tanques)+"</td>"+
-    "<td>"+E.fmtDec(ag.vazao,1)+"</td><td>100,0%</td>"+
-    "<td class='key'>"+E.fmtDec(ag.ha,1)+"</td></tr></tbody></table>"+
+    "<td>"+ag.dias+"</td><td>"+E.fmtInt(ag[qt.k])+"</td>"+
+    "<td>"+E.fmtDec(ag[tx.k],1)+"</td>"+(vin?"<td>"+E.fmtDec(ag.vinhaca,1)+"</td>":"")+
+    "<td>100,0%</td><td class='key'>"+E.fmtDec(ag.ha,1)+"</td></tr></tbody></table>"+
     "<p style='font-size:11.5px;color:#5A6072;margin:10px 0 0;line-height:1.5'>"+
     "A coluna de dias é por fazenda, então não soma os dias do mês: uma mesma data "+
-    "aparece em várias fazendas. Vazão e % do mês são ponderados pela área.</p>";
+    "aparece em várias fazendas. "+tx.Nome+" e % do mês são ponderados pela área."+
+    (tx.peso ? " A velocidade só considera as puxadas com velocidade entre 3 e 120 m/h — "+
+      "a planilha traz zero quando falta a hora final —, que somam "+
+      E.fmtDec(ag[tx.peso],1)+" ha ("+E.pctAbs(ag[tx.peso]/ag.ha,0)+" da área do mês)." : "")+
+    "</p>";
 
   abreCaixa(cfg.rotulo+" — "+MESES[mes]+" de "+(ano?2026:2025),
             "Fazendas irrigadas no mês, da maior para a menor área", conta, corpo);
@@ -3108,6 +3550,7 @@ function montaPaginaIrriga(cfg){
   var sl = document.getElementById(cfg.id);
   var q = function(s){ return sl.querySelector(s); };
   var D = window.IRRIGACAO[cfg.chave];
+  var tx = cfg.taxa;
   var s25 = somaIrriga(D.a2025), s26 = somaIrriga(D.a2026);
   irrigaModo[cfg.id] = "mes";
 
@@ -3120,10 +3563,10 @@ function montaPaginaIrriga(cfg){
     q(".js-chip-faz-k").innerHTML = "Fazendas atendidas <b style='color:"+
       (D.fazTotal[1]>=D.fazTotal[0]?"#7FD79B":"#F0897A")+"'>"+
       (D.fazTotal[1]-D.fazTotal[0]>=0?"+":"")+(D.fazTotal[1]-D.fazTotal[0])+"</b>";
-    // vazão da safra: ponderada pela área de cada mês, mesma regra do mês
-    var z25=vazaoSafra(D.a2025), z26=vazaoSafra(D.a2026), dz=z26/z25-1;
-    q(".js-chip-dia").textContent = E.fmtDec(z26,1)+" m³/h";
-    q(".js-chip-dia-k").innerHTML = "Vazão média da safra <b style='color:"+
+    // taxa da safra: ponderada pela área de cada mês, mesma regra do mês
+    var z25=taxaSafra(D.a2025,tx), z26=taxaSafra(D.a2026,tx), dz=z26/z25-1;
+    q(".js-chip-dia").textContent = E.fmtDec(z26,1)+" "+tx.un;
+    q(".js-chip-dia-k").innerHTML = tx.Nome+" média da safra <b style='color:"+
       (dz>=0?"#7FD79B":"#F0897A")+"'>"+E.pct(dz)+"</b>";
     q(".js-abertura").innerHTML = "A safra 2026 abriu em <b>"+dataBR(D.ini2026)+
       "</b> e a 2025 em <b>"+dataBR(D.ini2025)+"</b>.";
@@ -3139,9 +3582,9 @@ function montaPaginaIrriga(cfg){
 
     var v25 = acum ? acumula(D.a2025) : D.a2025.map(function(m){ return m.ha; });
     var v26 = acum ? acumula(D.a2026) : D.a2026.map(function(m){ return m.ha; });
-    // a vazão é sempre a do mês: é uma taxa, não faz sentido acumular
-    var z25 = D.a2025.map(function(m){ return m.vazao; });
-    var z26 = D.a2026.map(function(m){ return m.vazao; });
+    // a vazão (ou velocidade) é sempre a do mês: é uma taxa, não faz sentido acumular
+    var z25 = D.a2025.map(function(m){ return m[tx.k]; });
+    var z26 = D.a2026.map(function(m){ return m[tx.k]; });
 
     var padL=84, padR=90, padT=48, padB=82;
     if(H<330){ padT=40; padB=74; }
@@ -3149,17 +3592,17 @@ function montaPaginaIrriga(cfg){
     var n=MESES.length, slot=plotW/n;
 
     // duas faixas: barras de área embaixo, linhas de vazão em cima, cada uma
-    // com seu eixo — senão a vazão (dezenas) somem ao lado da área (milhares)
+    // com seu eixo — senão a taxa (dezenas) some ao lado da área (milhares)
     var topoBarras = padT + plotH*0.44;
     var baseLinhas = padT + plotH*0.34;
     var hBarras = base - topoBarras;
 
     E.tituloSVG(svg,16,20, acum
-      ? "Área irrigada acumulada (ha) e vazão média do mês (m³/h)"
-      : "Área irrigada no mês (ha) e vazão média do mês (m³/h)", null, W-200);
+      ? "Área irrigada acumulada (ha) e "+tx.nome+" média do mês ("+tx.un+")"
+      : "Área irrigada no mês (ha) e "+tx.nome+" média do mês ("+tx.un+")", null, W-200);
     E.txt(svg,16,34, acum
-      ? "barras: área acumulada desde o início da safra; linhas: vazão média de cada mês"
-      : "barras: hectares aplicados no mês; linhas: vazão média com que foram aplicados",
+      ? "barras: área acumulada desde o início da safra; linhas: "+tx.nome+" média de cada mês"
+      : "barras: hectares aplicados no mês; linhas: "+tx.nome+" média com que foram aplicados",
       {"font-size":10.5,fill:E.MUT});
 
     // --- faixa de baixo: área ---
@@ -3172,7 +3615,7 @@ function montaPaginaIrriga(cfg){
     }
     E.txt(svg,padL-8,topoBarras-9,"hectares",{"text-anchor":"end","font-size":10.5,fill:E.MUT});
 
-    // --- faixa de cima: vazão, com escala própria ---
+    // --- faixa de cima: vazão ou velocidade, com escala própria ---
     var todos = z25.concat(z26);
     var zMin=Math.min.apply(null,todos), zMax=Math.max.apply(null,todos);
     var amp=(zMax-zMin)||zMax*0.2;
@@ -3186,7 +3629,7 @@ function montaPaginaIrriga(cfg){
       E.add(svg,"line",{x1:padL,x2:W-padR,y1:yy,y2:yy,stroke:"#E4EEF6"});
       E.txt(svg,W-padR+10,yy+4,E.fmtDec(vz,0),{"font-size":11,fill:"#2E86C1","font-weight":"600"});
     }
-    E.txt(svg,W-padR+10,padT+2,"m³/h",{"font-size":10.5,fill:"#2E86C1"});
+    E.txt(svg,W-padR+10,padT+2,tx.un,{"font-size":10.5,fill:"#2E86C1"});
 
     // --- barras ---
     var barW=Math.min(slot*0.27,52), gap=Math.min(slot*0.05,9);
@@ -3209,13 +3652,13 @@ function montaPaginaIrriga(cfg){
       var rot = acum ? E.pct(dv)+" · "+(v26[i]-v25[i]>=0?"+":"−")+E.fmtInt(Math.abs(v26[i]-v25[i]))+" ha"
                      : E.pct(dv);
       E.pilula(svg,cx,base+40,rot,E.corVar(dv),dv>=0?"#EAF5EE":"#FBEDEB");
-      // variação da vazão do mês, sempre — é o que a página passou a responder
+      // variação da taxa do mês, sempre — é o que a página passou a responder
       var dz=z26[i]/z25[i]-1;
-      E.txt(svg,cx,base+62,"vazão "+E.pct(dz),
+      E.txt(svg,cx,base+62,tx.nome+" "+E.pct(dz),
             {"text-anchor":"middle","font-size":10.5,"font-weight":"700",fill:E.corVar(dz)});
     });
 
-    // --- linhas de vazão ---
+    // --- linhas da taxa (vazão ou velocidade) ---
     function xC(i){ return padL+i*slot+slot/2; }
     [[z25,E.GRAY,true],[z26,"#2E86C1",false]].forEach(function(cf){
       var vals=cf[0], cor=cf[1], velha=cf[2];
@@ -3241,8 +3684,8 @@ function montaPaginaIrriga(cfg){
     E.legenda(q(".js-legend"),[
       {cor:E.C25,nome:"Área 2025"},
       {cor:cfg.cor,nome:"Área 2026"},
-      {tipo:"linha",cor:E.GRAY,tracejada:true,nome:"Vazão 2025",obs:"(eixo da direita)"},
-      {tipo:"linha",cor:"#2E86C1",nome:"Vazão 2026",obs:"(eixo da direita)"}
+      {tipo:"linha",cor:E.GRAY,tracejada:true,nome:tx.Nome+" 2025",obs:"(eixo da direita)"},
+      {tipo:"linha",cor:"#2E86C1",nome:tx.Nome+" 2026",obs:"(eixo da direita)"}
     ]);
     texto();
   }
@@ -3259,22 +3702,54 @@ function montaPaginaIrriga(cfg){
     var ac25=acumula(D.a2025), ac26=acumula(D.a2026);
     var virou = -1;
     for(var i=0;i<6;i++){ if(ac26[i]>=ac25[i]) { virou=i; break; } }
+    // abril: a explicação depende de qual safra abriu antes (mês-dia das datas)
+    var abriuAntes = D.ini2026.slice(5) < D.ini2025.slice(5);
+    var abriuDepois = D.ini2026.slice(5) > D.ini2025.slice(5);
+    var datas = dataBR(D.ini2026)+" contra "+dataBR(D.ini2025);
+    var fraseAbr = (abriuAntes && mAbr>0)
+      ? "Abril salta "+E.pct(mAbr)+" porque a safra abriu em "+datas+": "
+      : (abriuDepois && mAbr>0)
+        ? "Abril sobe "+E.pct(mAbr)+" mesmo com a safra 2026 abrindo depois ("+datas+"); "
+        : "Abril varia "+E.pct(mAbr)+" (abertura em "+datas+"); ";
+
+    // taxa por mês: fim de safra forte nos dois últimos meses vira a frase da
+    // localizada; senão, aponta o mês de maior ganho e o de maior queda
+    var dTx = MESES.map(function(m,i){ return {m:m.toLowerCase(), d:D.a2026[i][tx.k]/D.a2025[i][tx.k]-1}; })
+                   .sort(function(a,b){ return a.d-b.d; });
+    var t25 = taxaSafra(D.a2025,tx), t26 = taxaSafra(D.a2026,tx);
+    var dAgo = D.a2026[4][tx.k]/D.a2025[4][tx.k]-1, dSet = D.a2026[5][tx.k]/D.a2025[5][tx.k]-1;
+    var alto = dTx[dTx.length-1], baixo = dTx[0];
+    var fraseTx = (dAgo>0.05 && dSet>0.05)
+      ? ", subindo forte no fim da safra: "+E.pct(dAgo)+" em agosto e "+E.pct(dSet)+" em setembro. "
+      : (alto.d>0 && baixo.d<0)
+        ? ", com o maior ganho em "+alto.m+" ("+E.pct(alto.d)+") e a maior queda em "+baixo.m+" ("+E.pct(baixo.d)+"). "
+        : (alto.d>0 ? ", com o maior ganho em "+alto.m+" ("+E.pct(alto.d)+"). "
+                    : ", com a maior queda em "+baixo.m+" ("+E.pct(baixo.d)+"). ");
+
+    // só a convencional: parte da área em vinhaça e quanto da área a velocidade cobre
+    var extra = "";
+    if(D.a2026[0].vinhaca!=null){
+      var vi = function(arr,k){ return arr.reduce(function(s,m){ return s+m[k]; },0); };
+      var pv25 = vi(D.a2025,"vinhaca")/s25.ha, pv26 = vi(D.a2026,"vinhaca")/s26.ha;
+      extra = " <span class='sep'>|</span> Vinhaça foi <strong>"+E.pctAbs(pv26,0)+
+        "</strong> da área em 2026, contra "+E.pctAbs(pv25,0)+" em 2025.";
+      if(tx.peso) extra += " A velocidade cobre "+E.pctAbs(vi(D.a2026,tx.peso)/s26.ha,0)+
+        " da área de 2026 ("+E.pctAbs(vi(D.a2025,tx.peso)/s25.ha,0)+
+        " em 2025): puxada sem hora final fica fora da conta.";
+    }
+
     q(".js-insight").innerHTML =
       "<strong>"+E.fmtInt(s26.ha)+" ha</strong> aplicados até 30/09 na safra 2026, contra "+
       E.fmtInt(s25.ha)+" ha em 2025 — <strong>"+E.pct(v)+"</strong>. "+
-      "<span class='sep'>|</span> Abril salta "+E.pct(mAbr)+" porque a safra abriu em "+
-      dataBR(D.ini2026)+" contra "+dataBR(D.ini2025)+": de maio em diante a variação é "+
+      "<span class='sep'>|</span> "+fraseAbr+"de maio em diante a variação é "+
       E.pct(resto26/resto25-1)+". <span class='sep'>|</span> O mês mais fraco foi "+
       piores[0].m+" ("+E.pct(piores[0].d)+") e o mais forte, "+
       piores[piores.length-1].m+" ("+E.pct(piores[piores.length-1].d)+"). "+
-      "<span class='sep'>|</span> A vazão média da safra saiu de <strong>"+
-      E.fmtDec(vazaoSafra(D.a2025),1)+" m³/h</strong> para <strong>"+
-      E.fmtDec(vazaoSafra(D.a2026),1)+" m³/h</strong> ("+
-      E.pct(vazaoSafra(D.a2026)/vazaoSafra(D.a2025)-1)+"), subindo forte no fim da safra: "+
-      E.pct(D.a2026[4].vazao/D.a2025[4].vazao-1)+" em agosto e "+
-      E.pct(D.a2026[5].vazao/D.a2025[5].vazao-1)+" em setembro. "+
+      "<span class='sep'>|</span> A "+tx.nome+" média da safra saiu de <strong>"+
+      E.fmtDec(t25,1)+" "+tx.un+"</strong> para <strong>"+
+      E.fmtDec(t26,1)+" "+tx.un+"</strong> ("+E.pct(t26/t25-1)+")"+fraseTx+
       "<span class='sep'>|</span> "+D.fazTotal[1]+" fazendas atendidas contra "+D.fazTotal[0]+
-      " em 2025, a "+E.fmtDec(s26.ha/s26.dias,1)+" ha/dia.";
+      " em 2025, a "+E.fmtDec(s26.ha/s26.dias,1)+" ha/dia."+extra;
   }
 
   q(".js-modo").addEventListener("click",function(e){
