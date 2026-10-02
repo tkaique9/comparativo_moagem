@@ -10,7 +10,7 @@ uma tela por tópico, sem rolagem de documento.
 
 Basta abrir o `index.html` no navegador — não precisa de servidor nem de internet.
 Para apresentar, use F11 (tela cheia). Navegação: setas ←/→, barra de espaço, as
-bolinhas do rodapé, os botões ou o índice do topo.
+bolinhas do rodapé, os botões ou o menu de módulos do topo.
 
 Se preferir servir por HTTP (o repositório já traz `.claude/launch.json`):
 
@@ -20,21 +20,27 @@ python -m http.server 8731
 
 ## Páginas
 
-| # | Página | O que responde |
-|---|---|---|
-| — | Capa | Números-chave da safra e a decisão em foco |
-| 1 | Panorama do grupo | Quanto o grupo moeu mês a mês e como a vantagem sobre 2025 encolhe |
-| 2 | Quem puxa, quem trava | Quanto cada unidade somou ou subtraiu; o grupo com e sem a CRV-MG |
-| 3 | Unidade a unidade | Os quatro painéis na mesma escala, mês a mês |
-| 4 | Mês a mês por empresa | Com filtro de empresa: moagem do mês em barras e moagem média por dia em linha |
-| 5 | Colhedora · CRV-MG | Seis indicadores da frota CH570, safra e mês a mês |
-| 6 | Caminhão canavieiro | Oito indicadores da frota de caminhões, incluindo raio médio |
-| 7 | Transbordo | Sete indicadores da frota de transbordo |
-| 8 | Irrigação localizada | Área aplicada por mês, 2025 contra 2026, com alternador de acumulado |
-| 9 | Irrigação convencional | Mesma página para o carretel: área por mês, velocidade na linha e parte em vinhaça |
-| 10 | Irrigação por região | A convencional aberta por região, 2025 contra 2026, painéis na mesma escala |
-| 11 | Região x região | Duas regiões escolhidas lado a lado numa safra, com a diferença mês a mês |
-| 12 | Disponibilidade mecânica | Disponibilidade % da frota mês a mês, 2025 x 2026, com filtro de grupo e especialidade |
+A apresentação é organizada em **módulos**. O menu do topo mostra a capa, os quatro
+módulos e, ao lado, só as páginas do módulo em que você está; clicar no módulo leva à
+primeira página dele. Nas bolinhas do rodapé, cada módulo começa depois de um
+respiro. Os módulos e suas páginas ficam na lista `MODULOS`, no script de mesmo nome
+do `index.html` — uma página nova entra no módulo acrescentando o id dela ali.
+
+| Módulo | # | Página | O que responde |
+|---|---|---|---|
+| — | — | Capa | Números-chave da safra e a decisão em foco |
+| **Moagem** | 1 | Panorama do grupo | Quanto o grupo moeu mês a mês e como a vantagem sobre 2025 encolhe |
+| | 2 | Quem puxa, quem trava | Quanto cada unidade somou ou subtraiu; o grupo com e sem a CRV-MG |
+| | 3 | Unidade a unidade | Os quatro painéis na mesma escala, mês a mês |
+| | 4 | Mês a mês por empresa | Com filtro de empresa: moagem do mês em barras e moagem média por dia em linha |
+| **Indicadores CTT** | 5 | Colhedora · CRV-MG | Seis indicadores da frota CH570, safra e mês a mês |
+| | 6 | Caminhão canavieiro | Oito indicadores da frota de caminhões, incluindo raio médio |
+| | 7 | Transbordo | Sete indicadores da frota de transbordo |
+| **Irrigação** | 8 | Irrigação localizada | Área aplicada por mês, 2025 contra 2026, com alternador de acumulado |
+| | 9 | Irrigação convencional | Mesma página para o carretel: área por mês, velocidade na linha e parte em vinhaça |
+| | 10 | Irrigação por região | A convencional aberta por região, 2025 contra 2026, painéis na mesma escala |
+| | 11 | Região x região | Duas regiões escolhidas lado a lado numa safra, com a diferença mês a mês |
+| **Manutenção** | 12 | Disponibilidade mecânica | Disponibilidade % da frota mês a mês, 2025 x 2026, com filtro de especialidades |
 
 ### A página 4
 

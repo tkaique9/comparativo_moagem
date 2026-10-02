@@ -14,6 +14,19 @@ nav.toc a{color:var(--navy);text-decoration:none;font-size:12.5px;font-weight:50
 nav.toc a b{color:var(--gold);font-weight:700;margin-right:4px}
 nav.toc a:hover{color:var(--gold)}
 nav.toc a.on{color:var(--gold);border-bottom-color:var(--gold);font-weight:700}
+/* menu por módulo: à esquerda a capa e os módulos, à direita só as páginas do
+   módulo em que a apresentação está */
+nav.toc{display:flex;align-items:center}
+.toc-mods{display:inline-flex;align-items:center;gap:6px;margin-left:2px}
+.toc-mod{font:inherit;font-size:12px;font-weight:700;color:var(--navy);background:var(--bgsoft);
+  border:1px solid var(--line);border-radius:14px;padding:3px 11px;cursor:pointer;white-space:nowrap}
+.toc-mod u{text-decoration:none;color:var(--mut);font-weight:500;font-size:11px;margin-left:3px}
+.toc-mod:hover{border-color:var(--gold)}
+.toc-mod.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.toc-mod.on u{color:var(--gold)}
+.toc-sep{flex:0 0 1px;align-self:stretch;background:var(--line);margin:0 14px}
+.toc-pags{display:inline-flex;align-items:center}
+.toc-dica{font-size:12px;color:var(--mut);font-style:italic}
 
 .kpis{display:flex;flex-wrap:wrap;gap:1px;background:var(--line);border:1px solid var(--line)}
 .kpi{background:var(--navy2);padding:16px 12px;text-align:center;flex:1 1 0;min-width:150px}
@@ -44,6 +57,7 @@ header.top,nav.toc{flex:0 0 auto}
 .deck-dots{display:flex;gap:8px;margin:0 auto;flex-wrap:wrap;justify-content:center}
 .deck-dots button{width:11px;height:11px;padding:0;border-radius:50%;background:rgba(255,255,255,.3);border:0;cursor:pointer}
 .deck-dots button.on{background:var(--gold);transform:scale(1.3)}
+.deck-dots button.mod-ini{margin-left:10px}   /* espaço entre um módulo e outro */
 .deck-count{color:#C6CEE0;font-size:12.5px;font-variant-numeric:tabular-nums;min-width:58px;text-align:right}
 .deck-hint{color:#8C97AE;font-size:11px;letter-spacing:.02em}
 
@@ -5578,6 +5592,63 @@ window.addEventListener("resize",function(){ clearTimeout(tmr); tmr=setTimeout(r
 </script>
 
 <!-- ============================================================
+     MÓDULOS — o menu do topo agrupa as páginas por assunto: Moagem
+     (1 a 4), Indicadores CTT (5 a 7), Irrigação (8 a 11) e Manutenção
+     (12). Uma página nova entra no módulo pela lista de ids abaixo.
+     ============================================================ -->
+<script>(function(){
+"use strict";
+var MODULOS = [
+  {id:"moagem", nome:"Moagem", pags:["panorama","contribuicao","unidades","mes-a-mes"]},
+  {id:"ctt", nome:"Indicadores CTT", pags:["colhedora","caminhao","transbordo"]},
+  {id:"irrigacao", nome:"Irrigação", pags:["irriga-localizada","irriga-convencional","irriga-regioes","irriga-reg-x-reg"]},
+  {id:"manutencao", nome:"Manutenção", pags:["disponibilidade"]}
+];
+function modDe(id){
+  for(var i=0;i<MODULOS.length;i++) if(MODULOS[i].pags.indexOf(id)>=0) return MODULOS[i];
+  return null;
+}
+window.moduloDaPagina = function(id){ var m=modDe(id); return m ? m.nome : null; };
+
+var nav = document.querySelector("nav.toc");
+var links = Array.prototype.slice.call(nav.querySelectorAll("a"));
+var capa = nav.querySelector("a[href='#capa']");
+var mods = document.createElement("span"); mods.className = "toc-mods";
+var sep  = document.createElement("span"); sep.className = "toc-sep";
+var pags = document.createElement("span"); pags.className = "toc-pags";
+var dica = document.createElement("span"); dica.className = "toc-dica"; dica.textContent = "escolha um módulo";
+
+function link(id){ return nav.querySelector("a[href='#"+id+"']"); }
+MODULOS.forEach(function(m){
+  // números da primeira e da última página, tirados do próprio link
+  var nums = m.pags.map(function(id){ var b=link(id)&&link(id).querySelector("b"); return b?b.textContent:""; });
+  var bt = document.createElement("button");
+  bt.type = "button"; bt.className = "toc-mod"; bt.setAttribute("data-mod",m.id);
+  bt.innerHTML = m.nome+" <u>"+nums[0]+(nums.length>1?"–"+nums[nums.length-1]:"")+"</u>";
+  bt.addEventListener("click",function(){ if(window.deckGoTo) window.deckGoTo(m.pags[0]); });
+  mods.appendChild(bt);
+});
+// os links das páginas, na ordem dos módulos e marcados com o módulo
+MODULOS.forEach(function(m){
+  m.pags.forEach(function(id){ var a=link(id); if(a){ a.setAttribute("data-mod",m.id); pags.appendChild(a); } });
+});
+// página sem módulo (se algum dia sobrar) fica no fim, sempre à vista
+links.forEach(function(a){ if(a!==capa && !a.getAttribute("data-mod")) pags.appendChild(a); });
+pags.appendChild(dica);
+while(nav.firstChild) nav.removeChild(nav.firstChild);
+nav.appendChild(capa); nav.appendChild(mods); nav.appendChild(sep); nav.appendChild(pags);
+
+// chamado pelo deck a cada troca de página
+window.aoMudarPagina = function(id){
+  var m = modDe(id), mid = m ? m.id : null;
+  Array.prototype.forEach.call(mods.children,function(b){ b.classList.toggle("on",b.getAttribute("data-mod")===mid); });
+  Array.prototype.forEach.call(pags.querySelectorAll("a[data-mod]"),function(a){ a.hidden = a.getAttribute("data-mod")!==mid; });
+  dica.hidden = !!mid;
+};
+})();
+</script>
+
+<!-- ============================================================
      DECK — navegação página a página
      ============================================================ -->
 <script>(function(){
@@ -5596,6 +5667,12 @@ slides.forEach(function(s,i){
   var b=document.createElement("button");
   b.type="button";
   b.title=s.getAttribute("data-title")||("Página "+(i+1));
+  // primeira bolinha de cada módulo ganha um respiro à esquerda
+  var mod = window.moduloDaPagina ? window.moduloDaPagina(s.id) : null;
+  if(mod){
+    b.title = mod+" — "+b.title;
+    if(i>0 && window.moduloDaPagina(slides[i-1].id)!==mod) b.classList.add("mod-ini");
+  }
   b.setAttribute("aria-label",b.title);
   b.addEventListener("click",function(){ go(i); });
   dotsBox.appendChild(b);
@@ -5614,6 +5691,7 @@ function go(i,skipHash){
   dots.forEach(function(d,k){ d.classList.toggle("on",k===i); });
   var id=slides[i].id;
   tocLinks.forEach(function(a){ a.classList.toggle("on",a.getAttribute("href")==="#"+id); });
+  if(window.aoMudarPagina) window.aoMudarPagina(id);   // menu mostra o módulo da página
   prevBtn.disabled=(i===0); nextBtn.disabled=(i===slides.length-1);
   countEl.textContent=(i+1)+" / "+slides.length;
   if(!skipHash){ try{ history.replaceState(null,"","#"+id); }catch(e){} }
