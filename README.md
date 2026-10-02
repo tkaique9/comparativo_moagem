@@ -150,7 +150,15 @@ e cada uma traz essa ressalva no próprio texto.
 ### A página 8 (irrigação)
 
 Área irrigada mês a mês nas duas safras, com alternador entre **mês a mês** e
-**acumulado**. A janela vai do início de cada safra até **30/09** nos dois anos — o
+**acumulado**. O quadro tem duas faixas, como a página 4: **barras** de área
+embaixo e **linhas de vazão** em cima, cada uma com seu eixo — em um só eixo a
+vazão (dezenas de m³/h) sumiria ao lado da área (milhares de ha). A vazão é sempre
+a do mês, mesmo no modo acumulado, porque é uma taxa e não se acumula. Sob cada
+mês vão as duas variações: a de área na pílula e a de vazão na linha de baixo.
+
+A vazão é a **média ponderada pela área aplicada** — `Σ(ha × vazão) ÷ Σha` — e não
+a média simples das linhas do apontamento: é a vazão com que aqueles hectares
+foram de fato irrigados. Na safra, a ponderação usa a área de cada mês. A janela vai do início de cada safra até **30/09** nos dois anos — o
 que a base traz de outubro fica de fora, porque outubro/2025 está fechado e
 outubro/2026 tem um dia só.
 

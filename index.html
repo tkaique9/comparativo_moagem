@@ -1642,6 +1642,9 @@ window.FROTA = {
      passa de 30/09 fica de fora nos dois anos.
      "dias" são os dias com apontamento no mês e "faz" as fazendas
      atendidas naquele mês; fazTotal são as fazendas distintas da safra.
+     "vazao" é a média ponderada pela área aplicada — Σ(ha × vazão) ÷ Σha —
+     e não a média simples das linhas: é a vazão com que aqueles hectares
+     foram de fato irrigados.
      A convencional entra como mais uma chave deste objeto.
      ============================================================ -->
 <script>
@@ -1651,20 +1654,20 @@ window.IRRIGACAO = {
     ini2025: "2025-04-19", ini2026: "2026-04-14",
     fazTotal: [72, 88],
     a2025: [
-      {ha:106.4, dias:12, faz:4, tanques:218},
-      {ha:1497.4, dias:31, faz:11, tanques:2474},
-      {ha:1637.3, dias:30, faz:12, tanques:2711},
-      {ha:1642.4, dias:31, faz:26, tanques:2747},
-      {ha:1650.0, dias:31, faz:16, tanques:2494},
-      {ha:1161.9, dias:30, faz:12, tanques:2081}
+      {ha:106.4, vazao:60.0, dias:12, faz:4, tanques:218},
+      {ha:1497.4, vazao:50.9, dias:31, faz:11, tanques:2474},
+      {ha:1637.3, vazao:50.8, dias:30, faz:12, tanques:2711},
+      {ha:1642.4, vazao:51.5, dias:31, faz:26, tanques:2747},
+      {ha:1650.0, vazao:47.3, dias:31, faz:16, tanques:2494},
+      {ha:1161.9, vazao:55.5, dias:30, faz:12, tanques:2081}
     ],
     a2026: [
-      {ha:601.5, dias:17, faz:15, tanques:937},
-      {ha:1841.1, dias:31, faz:27, tanques:3000},
-      {ha:1260.6, dias:28, faz:18, tanques:1827},
-      {ha:1525.2, dias:31, faz:16, tanques:2357},
-      {ha:1461.3, dias:31, faz:14, tanques:2833},
-      {ha:1585.1, dias:30, faz:12, tanques:3109}
+      {ha:601.5, vazao:46.9, dias:17, faz:15, tanques:937},
+      {ha:1841.1, vazao:49.8, dias:31, faz:27, tanques:3000},
+      {ha:1260.6, vazao:45.3, dias:28, faz:18, tanques:1827},
+      {ha:1525.2, vazao:48.5, dias:31, faz:16, tanques:2357},
+      {ha:1461.3, vazao:59.8, dias:31, faz:14, tanques:2833},
+      {ha:1585.1, vazao:60.5, dias:30, faz:12, tanques:3109}
     ]
   }
 };
@@ -2826,7 +2829,7 @@ function montaPaginaFrota(cfg){
 var PAGINAS_IRRIGA = [
   {id:"irriga-localizada", chave:"localizada", num:"08", rotulo:"Irrigação localizada",
    cor:"#2E86C1", titulo:"Área irrigada — localizada",
-   sub:"Hectares aplicados mês a mês nas duas safras, do início de cada uma até 30/09. Abril depende da data de abertura, então o mês não compara desempenho: compara calendário."}
+   sub:"Hectares aplicados mês a mês nas duas safras, do início de cada uma até 30/09, com a vazão média de cada mês na linha. Abril depende da data de abertura, então o mês não compara desempenho: compara calendário."}
 ];
 
 var irrigaModo = {};   // "mes" ou "acumulado", por página
@@ -2838,6 +2841,13 @@ function somaIrriga(arr){
 }
 function acumula(arr){
   var s=0; return arr.map(function(m){ s+=m.ha; return Math.round(s*10)/10; });
+}
+// vazão da safra inteira: ponderada pela área de cada mês, para um mês de pouca
+// área não pesar igual a um mês cheio
+function vazaoSafra(arr){
+  var ha=0, acc=0;
+  arr.forEach(function(m){ ha+=m.ha; acc+=m.ha*m.vazao; });
+  return ha ? acc/ha : 0;
 }
 function dataBR(iso){ return iso.slice(8,10)+"/"+iso.slice(5,7); }
 
@@ -2879,10 +2889,11 @@ function montaPaginaIrriga(cfg){
     q(".js-chip-faz-k").innerHTML = "Fazendas atendidas <b style='color:"+
       (D.fazTotal[1]>=D.fazTotal[0]?"#7FD79B":"#F0897A")+"'>"+
       (D.fazTotal[1]-D.fazTotal[0]>=0?"+":"")+(D.fazTotal[1]-D.fazTotal[0])+"</b>";
-    var d25=s25.ha/s25.dias, d26=s26.ha/s26.dias;
-    q(".js-chip-dia").textContent = E.fmtDec(d26,1)+" ha/dia";
-    q(".js-chip-dia-k").innerHTML = "Ritmo médio da safra <b style='color:"+
-      (d26>=d25?"#7FD79B":"#F0897A")+"'>"+E.pct(d26/d25-1)+"</b>";
+    // vazão da safra: ponderada pela área de cada mês, mesma regra do mês
+    var z25=vazaoSafra(D.a2025), z26=vazaoSafra(D.a2026), dz=z26/z25-1;
+    q(".js-chip-dia").textContent = E.fmtDec(z26,1)+" m³/h";
+    q(".js-chip-dia-k").innerHTML = "Vazão média da safra <b style='color:"+
+      (dz>=0?"#7FD79B":"#F0897A")+"'>"+E.pct(dz)+"</b>";
     q(".js-abertura").innerHTML = "A safra 2026 abriu em <b>"+dataBR(D.ini2026)+
       "</b> e a 2025 em <b>"+dataBR(D.ini2025)+"</b>.";
   }
@@ -2897,33 +2908,56 @@ function montaPaginaIrriga(cfg){
 
     var v25 = acum ? acumula(D.a2025) : D.a2025.map(function(m){ return m.ha; });
     var v26 = acum ? acumula(D.a2026) : D.a2026.map(function(m){ return m.ha; });
+    // a vazão é sempre a do mês: é uma taxa, não faz sentido acumular
+    var z25 = D.a2025.map(function(m){ return m.vazao; });
+    var z26 = D.a2026.map(function(m){ return m.vazao; });
 
-    var padL=84, padR=26, padT=48, padB=70;
-    if(H<330){ padT=40; padB=62; }
+    var padL=84, padR=90, padT=48, padB=82;
+    if(H<330){ padT=40; padB=74; }
     var plotW=W-padL-padR, plotH=H-padT-padB, base=padT+plotH;
     var n=MESES.length, slot=plotW/n;
 
+    // duas faixas: barras de área embaixo, linhas de vazão em cima, cada uma
+    // com seu eixo — senão a vazão (dezenas) somem ao lado da área (milhares)
+    var topoBarras = padT + plotH*0.44;
+    var baseLinhas = padT + plotH*0.34;
+    var hBarras = base - topoBarras;
+
     E.tituloSVG(svg,16,20, acum
-      ? "Área irrigada acumulada (ha) — do início da safra até cada mês"
-      : "Área irrigada no mês (ha)", null, W-190);
+      ? "Área irrigada acumulada (ha) e vazão média do mês (m³/h)"
+      : "Área irrigada no mês (ha) e vazão média do mês (m³/h)", null, W-200);
     E.txt(svg,16,34, acum
-      ? "a distância entre as barras mostra a vantagem acumulada de 2026"
-      : "barra clara é 2025, barra cheia é 2026; sob cada mês, a variação",
+      ? "barras: área acumulada desde o início da safra; linhas: vazão média de cada mês"
+      : "barras: hectares aplicados no mês; linhas: vazão média com que foram aplicados",
       {"font-size":10.5,fill:E.MUT});
 
-    var lx=W-padR;
-    [{c:E.C25,n:"Safra 2025"},{c:cfg.cor,n:"Safra 2026"}].slice().reverse().forEach(function(it){
-      lx -= it.n.length*6.1+6;
-      E.txt(svg,lx,24,it.n,{"font-size":11,fill:"#2B2B2B"});
-      lx -= 16;
-      E.add(svg,"rect",{x:lx,y:15,width:11,height:11,rx:2.5,fill:it.c});
-      lx -= 12;
-    });
+    // --- faixa de baixo: área ---
+    var maxA = E.niceAxis(Math.max.apply(null,v25.concat(v26))*1.06,4);
+    function y(v){ return base-(v/maxA)*hBarras; }
+    for(var k=0;k<=4;k++){
+      var vA=maxA*k/4, yA=y(vA);
+      E.add(svg,"line",{x1:padL,x2:W-padR,y1:yA,y2:yA,stroke:E.GRID});
+      E.txt(svg,padL-8,yA+4,vA?E.fmtInt(vA):"0",{"text-anchor":"end","font-size":11,fill:E.MUT});
+    }
+    E.txt(svg,padL-8,topoBarras-9,"hectares",{"text-anchor":"end","font-size":10.5,fill:E.MUT});
 
-    var max = E.niceAxis(Math.max.apply(null,v25.concat(v26))*1.2,4);
-    var y = E.eixoY(svg,{max:max,min:0,x0:padL,x1:W-padR,yTop:padT,yBot:base,
-                         fmt:function(v){ return v?E.fmtInt(v):"0"; }});
+    // --- faixa de cima: vazão, com escala própria ---
+    var todos = z25.concat(z26);
+    var zMin=Math.min.apply(null,todos), zMax=Math.max.apply(null,todos);
+    var amp=(zMax-zMin)||zMax*0.2;
+    var passo=E.passoNice(amp/2);
+    var maxZ=Math.ceil((zMax+amp*0.20)/passo)*passo;
+    var minZ=Math.max(0,Math.floor((zMin-amp*0.20)/passo)*passo);
+    if(maxZ<=minZ) maxZ=minZ+passo;
+    function yZ(v){ return baseLinhas-((v-minZ)/(maxZ-minZ))*(baseLinhas-(padT+15)); }
+    for(var vz=minZ; vz<=maxZ+passo*0.001; vz+=passo){
+      var yy=yZ(vz);
+      E.add(svg,"line",{x1:padL,x2:W-padR,y1:yy,y2:yy,stroke:"#E4EEF6"});
+      E.txt(svg,W-padR+10,yy+4,E.fmtDec(vz,0),{"font-size":11,fill:"#2E86C1","font-weight":"600"});
+    }
+    E.txt(svg,W-padR+10,padT+2,"m³/h",{"font-size":10.5,fill:"#2E86C1"});
 
+    // --- barras ---
     var barW=Math.min(slot*0.27,52), gap=Math.min(slot*0.05,9);
     MESES.forEach(function(mes,i){
       var cx = padL+i*slot+slot/2;
@@ -2936,19 +2970,43 @@ function montaPaginaIrriga(cfg){
       });
       E.txt(svg,cx,base+20,mes,{"text-anchor":"middle","font-size":12.5,"font-weight":"600",fill:"#2B2B2B"});
       var dv=v26[i]/v25[i]-1;
-      E.pilula(svg,cx,base+40,E.pct(dv),E.corVar(dv),dv>=0?"#EAF5EE":"#FBEDEB");
-      // no acumulado, a diferença em hectares diz mais que o percentual sozinho
-      if(acum) E.txt(svg,cx,base+60,(v26[i]-v25[i]>=0?"+":"−")+E.fmtInt(Math.abs(v26[i]-v25[i]))+" ha",
-                     {"text-anchor":"middle","font-size":10.5,"font-weight":"700",fill:E.corVar(v26[i]-v25[i])});
-      else E.txt(svg,cx,base+60,E.fmtDec(D.a2026[i].ha/D.a2026[i].dias,1)+" ha/dia",
-                 {"text-anchor":"middle","font-size":10.5,"font-weight":"600",fill:E.MUT});
+      var rot = acum ? E.pct(dv)+" · "+(v26[i]-v25[i]>=0?"+":"−")+E.fmtInt(Math.abs(v26[i]-v25[i]))+" ha"
+                     : E.pct(dv);
+      E.pilula(svg,cx,base+40,rot,E.corVar(dv),dv>=0?"#EAF5EE":"#FBEDEB");
+      // variação da vazão do mês, sempre — é o que a página passou a responder
+      var dz=z26[i]/z25[i]-1;
+      E.txt(svg,cx,base+62,"vazão "+E.pct(dz),
+            {"text-anchor":"middle","font-size":10.5,"font-weight":"700",fill:E.corVar(dz)});
+    });
+
+    // --- linhas de vazão ---
+    function xC(i){ return padL+i*slot+slot/2; }
+    [[z25,E.GRAY,true],[z26,"#2E86C1",false]].forEach(function(cf){
+      var vals=cf[0], cor=cf[1], velha=cf[2];
+      var pts=vals.map(function(v,i){ return [xC(i), yZ(v)]; });
+      var at={d:pts.map(function(p,i){ return (i?"L":"M")+p[0].toFixed(1)+","+p[1].toFixed(1); }).join(" "),
+              fill:"none",stroke:cor,"stroke-width":velha?"2.2":"3"};
+      if(velha) at["stroke-dasharray"]="6,4";
+      E.add(svg,"path",at);
+      pts.forEach(function(p){
+        E.add(svg,"circle",{cx:p[0],cy:p[1],r:velha?3.6:5,fill:velha?"#fff":cor,
+                            stroke:cor,"stroke-width":velha?2:2.4});
+      });
+    });
+    // rótulos depois das duas curvas, cada ano para o lado oposto ao do outro
+    MESES.forEach(function(_,i){
+      var a26=yZ(z26[i]), a25=yZ(z25[i]), acima=(z26[i]>=z25[i]);
+      E.txt(svg,xC(i), acima? a26-11 : a26+19, E.fmtDec(z26[i],1),
+            {"text-anchor":"middle","font-size":11.5,"font-weight":"700",fill:"#2E86C1"});
+      E.txt(svg,xC(i), acima? a25+17 : a25-10, E.fmtDec(z25[i],1),
+            {"text-anchor":"middle","font-size":9.5,"font-weight":"700",fill:E.GRAY});
     });
 
     E.legenda(q(".js-legend"),[
-      {cor:E.C25,nome:"Safra 2025"},
-      {cor:cfg.cor,nome:"Safra 2026"},
-      {cor:"#fff",borda:"#8E9AB4",nome:acum?"Sob cada mês":"Sob cada mês",
-       obs:acum?"a diferença acumulada em hectares":"o ritmo de 2026 em hectares por dia"}
+      {cor:E.C25,nome:"Área 2025"},
+      {cor:cfg.cor,nome:"Área 2026"},
+      {tipo:"linha",cor:E.GRAY,tracejada:true,nome:"Vazão 2025",obs:"(eixo da direita)"},
+      {tipo:"linha",cor:"#2E86C1",nome:"Vazão 2026",obs:"(eixo da direita)"}
     ]);
     texto();
   }
@@ -2973,9 +3031,14 @@ function montaPaginaIrriga(cfg){
       E.pct(resto26/resto25-1)+". <span class='sep'>|</span> O mês mais fraco foi "+
       piores[0].m+" ("+E.pct(piores[0].d)+") e o mais forte, "+
       piores[piores.length-1].m+" ("+E.pct(piores[piores.length-1].d)+"). "+
+      "<span class='sep'>|</span> A vazão média da safra saiu de <strong>"+
+      E.fmtDec(vazaoSafra(D.a2025),1)+" m³/h</strong> para <strong>"+
+      E.fmtDec(vazaoSafra(D.a2026),1)+" m³/h</strong> ("+
+      E.pct(vazaoSafra(D.a2026)/vazaoSafra(D.a2025)-1)+"), subindo forte no fim da safra: "+
+      E.pct(D.a2026[4].vazao/D.a2025[4].vazao-1)+" em agosto e "+
+      E.pct(D.a2026[5].vazao/D.a2025[5].vazao-1)+" em setembro. "+
       "<span class='sep'>|</span> "+D.fazTotal[1]+" fazendas atendidas contra "+D.fazTotal[0]+
-      " em 2025, com "+E.fmtInt(s26.tanques)+" tanques aplicados ("+
-      E.pct(s26.tanques/s25.tanques-1)+").";
+      " em 2025, a "+E.fmtDec(s26.ha/s26.dias,1)+" ha/dia.";
   }
 
   q(".js-modo").addEventListener("click",function(e){
