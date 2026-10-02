@@ -333,12 +333,17 @@ header.top,nav.toc{flex:0 0 auto}
   .ind .ind-lupa{display:none}
 }
 /* simulador da reta final: dois cenários lado a lado, tudo editável */
-.s-card.s-sim{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:10px 14px;overflow:hidden}
-.cen{display:flex;flex-direction:column;gap:7px;min-width:0;overflow:hidden}
+/* duas linhas: os cenários dividem a folga (minmax 0 1fr) e o quadro de
+   regiões fica com a altura do seu conteúdo */
+.s-card.s-sim{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr) auto;
+  gap:10px 16px;padding:10px 14px;overflow:hidden}
+.cen{display:flex;flex-direction:column;gap:5px;min-width:0;overflow:hidden}
 .cen + .cen{border-left:1px solid var(--line);padding-left:16px}
 .cen-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .cen-tag{width:11px;height:11px;border-radius:3px;flex:none}
 .cen-top b{font-size:14.5px;color:var(--navy)}
+.cen-sub2{font-style:normal;font-size:10.5px;color:var(--mut);background:var(--bgsoft);
+  padding:1px 7px;border-radius:9px}
 .cen-prev{margin-left:auto;font-size:11.5px;color:var(--mut);display:flex;align-items:center;gap:5px}
 .cen-prev i{font-style:normal;color:#9AA4B8}
 .cen-prev b.js-prev{color:var(--navy);font-size:13.5px;font-variant-numeric:tabular-nums}
@@ -352,13 +357,18 @@ table.cen-tab tr.cen-reg td{background:var(--bgsoft);font-size:11.5px;padding:2p
 table.cen-tab tr.cen-reg td.l.reg{padding-left:22px;color:var(--mut)}
 table.cen-tab tr.cen-reg td.reg-dias{color:#9AA4B8}
 table.cen-tab tr.cen-reg input{font-size:11.5px;padding:1px 5px}
-.cen-real{font-size:12px;color:var(--mut);background:var(--bgsoft);border-radius:6px;padding:6px 10px}
+.cen-real{font-size:12px;color:var(--mut);background:var(--bgsoft);border-radius:6px;
+  padding:5px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:none}
 .cen-real b{color:var(--navy);font-size:13.5px;font-variant-numeric:tabular-nums}
-.cen-real i{font-style:normal;display:block;font-size:11px;margin-top:1px}
+.cen-real i{font-style:normal;font-size:11px;margin-left:6px;color:#9AA4B8}
+.cen-tabwrap{flex:1 1 auto;min-height:0;overflow-y:auto}
 table.cen-tab{width:100%;border-collapse:collapse;font-size:12.5px}
+/* o cabeçalho e a linha do projetado ficam à vista enquanto a tabela rola */
+table.cen-tab thead th{position:sticky;top:0;z-index:2}
+table.cen-tab tr.cen-sub td{position:sticky;bottom:0;z-index:1}
 table.cen-tab th{background:var(--navy);color:#fff;font-weight:600;font-size:11.5px;padding:5px 7px;text-align:center}
 table.cen-tab th.l{text-align:left}
-table.cen-tab td{padding:3px 7px;border-bottom:1px solid var(--line);text-align:center;
+table.cen-tab td{padding:2px 7px;border-bottom:1px solid var(--line);text-align:center;
   font-variant-numeric:tabular-nums}
 table.cen-tab td.l{text-align:left;color:var(--mut)}
 table.cen-tab tr.cen-sub td{background:#FFF3D0;font-weight:700;color:var(--navy);border-bottom:0}
@@ -368,15 +378,39 @@ table.cen-tab input{font:inherit;font-size:12.5px;font-weight:700;color:var(--na
 .cen-prev input{font:inherit;font-size:13px;font-weight:700;color:var(--navy);text-align:right;
   border:1px solid var(--line);border-radius:5px;padding:2px 6px;font-variant-numeric:tabular-nums}
 table.cen-tab input:focus,.cen-prev input:focus{outline:2px solid var(--gold);border-color:var(--gold)}
-.cen-barra{width:100%;height:48px;display:block;flex:none}
+.cen-barra{width:100%;height:38px;display:block;flex:none}
 /* sem margin-top:auto: com ele o vão sobrava no meio da coluna, entre a barra
    e o bloco final; assim o conteúdo flui de cima e a folga fica embaixo */
-.cen-fim{display:flex;flex-direction:column;gap:3px;margin-top:6px}
+.cen-fim{display:flex;flex-direction:column;gap:2px;margin-top:4px}
 /* o gráfico de ritmo fica por último e estica: é ele que ocupa a folga que
    sobrava embaixo da coluna. Em tela baixa ele encolhe a zero e não é desenhado. */
-.cen-ritmo{flex:1 1 auto;min-height:0;width:100%;display:block;margin-top:8px}
+/* quadro de regiões: ocupa as duas colunas, no fim do cartão, e absorve a
+   folga que sobrava no pé de cada cenário */
+.q-reg{grid-column:1 / -1;border-top:1px solid var(--line);padding-top:6px;
+  display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.q-reg h4{margin:0 0 4px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--mut);font-weight:700}
+table.q-tab{width:100%;border-collapse:collapse;font-size:12px}
+table.q-tab th{background:var(--navy);color:#fff;font-weight:600;font-size:11px;
+  padding:4px 7px;text-align:center;white-space:nowrap}
+table.q-tab th.l{text-align:left}
+table.q-tab th.c1{background:#24558A} table.q-tab th.c2{background:#8A6D14}
+table.q-tab td{padding:2px 7px;border-bottom:1px solid var(--line);text-align:center;
+  font-variant-numeric:tabular-nums}
+table.q-tab td.l{text-align:left;font-weight:700;color:var(--navy)}
+table.q-tab tr.tot td{background:#FFF3D0;font-weight:700;color:var(--navy);border-bottom:0}
+table.q-tab td.bis{font-weight:700}
+table.q-tab td.sep{border-left:1px solid var(--line)}
+.q-nota{font-size:10px;color:var(--mut);margin:3px 0 0;line-height:1.4}
+@media(max-height:780px){
+  table.q-tab{font-size:11px}
+  table.q-tab td{padding:1px 6px}
+  table.q-tab th{padding:3px 6px;font-size:10px}
+  .q-reg h4{display:none}
+  .q-nota{display:none}
+}
 .cen-fim .cf{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
-  font-size:12.5px;color:var(--mut);padding:3px 8px;border-radius:5px}
+  font-size:12.5px;color:var(--mut);padding:1px 8px;border-radius:5px}
 .cen-fim .cf b{font-size:15px;color:var(--navy);font-variant-numeric:tabular-nums}
 .cen-fim .cf-bisar{padding:5px 8px}
 .cen-fim .cf-bisar span{font-weight:700;color:var(--ink)}
@@ -6075,9 +6109,11 @@ var SIM_REG = [
   {id:"CARGIL", nome:"Cargil",   ha:2608,  estimado:174598,  colhido:127686}
 ];
 // cenário 2 começa com a estimativa 5% acima, para os dois já nascerem diferentes
+// os dois cenários nascem com ritmos diferentes: o da safra inteira e o dos
+// dois últimos meses fechados
 var SIM_CEN = [
-  {rot:"Cenário 1", cor:"#2E86C1", aumento:0},
-  {rot:"Cenário 2", cor:"#C9A227", aumento:5}
+  {rot:"Cenário 1", sub:"ritmo da safra", cor:"#2E86C1", aumento:0, base:"safra"},
+  {rot:"Cenário 2", sub:"ritmo de ago–set", cor:"#C9A227", aumento:0, base:"ult"}
 ];
 
 // dias de cada mês do realizado: abril conta da abertura da safra até 30/04
@@ -6088,8 +6124,19 @@ var SIM_REAL_TON  = E.total(SIM_MG.a2026);       // moagem da CRV-MG: é ela que
 var SIM_REAL_DIAS = MESES.reduce(function(a,_,i){ return a+simDiasRealizado(i); },0);
 var SIM_REG_COLH  = SIM_REG.reduce(function(a,r){ return a+r.colhido; },0);
 var SIM_REG_EST   = SIM_REG.reduce(function(a,r){ return a+r.estimado; },0);
-// padrão de cada região: a média diária que ela vem entregando no histórico
-SIM_REG.forEach(function(r){ r.padrao = Math.round(r.colhido/SIM_REAL_DIAS); });
+// Dois padrões por região: a média diária da safra inteira e a dos dois últimos
+// meses fechados (agosto e setembro). A base só traz o colhido TOTAL de cada
+// região, então o ritmo recente é aplicado pelo fator do grupo — a razão entre
+// o t/dia de ago+set e o t/dia da safra —, assumindo que as regiões
+// aceleraram na mesma proporção. Está dito na nota do quadro.
+var SIM_ULT_TDIA = (SIM_MG.a2026[4]+SIM_MG.a2026[5]) /
+                   (simDiasRealizado(4)+simDiasRealizado(5));
+var SIM_FATOR_ULT = SIM_ULT_TDIA / (SIM_REAL_TON/SIM_REAL_DIAS);
+SIM_REG.forEach(function(r){
+  r.padrao  = Math.round(r.colhido/SIM_REAL_DIAS);
+  r.padrao2 = Math.round(r.padrao*SIM_FATOR_ULT);
+});
+function simPadrao(c,r){ return c.base==="ult" ? r.padrao2 : r.padrao; }
 
 function numBR(txt){
   var t=String(txt).replace(/\s/g,"").replace(/\./g,"").replace(",",".");
@@ -6114,7 +6161,7 @@ function montaSimulador(){
       var regs = SIM_REG.map(function(r,ri){
         return "<tr class='cen-reg' data-mes='"+i+"' data-reg='"+ri+"' hidden>"+
           "<td class='l reg'>"+E.esc(r.nome)+"</td><td class='reg-dias'>–</td>"+
-          "<td>"+campo("js-rtdia",E.fmtInt(r.padrao),74)+"</td>"+
+          "<td>"+campo("js-rtdia",E.fmtInt(simPadrao(c,r)),74)+"</td>"+
           "<td class='js-rvol'>–</td></tr>";
       }).join("");
       return mes+regs;
@@ -6122,25 +6169,37 @@ function montaSimulador(){
 
     return "<div class='cen' data-cen='"+ci+"'>"+
       "<div class='cen-top'><span class='cen-tag' style='background:"+c.cor+"'></span>"+
-        "<b>"+E.esc(c.rot)+"</b>"+
+        "<b>"+E.esc(c.rot)+"</b><em class='cen-sub2'>"+E.esc(c.sub)+"</em>"+
         "<span class='cen-prev'>Estimado "+E.fmtInt(SIM_REG_EST)+" t"+
           "<i>+</i>"+campo("js-aum",c.aumento,34)+"%"+
           "<i>=</i><b class='js-prev'>–</b></span></div>"+
       "<div class='cen-real'>Realizado de abril a setembro <b>"+E.fmtInt(SIM_REAL_TON)+" t</b>"+
         "<i>"+SIM_REAL_DIAS+" dias &middot; "+E.fmtInt(SIM_REAL_TON/SIM_REAL_DIAS)+" t/dia</i></div>"+
-      "<table class='cen-tab'><thead><tr><th class='l'>Reta final</th><th>Dias</th>"+
+      "<div class='cen-tabwrap'><table class='cen-tab'><thead><tr><th class='l'>Reta final</th><th>Dias</th>"+
         "<th>Moagem/dia</th><th>Volume do mês</th></tr></thead><tbody>"+linhas+
         "<tr class='cen-sub'><td class='l'>Projetado out–dez</td><td class='js-pdias'>–</td>"+
         "<td class='js-ptdia'>–</td><td class='js-pvol'>–</td></tr>"+
-      "</tbody></table>"+
+      "</tbody></table></div>"+
       "<svg class='js-barra cen-barra'></svg>"+
       "<div class='cen-fim'>"+
         "<div class='cf'><span>Total da safra</span><b class='js-total'>–</b></div>"+
         "<div class='cf'><span>Falta para a previsão</span><b class='js-falta'>–</b></div>"+
         "<div class='cf cf-bisar'><span class='js-bisar-rot'>Bisar</span><b class='js-bisar'>–</b></div>"+
-      "</div><svg class='js-reg cen-ritmo'></svg></div>";
+      "</div></div>";
   }
-  card.innerHTML = SIM_CEN.map(painel).join("");
+  card.innerHTML = SIM_CEN.map(painel).join("") +
+    "<div class='q-reg'><h4>Quanto vai bisar por região</h4>"+
+    "<table class='q-tab'><thead>"+
+      "<tr><th class='l' rowspan='2'>Região</th><th rowspan='2'>ha</th>"+
+        "<th rowspan='2'>TCH</th><th rowspan='2'>Colhido</th>"+
+        "<th class='c1 sep' colspan='4'>Cenário 1 &middot; ritmo da safra</th>"+
+        "<th class='c2 sep' colspan='4'>Cenário 2 &middot; ritmo de ago–set</th></tr>"+
+      "<tr><th class='c1 sep'>Previsão</th><th class='c1'>À colher</th>"+
+        "<th class='c1'>Projetado</th><th class='c1'>Bisar</th>"+
+        "<th class='c2 sep'>Previsão</th><th class='c2'>À colher</th>"+
+        "<th class='c2'>Projetado</th><th class='c2'>Bisar</th></tr>"+
+    "</thead><tbody class='js-qcorpo'></tbody></table>"+
+    "<p class='q-nota'></p></div>";
 
   function calcula(){
     var resumo=[];
@@ -6191,11 +6250,53 @@ function montaSimulador(){
                 bisar:pr-r.colhido-porReg[ri]};
       });
       barra(p.querySelector(".js-barra"), c, prev, pVol, total);
-      bisarRegiao(p.querySelector(".js-reg"), c, regs);
       resumo.push({c:c, prev:prev, pVol:pVol, total:total, bisar:bisar, pDias:pDias,
                    aum:aum, regs:regs});
     });
+    quadroRegioes(resumo);
     texto(resumo);
+  }
+
+  // Quadro do fim: uma linha por região, com previsão, à colher, projetado e
+  // bisar de cada cenário. A projeção entra DENTRO de cada cenário porque os
+  // dois partem de ritmos diferentes.
+  function quadroRegioes(r){
+    function cel(g){
+      var bom = g.bisar<=0;
+      return "<td class='sep'>"+E.fmtInt(g.prev)+"</td>"+
+        "<td>"+E.fmtInt(g.prev-g.colhido)+"</td>"+
+        "<td>"+E.fmtInt(g.proj)+"</td>"+
+        "<td class='bis' style='color:"+(bom?E.GREEN:E.RED)+"'>"+
+        (bom?"sobra ":"")+E.fmtInt(Math.abs(g.bisar))+"</td>";
+    }
+    var corpo = SIM_REG.map(function(reg,i){
+      var a=r[0].regs[i], b=r[1].regs[i];
+      return "<tr><td class='l'>"+E.esc(reg.nome)+"</td>"+
+        "<td>"+E.fmtInt(reg.ha)+"</td>"+
+        "<td>"+E.fmtDec(reg.estimado/reg.ha,2)+"</td>"+
+        "<td>"+E.fmtInt(reg.colhido)+"</td>"+cel(a)+cel(b)+"</tr>";
+    }).join("");
+    function tot(k){
+      var g={prev:0,colhido:0,proj:0,bisar:0};
+      r[k].regs.forEach(function(x){ g.prev+=x.prev; g.colhido+=x.colhido;
+                                     g.proj+=x.proj; g.bisar+=x.bisar; });
+      return g;
+    }
+    var t0=tot(0), t1=tot(1);
+    var ha=SIM_REG.reduce(function(a,x){ return a+x.ha; },0);
+    corpo += "<tr class='tot'><td class='l'>Total</td><td>"+E.fmtInt(ha)+"</td>"+
+      "<td>"+E.fmtDec(SIM_REG_EST/ha,2)+"</td><td>"+E.fmtInt(t0.colhido)+"</td>"+
+      cel(t0)+cel(t1)+"</tr>";
+    card.querySelector(".js-qcorpo").innerHTML = corpo;
+    card.querySelector(".q-nota").innerHTML =
+      "Previsão da região = Estimado × (1 + aumento). Bisar = Previsão − Colhido − Projetado. "+
+      "O cenário 1 parte da média diária da safra de cada região e o cenário 2 do ritmo de "+
+      "agosto e setembro ("+E.fmtInt(SIM_ULT_TDIA)+" t/dia contra "+
+      E.fmtInt(SIM_REAL_TON/SIM_REAL_DIAS)+" t/dia), aplicado às regiões na mesma proporção — "+
+      "a base traz só o colhido total de cada uma. "+
+      "O colhido somado das regiões é "+E.fmtInt(SIM_REG_COLH)+" t, "+
+      E.fmtInt(SIM_REAL_TON-SIM_REG_COLH)+" t abaixo da moagem da CRV-MG ("+
+      E.fmtInt(SIM_REAL_TON)+" t) usada no total de cada cenário — defasagem de fechamento.";
   }
 
   // barra de progresso: realizado + projetado contra a previsão
@@ -6226,34 +6327,6 @@ function montaSimulador(){
       E.txt(svg,x(SIM_REAL_TON)+3,yBase,"projetado",{"font-size":9,fill:E.MUT});
   }
 
-  // Bisar de cada região, em barras horizontais. Ocupa a folga do pé da coluna:
-  // com menos de 52px não é desenhado, em vez de espremer.
-  function bisarRegiao(svg,c,regs){
-    E.limpa(svg);
-    var r=svg.getBoundingClientRect();
-    var W=Math.max(300,Math.round(r.width)), H=Math.round(r.height);
-    if(H<52) return;
-    svg.setAttribute("viewBox","0 0 "+W+" "+H);
-    svg.setAttribute("preserveAspectRatio","xMinYMin meet");
-
-    var tit = H>=74, padT = tit?15:2, padB=2;
-    var n=regs.length, lin=(H-padT-padB)/n, hb=Math.min(11,lin-4);
-    var rotW=74, valW=78, x0=rotW, plot=W-rotW-valW;
-    var max=Math.max.apply(null,regs.map(function(g){ return Math.abs(g.bisar); }).concat([1]));
-
-    if(tit) E.txt(svg,0,10,"Bisar por região (t)",{"font-size":9,"font-weight":"700",fill:E.MUT});
-    regs.forEach(function(g,i){
-      var y=padT+i*lin, yc=y+lin/2;
-      E.txt(svg,0,yc+3,g.nome,{"font-size":9,fill:E.MUT});
-      var w=Math.max(1,(Math.abs(g.bisar)/max)*plot);
-      E.add(svg,"rect",{x:x0,y:yc-hb/2,width:w,height:hb,rx:2,
-                        fill:g.bisar>0?E.RED:E.GREEN,opacity:g.bisar>0?".8":".75"});
-      E.txt(svg,W-2,yc+3,(g.bisar>0?"":"sobra ")+E.fmtInt(Math.abs(g.bisar)),
-            {"text-anchor":"end","font-size":9,"font-weight":"700",
-             fill:g.bisar>0?E.RED:E.GREEN});
-    });
-  }
-
   function texto(r){
     function frase(x){
       return "<strong>"+E.esc(x.c.rot)+"</strong>"+(x.aum?" (+"+E.fmtDec(x.aum*100,0)+"%)":"")+
@@ -6269,9 +6342,7 @@ function montaSimulador(){
       (pior.bisar<0?" de sobra":"")+". <span class='sep'>|</span> Para zerar o bisar seria preciso <strong>"+
       (r[0].pDias ? E.fmtInt((r[0].prev-SIM_REAL_TON)/r[0].pDias)+" t/dia" : "–")+
       "</strong> nos "+E.fmtInt(r[0].pDias)+" dias da reta final, contra "+
-      E.fmtInt(SIM_REAL_TON/SIM_REAL_DIAS)+" t/dia de abril a setembro. "+
-      "<span class='sep'>|</span> O colhido somado das regiões é "+E.fmtInt(SIM_REG_COLH)+
-      " t, "+E.fmtInt(SIM_REAL_TON-SIM_REG_COLH)+" t abaixo da moagem — defasagem de fechamento.";
+      E.fmtInt(SIM_REAL_TON/SIM_REAL_DIAS)+" t/dia de abril a setembro.";
   }
 
   // abrir e fechar o mês: só um aberto por vez, para a coluna não estourar
@@ -6306,7 +6377,7 @@ function montaSimulador(){
         p.querySelector("tr.cen-mes[data-mes='"+i+"'] .js-dias").value=m.dias;
         SIM_REG.forEach(function(r,ri){
           p.querySelector("tr.cen-reg[data-mes='"+i+"'][data-reg='"+ri+"'] .js-rtdia")
-            .value=E.fmtInt(r.padrao);
+            .value=E.fmtInt(simPadrao(c,r));
         });
       });
     });
