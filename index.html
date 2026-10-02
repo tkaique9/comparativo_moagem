@@ -6146,6 +6146,12 @@ function numBR(txt){
   var v=parseFloat(t);
   return isFinite(v) && v>=0 ? v : 0;
 }
+// os campos de % aceitam os dois sentidos: 5 aumenta, -5 diminui
+function numSig(txt){
+  var t=String(txt).replace(/\s/g,"").replace(/\./g,"").replace(",",".");
+  var v=parseFloat(t);
+  return isFinite(v) ? v : 0;
+}
 
 function montaSimulador(){
   var card = document.querySelector("#simulador .js-card");
@@ -6175,10 +6181,10 @@ function montaSimulador(){
       "<div class='cen-top'><span class='cen-tag' style='background:"+c.cor+"'></span>"+
         "<b>"+E.esc(c.rot)+"</b><em class='cen-sub2'>"+E.esc(c.sub)+"</em>"+
         "<span class='cen-prev'>Estimado"+
-          "<i>+</i>"+campo("js-aum",c.aumento,32)+"%"+
+          "<i>&plusmn;</i>"+campo("js-aum",c.aumento,36)+"%"+
           "<i>=</i><b class='js-prev'>–</b>"+
           "<i class='cen-pipe'>|</i>Ritmo"+
-          "<i>+</i>"+campo("js-rit",0,32)+"%"+
+          "<i>&plusmn;</i>"+campo("js-rit",0,36)+"%"+
           "<i>=</i><b class='js-rit-ef'>–</b></span></div>"+
       "<div class='cen-real'>Realizado de abril a setembro <b>"+E.fmtInt(SIM_REAL_TON)+" t</b>"+
         "<i>"+SIM_REAL_DIAS+" dias &middot; "+E.fmtInt(SIM_REAL_TON/SIM_REAL_DIAS)+" t/dia</i></div>"+
@@ -6251,15 +6257,14 @@ function montaSimulador(){
     var resumo=[];
     SIM_CEN.forEach(function(c,ci){
       var p = card.querySelector(".cen[data-cen='"+ci+"']");
-      var aum = numBR(p.querySelector(".js-aum").value)/100;
+      var aum = Math.max(-0.99, numSig(p.querySelector(".js-aum").value)/100);
       var prev = SIM_REG_EST*(1+aum);
       p.querySelector(".js-prev").textContent = E.fmtInt(prev)+" t";
 
       // lê os campos: dias de cada mês e moagem/dia de cada região
-      // o ritmo em % multiplica a moagem/dia digitada em todas as regiões
-      var rit = 1 + numBR(p.querySelector(".js-rit").value.replace("-",""))/100 *
-                    (p.querySelector(".js-rit").value.trim().charAt(0)==="-" ? -1 : 1);
-      if(!(rit>0)) rit = 0;
+      // o ritmo em % multiplica a moagem/dia de todas as regiões, para os dois
+      // lados: 10 acelera, -20 desacelera. O piso é -100%, que zera o ritmo.
+      var rit = Math.max(0, 1 + numSig(p.querySelector(".js-rit").value)/100);
       var dias=[], taxa=[], pDias=0, cap=0;
       SIM_FIM.forEach(function(_,i){
         var d = numBR(p.querySelector("tr.cen-mes[data-mes='"+i+"'] .js-dias").value);
@@ -6295,8 +6300,12 @@ function montaSimulador(){
 
       var total=SIM_REAL_TON+pVol, falta=prev-SIM_REAL_TON;
       var bisar=sim.resta.reduce(function(a,b){ return a+b; },0);
-      p.querySelector(".js-rit-ef").textContent =
+      var ritEl = p.querySelector(".js-rit-ef");
+      ritEl.textContent =
         E.fmtInt(SIM_REG.reduce(function(a,r){ return a+simPadrao(c,r); },0)*rit)+" t/dia";
+      ritEl.style.color = rit>1.0001 ? E.GREEN : (rit<0.9999 ? E.RED : "");
+      var prevEl = p.querySelector(".js-prev");
+      prevEl.style.color = aum>0.0001 ? E.GREEN : (aum<-0.0001 ? E.RED : "");
       p.querySelector(".js-pdias").textContent = E.fmtInt(pDias);
       p.querySelector(".js-ptdia").textContent = pDias ? E.fmtInt(pVol/pDias) : "–";
       p.querySelector(".js-pvol").textContent = E.fmtInt(pVol);
