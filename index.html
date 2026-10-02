@@ -339,7 +339,19 @@ header.top,nav.toc{flex:0 0 auto}
 .cen-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .cen-tag{width:11px;height:11px;border-radius:3px;flex:none}
 .cen-top b{font-size:14.5px;color:var(--navy)}
-.cen-prev{margin-left:auto;font-size:11.5px;color:var(--mut);display:flex;align-items:center;gap:6px}
+.cen-prev{margin-left:auto;font-size:11.5px;color:var(--mut);display:flex;align-items:center;gap:5px}
+.cen-prev i{font-style:normal;color:#9AA4B8}
+.cen-prev b.js-prev{color:var(--navy);font-size:13.5px;font-variant-numeric:tabular-nums}
+/* botão que abre as regiões do mês: só um mês fica aberto por vez */
+.cen-abre{font:inherit;font-size:12.5px;color:var(--mut);background:none;border:0;padding:0;
+  cursor:pointer;display:flex;align-items:center;gap:6px}
+.cen-abre .seta{color:var(--gold);font-size:11px;transition:transform .15s;display:inline-block}
+.cen-abre.on{color:var(--navy);font-weight:700}
+.cen-abre.on .seta{transform:rotate(90deg)}
+table.cen-tab tr.cen-reg td{background:var(--bgsoft);font-size:11.5px;padding:2px 7px}
+table.cen-tab tr.cen-reg td.l.reg{padding-left:22px;color:var(--mut)}
+table.cen-tab tr.cen-reg td.reg-dias{color:#9AA4B8}
+table.cen-tab tr.cen-reg input{font-size:11.5px;padding:1px 5px}
 .cen-real{font-size:12px;color:var(--mut);background:var(--bgsoft);border-radius:6px;padding:6px 10px}
 .cen-real b{color:var(--navy);font-size:13.5px;font-variant-numeric:tabular-nums}
 .cen-real i{font-style:normal;display:block;font-size:11px;margin-top:1px}
@@ -378,6 +390,12 @@ table.cen-tab input:focus,.cen-prev input:focus{outline:2px solid var(--gold);bo
   table.cen-tab td{padding:2px 6px}
   .cen-fim .cf-bisar b{font-size:16px}
   .cen-real{padding:4px 9px}
+  /* as quatro linhas de região abrem ~80px: sem compactar aqui, a coluna
+     cortava o bloco final quando um mês era aberto */
+  .cen-real i{display:none}
+  table.cen-tab tr.cen-reg td{padding:0 7px;font-size:11px}
+  table.cen-tab tr.cen-reg input{padding:0 5px;font-size:11px}
+  .cen-fim .cf{padding:1px 8px}
 }
 /* tela muito baixa: sem isso a coluna cortava os últimos pixels do bloco final */
 @media(max-height:660px){
@@ -6029,34 +6047,47 @@ function dspAplica(sel){
 
 
 /* ============================================================
-   SIMULADOR DA RETA FINAL — CRV-MG
-   Reproduz a Projeção Safra.xlsx: abril a setembro são o realizado e
-   entram travados; outubro, novembro e dezembro são a projeção, com
-   dias e moagem/dia editáveis. Dois cenários lado a lado.
+   SIMULADOR DA RETA FINAL — CRV-MG, por região
+   Abril a setembro entram travados com o realizado; outubro, novembro e
+   dezembro são a projeção, com os dias do mês e a moagem/dia de CADA
+   REGIÃO editáveis. Clicar no mês abre as regiões.
 
-     Falta  = Previsão − Realizado
-     Bisar  = Falta − Projetado (out+nov+dez)
+     Previsão da região = Estimado × (1 + aumento%)
+     Falta              = Previsão − Realizado
+     Bisar              = Falta − Projetado (out+nov+dez)
 
-   "Bisar" é o que ainda fica faltando para a previsão mesmo depois da
-   reta final; negativo quer dizer que a projeção passa da previsão.
+   "Bisar" é o que ainda falta para a previsão depois da reta final;
+   negativo quer dizer que a projeção passa da previsão.
    ============================================================ */
 var SIM_MG = UN.filter(function(u){ return u.cod==="CRV-MG"; })[0];
 var SIM_DIAS_MES = [30,31,30,31,31,30];          // abril..setembro
 var SIM_FIM = [{mes:"Outubro",dias:31},{mes:"Novembro",dias:30},{mes:"Dezembro",dias:15}];
-// valores de partida iguais aos da planilha
+
+// Acompanhamento por região (estimativa). O Estimado é a previsão de cada
+// região e o Colhido é o que ela já entregou de abril a setembro.
+var SIM_REG = [
+  {id:"1",      nome:"Região 1", ha:11593, estimado:1084758, colhido:917281},
+  {id:"2",      nome:"Região 2", ha:9354,  estimado:619781,  colhido:335593},
+  {id:"3",      nome:"Região 3", ha:8779,  estimado:564037,  colhido:336993},
+  {id:"CARGIL", nome:"Cargil",   ha:2608,  estimado:174598,  colhido:127686}
+];
+// cenário 2 começa com a estimativa 5% acima, para os dois já nascerem diferentes
 var SIM_CEN = [
-  {rot:"Cenário 1", cor:"#2E86C1", previsao:2500000, meses:[9500,8500,7500]},
-  {rot:"Cenário 2", cor:"#C9A227", previsao:2500000, meses:[10000,9000,8000]}
+  {rot:"Cenário 1", cor:"#2E86C1", aumento:0},
+  {rot:"Cenário 2", cor:"#C9A227", aumento:5}
 ];
 
 // dias de cada mês do realizado: abril conta da abertura da safra até 30/04
 function simDiasRealizado(i){
   return i===0 ? (30-parseInt(SIM_MG.ini2026.slice(8,10),10)+1) : SIM_DIAS_MES[i];
 }
-var SIM_REAL_TON = E.total(SIM_MG.a2026);
+var SIM_REAL_TON  = E.total(SIM_MG.a2026);       // moagem da CRV-MG: é ela que manda
 var SIM_REAL_DIAS = MESES.reduce(function(a,_,i){ return a+simDiasRealizado(i); },0);
+var SIM_REG_COLH  = SIM_REG.reduce(function(a,r){ return a+r.colhido; },0);
+var SIM_REG_EST   = SIM_REG.reduce(function(a,r){ return a+r.estimado; },0);
+// padrão de cada região: a média diária que ela vem entregando no histórico
+SIM_REG.forEach(function(r){ r.padrao = Math.round(r.colhido/SIM_REAL_DIAS); });
 
-// entrada numérica em pt-BR: aceita o que o usuário digitar e devolve número
 function numBR(txt){
   var t=String(txt).replace(/\s/g,"").replace(/\./g,"").replace(",",".");
   var v=parseFloat(t);
@@ -6064,29 +6095,38 @@ function numBR(txt){
 }
 
 function montaSimulador(){
-  var sl = document.getElementById("simulador");
-  var card = sl.querySelector(".js-card");
+  var card = document.querySelector("#simulador .js-card");
 
   function painel(c,ci){
     function campo(cls,val,larg){
       return "<input type='text' inputmode='decimal' autocomplete='off' spellcheck='false' "+
              "class='"+cls+"' value='"+val+"' style='width:"+larg+"px'>";
     }
+    var linhas = SIM_FIM.map(function(m,i){
+      var mes = "<tr class='cen-mes' data-mes='"+i+"'>"+
+        "<td class='l'><button type='button' class='js-abre cen-abre' data-mes='"+i+"'>"+
+          "<span class='seta'>&#9656;</span>"+m.mes+"</button></td>"+
+        "<td>"+campo("js-dias",m.dias,42)+"</td>"+
+        "<td class='js-mtdia'>–</td><td class='js-mvol'>–</td></tr>";
+      var regs = SIM_REG.map(function(r,ri){
+        return "<tr class='cen-reg' data-mes='"+i+"' data-reg='"+ri+"' hidden>"+
+          "<td class='l reg'>"+E.esc(r.nome)+"</td><td class='reg-dias'>–</td>"+
+          "<td>"+campo("js-rtdia",E.fmtInt(r.padrao),74)+"</td>"+
+          "<td class='js-rvol'>–</td></tr>";
+      }).join("");
+      return mes+regs;
+    }).join("");
+
     return "<div class='cen' data-cen='"+ci+"'>"+
       "<div class='cen-top'><span class='cen-tag' style='background:"+c.cor+"'></span>"+
         "<b>"+E.esc(c.rot)+"</b>"+
-        "<span class='cen-prev'>Previsão da safra "+
-          campo("js-prev",E.fmtInt(c.previsao),102)+" t</span></div>"+
+        "<span class='cen-prev'>Estimado "+E.fmtInt(SIM_REG_EST)+" t"+
+          "<i>+</i>"+campo("js-aum",c.aumento,34)+"%"+
+          "<i>=</i><b class='js-prev'>–</b></span></div>"+
       "<div class='cen-real'>Realizado de abril a setembro <b>"+E.fmtInt(SIM_REAL_TON)+" t</b>"+
         "<i>"+SIM_REAL_DIAS+" dias &middot; "+E.fmtInt(SIM_REAL_TON/SIM_REAL_DIAS)+" t/dia</i></div>"+
       "<table class='cen-tab'><thead><tr><th class='l'>Reta final</th><th>Dias</th>"+
-        "<th>Moagem/dia</th><th>Volume do mês</th></tr></thead><tbody>"+
-        SIM_FIM.map(function(m,i){
-          return "<tr><td class='l'>"+m.mes+"</td>"+
-            "<td>"+campo("js-dias",m.dias,44)+"</td>"+
-            "<td>"+campo("js-tdia",E.fmtInt(c.meses[i]),78)+"</td>"+
-            "<td class='js-vol'>–</td></tr>";
-        }).join("")+
+        "<th>Moagem/dia</th><th>Volume do mês</th></tr></thead><tbody>"+linhas+
         "<tr class='cen-sub'><td class='l'>Projetado out–dez</td><td class='js-pdias'>–</td>"+
         "<td class='js-ptdia'>–</td><td class='js-pvol'>–</td></tr>"+
       "</tbody></table>"+
@@ -6095,7 +6135,7 @@ function montaSimulador(){
         "<div class='cf'><span>Total da safra</span><b class='js-total'>–</b></div>"+
         "<div class='cf'><span>Falta para a previsão</span><b class='js-falta'>–</b></div>"+
         "<div class='cf cf-bisar'><span class='js-bisar-rot'>Bisar</span><b class='js-bisar'>–</b></div>"+
-      "</div><svg class='js-ritmo cen-ritmo'></svg></div>";
+      "</div><svg class='js-reg cen-ritmo'></svg></div>";
   }
   card.innerHTML = SIM_CEN.map(painel).join("");
 
@@ -6103,25 +6143,37 @@ function montaSimulador(){
     var resumo=[];
     SIM_CEN.forEach(function(c,ci){
       var p = card.querySelector(".cen[data-cen='"+ci+"']");
-      var prev = numBR(p.querySelector(".js-prev").value);
-      var dias=[], tdia=[], vol=[];
-      SIM_FIM.forEach(function(_,i){
-        dias.push(numBR(p.querySelectorAll(".js-dias")[i].value));
-        tdia.push(numBR(p.querySelectorAll(".js-tdia")[i].value));
-        vol.push(dias[i]*tdia[i]);
-        p.querySelectorAll(".js-vol")[i].textContent = E.fmtInt(vol[i]);
-      });
-      var pDias=dias.reduce(function(a,b){return a+b;},0);
-      var pVol=vol.reduce(function(a,b){return a+b;},0);
-      var total=SIM_REAL_TON+pVol, falta=prev-SIM_REAL_TON, bisar=falta-pVol;
+      var aum = numBR(p.querySelector(".js-aum").value)/100;
+      var prev = SIM_REG_EST*(1+aum);
+      p.querySelector(".js-prev").textContent = E.fmtInt(prev)+" t";
 
+      var dias=[], pDias=0, pVol=0;
+      var porReg = SIM_REG.map(function(){ return 0; });
+      SIM_FIM.forEach(function(_,i){
+        var d = numBR(p.querySelector("tr.cen-mes[data-mes='"+i+"'] .js-dias").value);
+        dias.push(d); pDias += d;
+        var somaDia = 0;
+        SIM_REG.forEach(function(r,ri){
+          var tr = p.querySelector("tr.cen-reg[data-mes='"+i+"'][data-reg='"+ri+"']");
+          var t = numBR(tr.querySelector(".js-rtdia").value);
+          somaDia += t;
+          porReg[ri] += d*t;
+          tr.querySelector(".reg-dias").textContent = E.fmtInt(d);
+          tr.querySelector(".js-rvol").textContent = E.fmtInt(d*t);
+        });
+        var mtr = p.querySelector("tr.cen-mes[data-mes='"+i+"']");
+        mtr.querySelector(".js-mtdia").textContent = E.fmtInt(somaDia);
+        mtr.querySelector(".js-mvol").textContent = E.fmtInt(d*somaDia);
+        pVol += d*somaDia;
+      });
+
+      var total=SIM_REAL_TON+pVol, falta=prev-SIM_REAL_TON, bisar=falta-pVol;
       p.querySelector(".js-pdias").textContent = E.fmtInt(pDias);
       p.querySelector(".js-ptdia").textContent = pDias ? E.fmtInt(pVol/pDias) : "–";
       p.querySelector(".js-pvol").textContent = E.fmtInt(pVol);
       p.querySelector(".js-total").textContent = E.fmtInt(total)+" t";
       p.querySelector(".js-falta").textContent = E.fmtInt(falta)+" t";
 
-      // bisar negativo = a projeção passou da previsão: vira sobra, em verde
       var sobra = bisar<0;
       p.querySelector(".js-bisar-rot").textContent = sobra ? "Sobra sobre a previsão" : "Bisar";
       var el=p.querySelector(".js-bisar");
@@ -6129,78 +6181,29 @@ function montaSimulador(){
       el.style.color = sobra ? E.GREEN : E.RED;
       p.querySelector(".cf-bisar").style.background = sobra ? "#EAF5EE" : "#FBEDEB";
 
+      // bisar de cada região, com a previsão dela já corrigida pelo aumento
+      var regs = SIM_REG.map(function(r,ri){
+        var pr=r.estimado*(1+aum);
+        return {nome:r.nome, prev:pr, colhido:r.colhido, proj:porReg[ri],
+                bisar:pr-r.colhido-porReg[ri]};
+      });
       barra(p.querySelector(".js-barra"), c, prev, pVol, total);
-      ritmo(p.querySelector(".js-ritmo"), c, dias, tdia, pDias ? falta/pDias : 0);
-      resumo.push({c:c, prev:prev, pVol:pVol, total:total, bisar:bisar, pDias:pDias});
+      bisarRegiao(p.querySelector(".js-reg"), c, regs);
+      resumo.push({c:c, prev:prev, pVol:pVol, total:total, bisar:bisar, pDias:pDias,
+                   aum:aum, regs:regs});
     });
     texto(resumo);
-  }
-
-  // Moagem por dia de abril a dezembro: os seis meses realizados ao lado dos
-  // três projetados, com a linha tracejada do ritmo que zeraria o bisar. É o que
-  // responde à pergunta seguinte ao "bisar 120 mil t": dá para alcançar?
-  function ritmo(svg,c,diasProj,tdiaProj,precisa){
-    E.limpa(svg);
-    var r=svg.getBoundingClientRect();
-    var W=Math.max(320,Math.round(r.width)), H=Math.round(r.height);
-    if(H<42) return;                       // sem folga nenhuma: não desenha
-    var temTitulo = H>=76;                 // em pouco espaço, só as barras
-    svg.setAttribute("viewBox","0 0 "+W+" "+H);
-    svg.setAttribute("preserveAspectRatio","xMidYMid meet");
-
-    var reais = MESES.map(function(_,i){ return SIM_MG.a2026[i]/simDiasRealizado(i); });
-    var vals  = reais.concat(tdiaProj);
-    var rot   = ["Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-    var padL=8, padR=8, padT=temTitulo?16:5, padB=14;
-    var plotW=W-padL-padR, plotH=H-padT-padB, base=padT+plotH;
-    var max=E.niceAxis(Math.max.apply(null,vals.concat([precisa]))*1.12,4)||1;
-    function y(v){ return base-(v/max)*plotH; }
-
-    var n=vals.length, slot=plotW/n, bw=Math.min(slot*0.62,46);
-    vals.forEach(function(v,i){
-      var x=padL+i*slot+(slot-bw)/2, proj=i>=6;
-      E.add(svg,"path",{d:E.barraTopo(x,y(v),bw,base-y(v),3),
-                        fill:proj?c.cor:"#C8CFDC"});
-      // em pouco espaço o valor da barra encostaria na linha tracejada; a
-      // tabela logo acima já traz esses mesmos números
-      if(plotH>64) E.txt(svg,x+bw/2,y(v)-3,E.fmtInt(v),
-        {"text-anchor":"middle","font-size":8.5,"font-weight":"700",
-         fill:proj?E.NAVY:E.MUT});
-      E.txt(svg,x+bw/2,base+10,rot[i],
-        {"text-anchor":"middle","font-size":8.5,fill:proj?E.NAVY:E.MUT,
-         "font-weight":proj?"700":"400"});
-    });
-
-    // ritmo que zeraria o bisar
-    if(precisa>0 && precisa<=max){
-      var yp=y(precisa);
-      E.add(svg,"line",{x1:padL,x2:W-padR,y1:yp,y2:yp,stroke:E.RED,
-                        "stroke-width":1.6,"stroke-dasharray":"5,3"});
-      var txt="zera o bisar: "+E.fmtInt(precisa)+" t/dia";
-      var tw=txt.length*5.4+10;
-      E.add(svg,"rect",{x:W-padR-tw,y:yp-11,width:tw,height:12,rx:3,fill:"#fff",opacity:".9"});
-      E.txt(svg,W-padR-5,yp-2,txt,
-        {"text-anchor":"end","font-size":8.5,"font-weight":"700",fill:E.RED});
-    }
-    if(temTitulo) E.txt(svg,padL,10,"Moagem por dia (t) — realizado e projetado",
-      {"font-size":9,"font-weight":"700",fill:E.MUT});
   }
 
   // barra de progresso: realizado + projetado contra a previsão
   function barra(svg,c,prev,pVol,total){
     E.limpa(svg);
-    // viewBox na medida real do elemento: com preserveAspectRatio="none" e
-    // viewBox fixo o texto saía esticado na horizontal e o rótulo da previsão,
-    // colado no topo, era recortado pela borda do SVG
     var r=svg.getBoundingClientRect();
     var W=Math.max(300,Math.round(r.width)), H=Math.max(22,Math.round(r.height));
     svg.setAttribute("viewBox","0 0 "+W+" "+H);
     svg.setAttribute("preserveAspectRatio","xMinYMin meet");
-
-    var temRot = H>=36;                       // só rotula a previsão se couber
-    var yBar = temRot ? 16 : 2;
-    var hBar = Math.max(9, H-yBar-12);        // 12px embaixo para os rótulos
-    var yBase = H-3;                          // linha de base dos rótulos de baixo
+    var temRot = H>=36, yBar = temRot ? 16 : 2;
+    var hBar = Math.max(9, H-yBar-12), yBase = H-3;
     var esc=Math.max(prev,total)||1, x=function(v){ return Math.max(0,Math.min(W,(v/esc)*W)); };
 
     E.add(svg,"rect",{x:0,y:yBar,width:W,height:hBar,rx:4,fill:"#EDEFF3"});
@@ -6208,61 +6211,100 @@ function montaSimulador(){
     E.add(svg,"rect",{x:x(SIM_REAL_TON),y:yBar,width:x(pVol),height:hBar,fill:c.cor,opacity:".45"});
     if(total<prev)
       E.add(svg,"rect",{x:x(total),y:yBar,width:x(prev)-x(total),height:hBar,fill:"#C0392B",opacity:".22"});
-
-    // marca da previsão
     var xp=x(prev);
     E.add(svg,"line",{x1:xp,x2:xp,y1:yBar-3,y2:yBar+hBar+3,stroke:E.NAVY,"stroke-width":2});
     if(temRot){
-      // perto da borda esquerda o rótulo alinhado à direita sairia do quadro
       var perto = xp < 62;
       E.txt(svg, perto ? xp+4 : Math.min(xp,W-2), Math.max(11,yBar-4), "previsão",
             {"text-anchor": perto?"start":"end", "font-size":9,"font-weight":"700",fill:E.NAVY});
     }
     E.txt(svg,2,yBase,"realizado",{"font-size":9,fill:E.MUT});
-    // só rotula "projetado" quando há espaço: senão encosta em "realizado"
     if(x(SIM_REAL_TON) > 62 && x(pVol) > 46)
       E.txt(svg,x(SIM_REAL_TON)+3,yBase,"projetado",{"font-size":9,fill:E.MUT});
   }
 
+  // Bisar de cada região, em barras horizontais. Ocupa a folga do pé da coluna:
+  // com menos de 52px não é desenhado, em vez de espremer.
+  function bisarRegiao(svg,c,regs){
+    E.limpa(svg);
+    var r=svg.getBoundingClientRect();
+    var W=Math.max(300,Math.round(r.width)), H=Math.round(r.height);
+    if(H<52) return;
+    svg.setAttribute("viewBox","0 0 "+W+" "+H);
+    svg.setAttribute("preserveAspectRatio","xMinYMin meet");
+
+    var tit = H>=74, padT = tit?15:2, padB=2;
+    var n=regs.length, lin=(H-padT-padB)/n, hb=Math.min(11,lin-4);
+    var rotW=74, valW=78, x0=rotW, plot=W-rotW-valW;
+    var max=Math.max.apply(null,regs.map(function(g){ return Math.abs(g.bisar); }).concat([1]));
+
+    if(tit) E.txt(svg,0,10,"Bisar por região (t)",{"font-size":9,"font-weight":"700",fill:E.MUT});
+    regs.forEach(function(g,i){
+      var y=padT+i*lin, yc=y+lin/2;
+      E.txt(svg,0,yc+3,g.nome,{"font-size":9,fill:E.MUT});
+      var w=Math.max(1,(Math.abs(g.bisar)/max)*plot);
+      E.add(svg,"rect",{x:x0,y:yc-hb/2,width:w,height:hb,rx:2,
+                        fill:g.bisar>0?E.RED:E.GREEN,opacity:g.bisar>0?".8":".75"});
+      E.txt(svg,W-2,yc+3,(g.bisar>0?"":"sobra ")+E.fmtInt(Math.abs(g.bisar)),
+            {"text-anchor":"end","font-size":9,"font-weight":"700",
+             fill:g.bisar>0?E.RED:E.GREEN});
+    });
+  }
+
   function texto(r){
     function frase(x){
-      return "<strong>"+E.esc(x.c.rot)+"</strong>: "+E.fmtInt(x.total)+" t ("+
+      return "<strong>"+E.esc(x.c.rot)+"</strong>"+(x.aum?" (+"+E.fmtDec(x.aum*100,0)+"%)":"")+
+        ": "+E.fmtInt(x.total)+" t ("+
         (x.bisar<0 ? "<strong>sobra "+E.fmtInt(-x.bisar)+" t</strong>"
                    : "<strong>bisa "+E.fmtInt(x.bisar)+" t</strong>")+")";
     }
-    var d=r[1].total-r[0].total;
+    var pior = r[0].regs.slice().sort(function(a,b){ return b.bisar-a.bisar; })[0];
     document.querySelector("#simulador .js-insight").innerHTML =
       frase(r[0])+" <span class='sep'>|</span> "+frase(r[1])+
-      " <span class='sep'>|</span> Entre os dois cenários, <strong>"+E.fmtInt(Math.abs(d))+
-      " t</strong> de diferença na safra — "+
-      (r[0].pDias===r[1].pDias
-        ? "com os mesmos "+E.fmtInt(r[0].pDias)+" dias de reta final, só mudando o ritmo diário."
-        : "com "+E.fmtInt(r[0].pDias)+" e "+E.fmtInt(r[1].pDias)+" dias de reta final.")+
-      " <span class='sep'>|</span> Para zerar o bisar seria preciso <strong>"+
+      " <span class='sep'>|</span> No cenário 1, a região que mais bisa é <strong>"+
+      E.esc(pior.nome)+"</strong>, com "+E.fmtInt(Math.abs(pior.bisar))+" t"+
+      (pior.bisar<0?" de sobra":"")+". <span class='sep'>|</span> Para zerar o bisar seria preciso <strong>"+
       (r[0].pDias ? E.fmtInt((r[0].prev-SIM_REAL_TON)/r[0].pDias)+" t/dia" : "–")+
       "</strong> nos "+E.fmtInt(r[0].pDias)+" dias da reta final, contra "+
-      E.fmtInt(SIM_REAL_TON/SIM_REAL_DIAS)+" t/dia de abril a setembro.";
+      E.fmtInt(SIM_REAL_TON/SIM_REAL_DIAS)+" t/dia de abril a setembro. "+
+      "<span class='sep'>|</span> O colhido somado das regiões é "+E.fmtInt(SIM_REG_COLH)+
+      " t, "+E.fmtInt(SIM_REAL_TON-SIM_REG_COLH)+" t abaixo da moagem — defasagem de fechamento.";
   }
 
-  card.addEventListener("input",function(e){
-    if(e.target.tagName==="INPUT") calcula();
+  // abrir e fechar o mês: só um aberto por vez, para a coluna não estourar
+  card.addEventListener("click",function(e){
+    var b=e.target.closest(".js-abre"); if(!b) return;
+    var p=b.closest(".cen"), mes=b.dataset.mes;
+    var abrindo = b.getAttribute("data-on")!=="1";
+    p.querySelectorAll(".js-abre").forEach(function(o){
+      o.setAttribute("data-on","0"); o.classList.remove("on");
+    });
+    p.querySelectorAll("tr.cen-reg").forEach(function(tr){ tr.hidden=true; });
+    if(abrindo){
+      b.setAttribute("data-on","1"); b.classList.add("on");
+      p.querySelectorAll("tr.cen-reg[data-mes='"+mes+"']").forEach(function(tr){ tr.hidden=false; });
+    }
+    calcula();
   });
-  // ao sair do campo, reescreve no formato pt-BR
+
+  card.addEventListener("input",function(e){ if(e.target.tagName==="INPUT") calcula(); });
   card.addEventListener("blur",function(e){
     var t=e.target;
     if(t.tagName!=="INPUT") return;
-    if(t.classList.contains("js-dias")) t.value=E.fmtInt(numBR(t.value));
-    else t.value=E.fmtInt(numBR(t.value));
+    if(!t.classList.contains("js-aum")) t.value=E.fmtInt(numBR(t.value));
     calcula();
   },true);
 
   document.getElementById("sim-reset").addEventListener("click",function(){
     SIM_CEN.forEach(function(c,ci){
       var p=card.querySelector(".cen[data-cen='"+ci+"']");
-      p.querySelector(".js-prev").value=E.fmtInt(c.previsao);
+      p.querySelector(".js-aum").value=c.aumento;
       SIM_FIM.forEach(function(m,i){
-        p.querySelectorAll(".js-dias")[i].value=m.dias;
-        p.querySelectorAll(".js-tdia")[i].value=E.fmtInt(c.meses[i]);
+        p.querySelector("tr.cen-mes[data-mes='"+i+"'] .js-dias").value=m.dias;
+        SIM_REG.forEach(function(r,ri){
+          p.querySelector("tr.cen-reg[data-mes='"+i+"'][data-reg='"+ri+"'] .js-rtdia")
+            .value=E.fmtInt(r.padrao);
+        });
       });
     });
     calcula();
