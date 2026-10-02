@@ -32,6 +32,8 @@ python -m http.server 8731
 | 7 | Transbordo | Sete indicadores da frota de transbordo |
 | 8 | Irrigação localizada | Área aplicada por mês, 2025 contra 2026, com alternador de acumulado |
 | 9 | Irrigação convencional | Mesma página para o carretel: área por mês, velocidade na linha e parte em vinhaça |
+| 10 | Irrigação por região | A convencional aberta por região, 2025 contra 2026, painéis na mesma escala |
+| 11 | Região x região | Duas regiões escolhidas lado a lado numa safra, com a diferença mês a mês |
 
 ### A página 4
 
@@ -200,6 +202,57 @@ uma **puxada de carretel**, e a área é `puxada × espaçamento ÷ 10.000`.
 - **Abril:** aqui a safra 2026 abriu *depois* (07/04 contra 04/04) e mesmo assim
   abril subiu, então o texto não atribui o salto ao calendário. O insight escolhe a
   frase conforme a data de abertura e o sinal da variação.
+
+### Fichas por lâmina (páginas 9 e 10)
+
+Cada puxada da convencional traz a lâmina na coluna `DESC. LAMINA` (`Água 2º lâmina`,
+`Vinhaça 3º lâmina`, `1ª Lam. Bordadura Ág.`…). As fichas somam a área da safra por
+**número de lâmina** — água e vinhaça juntas, e a bordadura (cerca de 1% da área) na
+lâmina do mesmo número —, no mesmo formato 2025 → 2026 das fichas de frota, com o
+peso de cada lâmina na área de 2026. São só de leitura: não trocam o gráfico. A
+página 9 mostra o total e a página 10 uma fila por região, alinhada com o painel de
+baixo. Só a convencional tem fichas: a localizada não entra nesse corte.
+
+| Lâmina | 2025 (ha) | 2026 (ha) | Variação |
+|---|---|---|---|
+| 1ª | 9.561 | 7.524 | −21% |
+| 2ª | 3.525 | 3.110 | −12% |
+| 3ª | 809 | 1.445 | +79% |
+| 4ª | 342 | 1.339 | +292% |
+
+A leitura vai no insight da página 9: a área de repetição (2ª lâmina em diante) passou
+de 33% para 44% do total. Os dados ficam em `IRRIGACAO.convencional.laminas` e em
+`laminas` de cada região (posição 0 = 1ª lâmina); uma 5ª lâmina vira mais uma ficha
+sozinha.
+
+### As páginas 10 e 11 (irrigação convencional por região)
+
+A mesma área da página 9 aberta pela coluna **REGIÃO** da aba `faz.` do fechamento
+de 2026 — o `banco de dados` de 2026 traz a mesma região em cada registro, e as duas
+batem 100%. **A planilha de 2025 não tem essa coluna**: a safra 2025 usa a região
+*atual* de cada fazenda (`regiaoFaz`), o que cobre toda a área de 2025. Ou seja, a
+comparação é das mesmas fazendas nos dois anos.
+
+| Região | Blocos | Convencional |
+|---|---|---|
+| 1 | 06 Shekinah, 07 Samir | só água |
+| 2 | 01 a 05, 08 a 10 | toda a vinhaça está aqui |
+| 3 | 11 Terceira Zona | nenhuma área nas duas safras |
+
+- **Página 10:** um painel por região com área na safra (hoje 1 e 2), na mesma
+  escala, com o alternador mês a mês / acumulado. A Região 3 é citada no texto em vez
+  de virar um painel vazio.
+- **Página 11:** dois seletores (A e B), safra 2026 ou 2025 e mês a mês / acumulado.
+  Sob cada mês, quem ficou à frente e por quantos hectares, na cor da região — não é
+  bom nem ruim, então a pílula não usa verde e vermelho — e a divisão da área entre
+  as duas. Escolher em A a região que está em B troca as duas de lugar. A Região 3
+  aparece desabilitada no seletor.
+
+Nas duas, clicar numa barra abre o mesmo modal da página 9 filtrado pela região. O
+total de cada região-mês é a soma das linhas de fazenda, então o modal fecha com a
+barra. Os dados ficam em `IRRIGACAO.convencional.regioes`; os blocos de cada região
+saem da coluna BLOCOS da mesma aba (o nome vem só na primeira linha do bloco, em
+célula mesclada, e vale até o próximo).
 
 ## Atualizar os dados
 
