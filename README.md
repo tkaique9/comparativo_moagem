@@ -283,10 +283,14 @@ das frotas.
 - **Clicar numa barra** abre o mês frota a frota, da pior para a melhor, com a conta
   no topo e o total fechando com a barra.
 
-**Em branco não entra na conta.** Frota que não aparece no relatório do mês (as 7 de
-Goiás, por exemplo) fica fora daquele mês — não vale 0%. A aba `GERAL` da planilha
-faz o contrário (média simples das 954 frotas do cadastro, com as ausentes valendo 0)
-e por isso fica até 0,9 p.p. abaixo; a página diz isso no texto. Ficam fora também os
+**Só as frotas de 60000 a 69999**, a faixa da CRV-MG. As 22xxx (tratores e colhedoras
+de Goiás, que só aparecem no relatório de agosto) ficam fora — no cadastro e no
+relatório. Sobram 947 frotas.
+
+**Em branco não entra na conta.** Frota que não aparece no relatório do mês fica fora
+daquele mês — não vale 0%. A aba `GERAL` da planilha faz o contrário (média simples
+das 954 frotas do cadastro, Goiás incluída, com as ausentes valendo 0) e por isso fica
+até 0,9 p.p. abaixo; a página diz isso no texto. Ficam fora também os
 equipamentos do relatório sem cadastro (40 a 52 por mês: sopradores, geradores,
 motosserras), porque não têm especialidade. Uma frota com mais horas de oficina que o
 período (60906, jul/2026) foi limitada ao período.

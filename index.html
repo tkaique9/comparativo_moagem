@@ -2426,6 +2426,8 @@ window.IRRIGACAO = {
      cadastro (sopradores, geradores, motosserras). Uma frota com oficina
      maior que o período (60906, jul/2026) foi limitada ao período.
      O grupo é o prefixo da especialidade ("CAMINHAO - BOMBEIRO" -> CAMINHAO).
+     Só entram as frotas de 60000 a 69999, a faixa da CRV-MG: as 22xxx (tratores
+     e colhedoras de Goiás, que só aparecem no relatório de agosto) ficam fora.
      ============================================================ -->
 <script>
 window.DISPONIBILIDADE = {
@@ -2435,12 +2437,6 @@ window.DISPONIBILIDADE = {
   especialidades: [["AREA VIVENCIA - DIVERSOS",0],["CAMINHAO - ASSISTENCIA",1],["CAMINHAO - BAU HERBICIDA",1],["CAMINHAO - BAU SUPRIMENTOS",1],["CAMINHAO - BOMBEIRO",1],["CAMINHAO - BORRACHARIA",1],["CAMINHAO - CACAMBA",1],["CAMINHAO - CANAVIEIRO",1],["CAMINHAO - COMBOIO",1],["CAMINHAO - MUNCK",1],["CAMINHAO - OFICINA",1],["CAMINHAO - PRANCHA",1],["CAMINHAO - TRANSP. TUBO",1],["CARREGADEIRA - AGRICOLA",2],["COLHEDORA - CANA",3],["DRONE - DIVERSOS",4],["EQUIPAMENTO INDUST - MOTOR ESTACIONARIO",5],["EQUIPAMENTO INDUST - MOTOR GERADOR",5],["EQUIPAMENTO IRRIG - ELETROBOMBA",6],["EQUIPAMENTO IRRIG - HIDRO ROLL IRRIGACAO",6],["EQUIPAMENTO IRRIG - MOTOR ESTACIONARIO",6],["EQUIPAMENTO IRRIG - MOTOR GERADOR",6],["EQUIPAMENTO IRRIG - MOTOR IRRIGACAO",6],["EQUIPAMENTO IRRIG - TRANSFORMADOR",6],["IMPLEMENTO - APLIC. INSETICIDA",7],["IMPLEMENTO - CARRETA AGRICOLA",7],["IMPLEMENTO - COBRIDOR",7],["IMPLEMENTO - CULTIVADOR / QUEBRA LOMBO",7],["IMPLEMENTO - DISTRIBUIDOR ADUBO",7],["IMPLEMENTO - DIVERSOS",7],["IMPLEMENTO - GRADAGEM",7],["IMPLEMENTO - HERBIPLUS E BOMBA COSTAL",7],["IMPLEMENTO - JARDINAGEM",7],["IMPLEMENTO - MOTOSSERRA",7],["IMPLEMENTO - PLANTADORA CANA",7],["IMPLEMENTO - ROCADEIRA",7],["IMPLEMENTO - SEMEADEIRA - (DISTRIB.CANA)",7],["IMPLEMENTO - SEPARADOR MAGNETICO",7],["IMPLEMENTO - SUBSOLADOR/CANTERIZADOR",7],["IMPLEMENTO - SULCADOR",7],["IMPLEMENTO - TERRACIADOR",7],["MAQUINA - UNIPORT",8],["MAQUINA PESADA - EMPILHADEIRA",9],["MAQUINA PESADA - ESCAVADEIRA HIDRAULICA",9],["MAQUINA PESADA - MOTONIVELADORA",9],["MAQUINA PESADA - PA CARREGADEIRA",9],["MAQUINA PESADA - RETROESCAVADEIRA",9],["MAQUINA PESADA - ROLO COMPACTADOR",9],["MAQUINA PESADA - TRATOR ESTEIRA",9],["MOTOCICLETA - ASSISTENCIA",10],["MOTOCICLETA - QUADRICICLO",10],["REBOQUE - BANHEIRO MOVEL",11],["REBOQUE - CACAMBA",11],["REBOQUE - CANAVIEIRO",11],["REBOQUE - DOLLY",11],["REBOQUE - GRANELEIRO",11],["REBOQUE - OFICINA",11],["REBOQUE - PRANCHA",11],["REBOQUE - TANQUE",11],["REBOQUE - TRANSBORDO",11],["REBOQUE - TRANSP. TUBO",11],["TRATOR - AGRICOLA",12],["TRATOR - TRANSBORDO",12],["VEICULO - AMBULANCIA",13],["VEICULO - ASSISTENCIA",13],["VEICULO - DIRETORIA",13]],
   campos: ["frota","descricao","especialidade","oficina2025","oficina2026"],
   frotas: [
-    [22220,"TRATOR JOHN DEERE 6190J",62,[null,null,null,null,29.0,null],[null,null,null,null,29.0,null]],
-    [22270,"TRATOR JOHN DEERE 6190J",62,[null,null,null,null,7.0,null],[null,null,null,null,7.0,null]],
-    [22271,"TRATOR JOHN DEERE 6190J",62,[null,null,null,null,30.2,null],[null,null,null,null,30.2,null]],
-    [22510,"COLHEDORA JOHN DEERE CH570",14,[null,null,null,null,497.2,null],[null,null,null,null,497.2,null]],
-    [22521,"COLHEDORA JOHN DEERE CH570",14,[null,null,null,null,423.0,null],[null,null,null,null,423.0,null]],
-    [22525,"COLHEDORA JOHN DEERE CH570",14,[null,null,null,null,223.8,null],[null,null,null,null,223.8,null]],
     [60000,"CAMINHONETE HILUX SW4 PLATINUM SDM-8I81",65,[2.2,21.0,24.8,0,0,0],[0.1,0,0,0,0,0.1]],
     [60001,"CAMINHONETE HILUX CDSRXA4RD SDI-8D81",65,[0,0,0,0,0,0],[0,0.1,0,0,0,0]],
     [60002,"AUTOMOVEL CARRYALL 1",65,[0,0,0,0,0,9.7],[0,0,0,0,0,0]],
@@ -5447,8 +5443,8 @@ function dspTexto(frs){
     if(l.length) txt += "<span class='sep'>|</span> Mais longe da meta (com 3 frotas ou mais): "+
       l.slice(0,2).map(function(x){ return E.esc(x.nome)+" ("+dspPct(x.b)+")"; }).join(" e ")+". ";
   }
-  if(dspFiltro.tipo==="t") txt += "<span class='sep'>|</span> A aba GERAL conta como 0% as frotas que não "+
-    "aparecem no relatório do mês (as de Goiás, sobretudo) e por isso fica até 0,9 p.p. abaixo; aqui elas ficam fora.";
+  if(dspFiltro.tipo==="t") txt += "<span class='sep'>|</span> Só frotas de 60000 a 69999 presentes no relatório "+
+    "do mês. A aba GERAL inclui as de Goiás e conta as ausentes como 0%, por isso fica até 0,9 p.p. abaixo.";
   document.getElementById("disp-insight").innerHTML = txt;
 }
 
