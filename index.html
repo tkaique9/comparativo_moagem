@@ -360,6 +360,9 @@ table.cen-tab input:focus,.cen-prev input:focus{outline:2px solid var(--gold);bo
 /* sem margin-top:auto: com ele o vão sobrava no meio da coluna, entre a barra
    e o bloco final; assim o conteúdo flui de cima e a folga fica embaixo */
 .cen-fim{display:flex;flex-direction:column;gap:3px;margin-top:6px}
+/* o gráfico de ritmo fica por último e estica: é ele que ocupa a folga que
+   sobrava embaixo da coluna. Em tela baixa ele encolhe a zero e não é desenhado. */
+.cen-ritmo{flex:1 1 auto;min-height:0;width:100%;display:block;margin-top:8px}
 .cen-fim .cf{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
   font-size:12.5px;color:var(--mut);padding:3px 8px;border-radius:5px}
 .cen-fim .cf b{font-size:15px;color:var(--navy);font-variant-numeric:tabular-nums}
@@ -375,6 +378,14 @@ table.cen-tab input:focus,.cen-prev input:focus{outline:2px solid var(--gold);bo
   table.cen-tab td{padding:2px 6px}
   .cen-fim .cf-bisar b{font-size:16px}
   .cen-real{padding:4px 9px}
+}
+/* tela muito baixa: sem isso a coluna cortava os últimos pixels do bloco final */
+@media(max-height:660px){
+  .cen-real i{display:none}
+  .cen-barra{height:26px}
+  .cen-fim .cf{padding:1px 8px}
+  .cen-fim .cf b{font-size:13px}
+  .cen-fim .cf-bisar b{font-size:15px}
 }
 
 /* painel de detalhe: a conta por trás do número clicado */
@@ -6095,7 +6106,7 @@ function montaSimulador(){
         "<div class='cf'><span>Total da safra</span><b class='js-total'>–</b></div>"+
         "<div class='cf'><span>Falta para a previsão</span><b class='js-falta'>–</b></div>"+
         "<div class='cf cf-bisar'><span class='js-bisar-rot'>Bisar</span><b class='js-bisar'>–</b></div>"+
-      "</div></div>";
+      "</div><svg class='js-ritmo cen-ritmo'></svg></div>";
   }
   card.innerHTML = SIM_CEN.map(painel).join("");
 
@@ -6130,9 +6141,57 @@ function montaSimulador(){
       p.querySelector(".cf-bisar").style.background = sobra ? "#EAF5EE" : "#FBEDEB";
 
       barra(p.querySelector(".js-barra"), c, prev, pVol, total);
+      ritmo(p.querySelector(".js-ritmo"), c, dias, tdia, pDias ? falta/pDias : 0);
       resumo.push({c:c, prev:prev, pVol:pVol, total:total, bisar:bisar, pDias:pDias});
     });
     texto(resumo);
+  }
+
+  // Moagem por dia de abril a dezembro: os seis meses realizados ao lado dos
+  // três projetados, com a linha tracejada do ritmo que zeraria o bisar. É o que
+  // responde à pergunta seguinte ao "bisar 120 mil t": dá para alcançar?
+  function ritmo(svg,c,diasProj,tdiaProj,precisa){
+    E.limpa(svg);
+    var r=svg.getBoundingClientRect();
+    var W=Math.max(320,Math.round(r.width)), H=Math.round(r.height);
+    if(H<78) return;                       // sem folga na coluna: não desenha
+    svg.setAttribute("viewBox","0 0 "+W+" "+H);
+    svg.setAttribute("preserveAspectRatio","xMidYMid meet");
+
+    var reais = MESES.map(function(_,i){ return SIM_MG.a2026[i]/simDiasRealizado(i); });
+    var vals  = reais.concat(tdiaProj);
+    var rot   = ["Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+    var padL=8, padR=8, padT=16, padB=14;
+    var plotW=W-padL-padR, plotH=H-padT-padB, base=padT+plotH;
+    var max=E.niceAxis(Math.max.apply(null,vals.concat([precisa]))*1.12,4)||1;
+    function y(v){ return base-(v/max)*plotH; }
+
+    var n=vals.length, slot=plotW/n, bw=Math.min(slot*0.62,46);
+    vals.forEach(function(v,i){
+      var x=padL+i*slot+(slot-bw)/2, proj=i>=6;
+      E.add(svg,"path",{d:E.barraTopo(x,y(v),bw,base-y(v),3),
+                        fill:proj?c.cor:"#C8CFDC"});
+      if(plotH>44) E.txt(svg,x+bw/2,y(v)-3,E.fmtInt(v),
+        {"text-anchor":"middle","font-size":8.5,"font-weight":"700",
+         fill:proj?E.NAVY:E.MUT});
+      E.txt(svg,x+bw/2,base+10,rot[i],
+        {"text-anchor":"middle","font-size":8.5,fill:proj?E.NAVY:E.MUT,
+         "font-weight":proj?"700":"400"});
+    });
+
+    // ritmo que zeraria o bisar
+    if(precisa>0 && precisa<=max){
+      var yp=y(precisa);
+      E.add(svg,"line",{x1:padL,x2:W-padR,y1:yp,y2:yp,stroke:E.RED,
+                        "stroke-width":1.6,"stroke-dasharray":"5,3"});
+      var txt="zera o bisar: "+E.fmtInt(precisa)+" t/dia";
+      var tw=txt.length*5.4+10;
+      E.add(svg,"rect",{x:W-padR-tw,y:yp-11,width:tw,height:12,rx:3,fill:"#fff",opacity:".9"});
+      E.txt(svg,W-padR-5,yp-2,txt,
+        {"text-anchor":"end","font-size":8.5,"font-weight":"700",fill:E.RED});
+    }
+    E.txt(svg,padL,10,"Moagem por dia (t) — realizado e projetado",
+      {"font-size":9,"font-weight":"700",fill:E.MUT});
   }
 
   // barra de progresso: realizado + projetado contra a previsão
@@ -6170,8 +6229,10 @@ function montaSimulador(){
       (r[0].pDias===r[1].pDias
         ? "com os mesmos "+E.fmtInt(r[0].pDias)+" dias de reta final, só mudando o ritmo diário."
         : "com "+E.fmtInt(r[0].pDias)+" e "+E.fmtInt(r[1].pDias)+" dias de reta final.")+
-      " <span class='sep'>|</span> Abril a setembro entram travados: são "+
-      E.fmtInt(SIM_REAL_TON)+" t já moídas.";
+      " <span class='sep'>|</span> Para zerar o bisar seria preciso <strong>"+
+      (r[0].pDias ? E.fmtInt((r[0].prev-SIM_REAL_TON)/r[0].pDias)+" t/dia" : "–")+
+      "</strong> nos "+E.fmtInt(r[0].pDias)+" dias da reta final, contra "+
+      E.fmtInt(SIM_REAL_TON/SIM_REAL_DIAS)+" t/dia de abril a setembro.";
   }
 
   card.addEventListener("input",function(e){
