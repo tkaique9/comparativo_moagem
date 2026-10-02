@@ -156,6 +156,12 @@ vazão (dezenas de m³/h) sumiria ao lado da área (milhares de ha). A vazão é
 a do mês, mesmo no modo acumulado, porque é uma taxa e não se acumula. Sob cada
 mês vão as duas variações: a de área na pílula e a de vazão na linha de baixo.
 
+**Clicar numa barra** abre as fazendas irrigadas naquele mês, da maior para a menor
+área, com dias, tanques, vazão e a participação de cada uma no mês. Os totais de cada
+mês são construídos a partir dessas mesmas linhas, então a última linha do modal fecha
+exatamente com a barra do gráfico. A coluna de dias é por fazenda e não soma os dias do
+mês — a mesma data aparece em várias fazendas.
+
 A vazão é a **média ponderada pela área aplicada** — `Σ(ha × vazão) ÷ Σha` — e não
 a média simples das linhas do apontamento: é a vazão com que aqueles hectares
 foram de fato irrigados. Na safra, a ponderação usa a área de cada mês. A janela vai do início de cada safra até **30/09** nos dois anos — o
