@@ -293,7 +293,18 @@ mesmo quando a frota aparece no relatório: em 2026, a 62511 sai do ano todo, a 
 de julho a setembro e a 62519 em setembro (em 2025 a Base não tem branco). E as
 colhedoras **62500, 62502, 62508 e 62509 saem de 2026** por decisão da operação:
 ficaram paradas, com 100% sem uma hora de oficina, e inflavam a colhedora; em 2025,
-quando trabalharam, continuam na conta. A aba `GERAL` da planilha faz o contrário (média simples
+quando trabalharam, continuam na conta.
+
+**Frota que ainda não existia não conta.** O relatório mostra a frota a 100% nos meses
+antes da compra. Por isso ela só entra no mês se a **data de aquisição** do cadastro
+for anterior ao início do período (07/04 em abril, dia 1 nos demais) — o mês da compra,
+parcial, também fica fora. Isso tira 87 frotas de parte de 2025 (as colhedoras 62522
+a 62529, os tratores 62272 a 62284, caminhões, motos, implementos…) e 4 de 2026. Os
+caminhões canavieiros **60551 a 60555 saem de 2025**: 100% o ano todo sem uma hora de
+oficina, e os 60553-55 nem têm data de compra (placas novas, ativos a partir de
+julho/2026).
+
+Com essas regras, a safra 2025 fica em 79,6% e a 2026 em 81,2% (+1,6 p.p.). A aba `GERAL` da planilha faz o contrário (média simples
 das 954 frotas do cadastro, Goiás incluída, com as ausentes valendo 0) e por isso fica
 até 0,9 p.p. abaixo; a página diz isso no texto. Ficam fora também os
 equipamentos do relatório sem cadastro (40 a 52 por mês: sopradores, geradores,
