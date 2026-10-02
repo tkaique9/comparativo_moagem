@@ -279,12 +279,12 @@ das frotas.
 - **Gráfico:** barras de 2025 e 2026 em escala de 0 a 100%, a meta de 85% tracejada e,
   sob cada mês, a diferença em pontos percentuais. Alternador mês a mês / acumulado (o
   acumulado é a disponibilidade da safra até aquele mês).
-- **Quadro ao lado:** o que está dentro do filtro, do pior ao melhor na safra 2026, com
-  a variação em p.p. — sem filtro, os grupos; com várias especialidades, cada uma; com
-  uma só, as frotas. Clicar numa linha filtra só por ela. No pé do quadro, os cards
-  do **acumulado da safra** (07/04 a 30/09): 2025, 2026 e a diferença em p.p., em %
-  sobre 2025 e em horas de oficina. A página não tem mais as fichas do topo.
-- **Diferenças** (pílulas, quadro, cards e texto) são calculadas entre os valores como
+- **Quadro ao lado:** só os três cards do **acumulado da safra** (07/04 a 30/09) do
+  filtro, empilhados — 2025, 2026 e a diferença em p.p., em % sobre 2025 e em horas
+  de oficina. A página não tem fichas no topo nem lista de grupos/frotas no quadro;
+  filtrar é só pelo seletor. O ranking das especialidades mais longe da meta segue no
+  texto de baixo.
+- **Diferenças** (pílulas, cards e texto) são calculadas entre os valores como
   aparecem, com uma casa — 70,6% − 62,2% dá +8,4 p.p. na tela, sem a sobra do
   arredondamento.
 - **Clicar numa barra** abre o mês frota a frota, da pior para a melhor, com a conta

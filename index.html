@@ -164,34 +164,22 @@ header.top,nav.toc{flex:0 0 auto}
 .lam-reg .ind .iv.on b{font-size:17px}
 .lam-reg .ind .iv b{font-size:12.5px}
 
-/* quadro da disponibilidade: o que está dentro do filtro, do pior ao melhor.
-   Cada linha também é um atalho de filtro. */
-#disp-quadro{flex-basis:308px}
-.dq-lista{display:flex;flex-direction:column;overflow:auto;min-height:0;flex:1 1 auto}
-.dq-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:baseline;font:inherit;
-  font-size:11.5px;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);
-  padding:5px 2px;cursor:pointer;color:var(--ink)}
-.dq-row:hover{background:#F4F6FA}
-.dq-row.sem{cursor:default}
-.dq-row.sem:hover{background:none}
-.dq-row .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--navy);font-weight:600}
-.dq-row .n u{text-decoration:none;color:var(--mut);font-weight:400;font-size:10.5px}
-.dq-row b{font-variant-numeric:tabular-nums}
-.dq-row .v{font-size:10.5px;font-weight:700;font-variant-numeric:tabular-nums;min-width:58px;text-align:right}
-/* acumulado da safra no pé do quadro: 2025, 2026 e a diferença */
-.dq-cards{flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:6px;border-top:1px solid var(--line);padding-top:8px}
-.dq-card{background:#F4F6FA;border-radius:8px;padding:6px 10px;display:flex;flex-direction:column;gap:1px;
-  border-left:4px solid #B8C0D0;min-width:0}
+/* quadro da disponibilidade: só o acumulado da safra do filtro — 2025, 2026 e a
+   diferença —, em três cards empilhados que ocupam a altura do cartão */
+#disp-quadro{flex-basis:236px}
+.dq-cards{flex:1 1 auto;display:flex;flex-direction:column;gap:10px;min-height:0}
+.dq-card{flex:1 1 0;background:#F4F6FA;border-radius:9px;padding:10px 14px;display:flex;flex-direction:column;
+  justify-content:center;gap:3px;border-left:5px solid #B8C0D0;min-width:0;min-height:0}
 .dq-card.c26{border-left-color:#2E86C1}
-.dq-card.dif{grid-column:1 / -1;border-left-color:var(--gold)}
-.dq-card i{font-style:normal;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);font-weight:700}
-.dq-card b{font-size:20px;color:var(--navy);font-variant-numeric:tabular-nums;line-height:1.15}
-.dq-card .dq-l{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
-.dq-card .dq-l span{font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums}
-.dq-card u{text-decoration:none;font-size:10.5px;color:var(--mut);line-height:1.35}
+.dq-card.dif{border-left-color:var(--gold)}
+.dq-card i{font-style:normal;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--mut);font-weight:700}
+.dq-card b{font-size:30px;color:var(--navy);font-variant-numeric:tabular-nums;line-height:1.1}
+.dq-card .dq-s{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.dq-card u{text-decoration:none;font-size:11px;color:var(--mut);line-height:1.4}
 @media(max-height:780px){
-  .dq-card{padding:4px 9px}
-  .dq-card b{font-size:17px}
+  .dq-cards{gap:7px}
+  .dq-card{padding:6px 11px}
+  .dq-card b{font-size:24px}
 }
 /* seletor de várias especialidades: botão no lugar do <select> e lista com
    caixas por grupo (marcar o grupo marca todas as especialidades dele) */
@@ -493,7 +481,7 @@ header.top,nav.toc{flex:0 0 auto}
 <div>
 <div class="s-eyebrow">12 &middot; Disponibilidade mecânica &middot; CRV Minas Gerais</div>
 <h2 class="s-title">Disponibilidade da frota — mês a mês</h2>
-<p class="s-sub">Quanto das horas do mês a frota passou fora da oficina, nas duas safras, de 07/04 a 30/09. Marque uma ou mais especialidades no seletor (ou clique no quadro ao lado); clique numa barra para ver frota a frota.</p>
+<p class="s-sub">Quanto das horas do mês a frota passou fora da oficina, nas duas safras, de 07/04 a 30/09. Marque uma ou mais especialidades no seletor; ao lado, o acumulado da safra. Clique numa barra para ver frota a frota.</p>
 </div>
 <div class="s-right">
 <div class="msel"><button type="button" class="s-sel msel-btn" id="disp-msel-btn" aria-haspopup="true" aria-expanded="false">Frota inteira</button>
@@ -5296,9 +5284,8 @@ function textoRxR(){
    Disponibilidade = horas fora da oficina ÷ horas do período, somadas
    sobre as frotas do filtro que entram na conta daquele mês.
    Filtro: uma ou mais especialidades (marcar o grupo marca todas as
-   dele); nenhuma marcada = frota inteira. O quadro ao lado lista o que
-   está dentro do filtro, do pior para o melhor, serve de atalho para
-   filtrar e fecha com o acumulado da safra 2025 x 2026.
+   dele); nenhuma marcada = frota inteira. O quadro ao lado mostra só o
+   acumulado da safra do filtro: 2025, 2026 e a diferença.
    ============================================================ */
 var DSP = window.DISPONIBILIDADE;
 var dspSel = [];          // índices de especialidade marcados; vazio = frota inteira
@@ -5400,7 +5387,7 @@ function graficoDisp(){
   dspBotao();
   E.limpa(svg);
   var rc=card.getBoundingClientRect();
-  var W=Math.max(520,Math.round(rc.width-24-322)), H=Math.max(260,Math.round(rc.height-16));
+  var W=Math.max(520,Math.round(rc.width-24-250)), H=Math.max(260,Math.round(rc.height-16));
   svg.setAttribute("viewBox","0 0 "+W+" "+H);
   svg.setAttribute("preserveAspectRatio","xMidYMid meet");
 
@@ -5448,35 +5435,10 @@ function graficoDisp(){
   dspTexto(frs);
 }
 
-// quadro ao lado: a lista do filtro e, embaixo, o acumulado da safra 2025 x 2026
+// quadro ao lado: o acumulado da safra (07/04 a 30/09) do filtro — 2025, 2026 e
+// a diferença em pontos, em % sobre 2025 e em horas de oficina
 function dspQuadro(frs){
   var q=document.getElementById("disp-quadro");
-  var filhos=dspFilhos(dspSel), html;
-  if(filhos){
-    var linhas = filhos.map(function(x){
-      var fx=dspFrotas(x.sel); return {x:x, n:fx.length, a:dspSafra(fx,0), b:dspSafra(fx,1)};
-    }).filter(function(l){ return l.b!=null; }).sort(function(p,q2){ return p.b-q2.b; });
-    html = "<h4>"+(dspSel.length?"Especialidades do filtro":"Grupos")+" — safra 2026, do pior ao melhor</h4><div class='dq-lista'>"+
-      linhas.map(function(l){
-        var d=l.a!=null?dspDif(l.a,l.b):null;
-        return "<button type='button' class='dq-row' data-sel='"+l.x.sel.join(",")+"' title='Filtrar por "+E.esc(l.x.nome)+"'>"+
-          "<span class='n'>"+E.esc(l.x.nome)+" <u>"+l.n+"</u></span><b style='color:"+(l.b<DSP.meta?"#C0392B":"#2E7D46")+"'>"+
-          dspPct(l.b)+"</b><span class='v' style='color:"+(d==null?E.MUT:E.corVar(d))+"'>"+(d==null?"":dspPP(d))+"</span></button>";
-      }).join("")+"</div>";
-  } else {
-    // uma especialidade só: as frotas de menor disponibilidade em 2026
-    var fr = frs.map(function(r){ return {r:r, a:dspSafra([r],0), b:dspSafra([r],1)}; })
-      .filter(function(x){ return x.b!=null; }).sort(function(p,q2){ return p.b-q2.b; });
-    html = "<h4>Frotas — safra 2026, da pior à melhor</h4><div class='dq-lista'>"+
-      fr.map(function(x){
-        var d=x.a!=null?dspDif(x.a,x.b):null;
-        return "<div class='dq-row sem'><span class='n'>"+x.r[0]+" <u>"+E.esc(x.r[1])+"</u></span><b style='color:"+
-          (x.b<DSP.meta?"#C0392B":"#2E7D46")+"'>"+dspPct(x.b)+"</b><span class='v' style='color:"+
-          (d==null?E.MUT:E.corVar(d))+"'>"+(d==null?"":dspPP(d))+"</span></div>";
-      }).join("")+"</div>";
-  }
-  // acumulado da safra (07/04 a 30/09): 2025, 2026 e a diferença em pontos,
-  // em % sobre 2025 e em horas de oficina
   var t25=dspTotais(frs,0), t26=dspTotais(frs,1);
   var dp = (t25.disp!=null && t26.disp!=null) ? dspDif(t25.disp,t26.disp) : null;
   var dr = (dp!=null && t25.disp) ? dspR1(t26.disp)/dspR1(t25.disp)-1 : null;
@@ -5484,17 +5446,16 @@ function dspQuadro(frs){
   function cartao(cls,rot,v,sub){
     return "<div class='dq-card "+cls+"'><i>"+rot+"</i><b>"+v+"</b><u>"+sub+"</u></div>";
   }
-  html += "<div class='dq-cards'>"+
-    cartao("c25","Acumulado 2025",dspPct(t25.disp),t25.frotas+" frotas · "+E.fmtInt(t25.ofi)+" h em oficina")+
-    cartao("c26","Acumulado 2026",dspPct(t26.disp),t26.frotas+" frotas · "+E.fmtInt(t26.ofi)+" h em oficina")+
+  q.innerHTML = "<h4>Safra · 07/04 a 30/09</h4><div class='dq-cards'>"+
+    cartao("c25","Acumulado 2025",dspPct(t25.disp),t25.frotas+" frotas<br>"+E.fmtInt(t25.ofi)+" h em oficina")+
+    cartao("c26","Acumulado 2026",dspPct(t26.disp),t26.frotas+" frotas<br>"+E.fmtInt(t26.ofi)+" h em oficina")+
     "<div class='dq-card dif'><i>Diferença 2026 x 2025</i>"+
       (dp==null ? "<b>–</b>" :
-       "<div class='dq-l'><b style='color:"+E.corVar(dp)+"'>"+dspPP(dp)+"</b><span style='color:"+E.corVar(dr)+"'>"+
-       E.pct(dr,1)+" sobre 2025</span></div>")+
+       "<b style='color:"+E.corVar(dp)+"'>"+dspPP(dp)+"</b><span class='dq-s' style='color:"+E.corVar(dr)+"'>"+
+       E.pct(dr,1)+" sobre 2025</span>")+
       "<u>Oficina: "+(dh>=0?"+":"−")+E.fmtInt(Math.abs(dh))+" h"+(t25.ofi?" ("+E.pct(t26.ofi/t25.ofi-1,0)+")":"")+
-      " · meta "+DSP.meta+"%</u></div>"+
+      "<br>Meta: "+DSP.meta+"%</u></div>"+
     "</div>";
-  q.innerHTML = html;
   q.hidden = false;
 }
 
@@ -5578,11 +5539,6 @@ function dspAplica(sel){
     dspAplica(sel);
   });
   pop.querySelector("[data-acao=limpar]").addEventListener("click",function(){ dspAplica([]); });
-  // o quadro também filtra: clicar numa linha passa a olhar só ela
-  document.getElementById("disp-quadro").addEventListener("click",function(e){
-    var b=e.target.closest(".dq-row[data-sel]");
-    if(b) dspAplica(b.dataset.sel.split(",").map(Number));
-  });
   document.getElementById("disp-modo").addEventListener("click",function(e){
     var b=e.target.closest("button"); if(!b) return;
     dspModo=b.dataset.modo;
