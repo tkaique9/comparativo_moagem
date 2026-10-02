@@ -203,15 +203,22 @@ uma **puxada de carretel**, e a área é `puxada × espaçamento ÷ 10.000`.
   abril subiu, então o texto não atribui o salto ao calendário. O insight escolhe a
   frase conforme a data de abertura e o sinal da variação.
 
-### Fichas por lâmina (páginas 9 e 10)
+### Lâmina (páginas 9 e 10)
 
 Cada puxada da convencional traz a lâmina na coluna `DESC. LAMINA` (`Água 2º lâmina`,
-`Vinhaça 3º lâmina`, `1ª Lam. Bordadura Ág.`…). As fichas somam a área da safra por
-**número de lâmina** — água e vinhaça juntas, e a bordadura (cerca de 1% da área) na
-lâmina do mesmo número —, no mesmo formato 2025 → 2026 das fichas de frota, com o
-peso de cada lâmina na área de 2026. São só de leitura: não trocam o gráfico. A
-página 9 mostra o total e a página 10 uma fila por região, alinhada com o painel de
-baixo. Só a convencional tem fichas: a localizada não entra nesse corte.
+`Vinhaça 3º lâmina`, `1ª Lam. Bordadura Ág.`…). A área é somada por **número de
+lâmina** — água e vinhaça juntas, e a bordadura (cerca de 1% da área) na lâmina do
+mesmo número. Só a convencional tem esse corte: a localizada não entra.
+
+- **Página 9:** as barras do mês são **empilhadas por lâmina** (1ª embaixo), em tons
+  de azul para 2026 e de cinza para 2025, com o número dentro do segmento quando
+  cabe e na dica do mouse quando não. A soma da pilha é o total do mês — o resíduo
+  de arredondamento fica na maior lâmina —, então o rótulo de cima e o modal não
+  mudam. A legenda traz o total de cada lâmina na safra 2026 e a variação, e o modal
+  do mês ganha a linha "Por lâmina". Funciona também no acumulado.
+- **Página 10:** uma fila de fichas por região (2025 → 2026, peso na área da
+  região), alinhada com o painel de baixo, no formato das fichas de frota. São só de
+  leitura: não trocam o gráfico.
 
 | Lâmina | 2025 (ha) | 2026 (ha) | Variação |
 |---|---|---|---|
@@ -221,9 +228,10 @@ baixo. Só a convencional tem fichas: a localizada não entra nesse corte.
 | 4ª | 342 | 1.339 | +292% |
 
 A leitura vai no insight da página 9: a área de repetição (2ª lâmina em diante) passou
-de 33% para 44% do total. Os dados ficam em `IRRIGACAO.convencional.laminas` e em
-`laminas` de cada região (posição 0 = 1ª lâmina); uma 5ª lâmina vira mais uma ficha
-sozinha.
+de 33% para 44% do total. Os dados ficam em `IRRIGACAO.convencional.laminas` (safra),
+`laminasMes` (mês a mês) e `laminas` de cada região (posição 0 = 1ª lâmina); uma 5ª
+lâmina vira mais uma ficha e mais um segmento sozinha (a rampa de cores tem quatro
+tons — uma 5ª repetiria o último e pede um tom novo em `RAMPA_LAM`).
 
 ### As páginas 10 e 11 (irrigação convencional por região)
 

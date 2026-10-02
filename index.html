@@ -1732,6 +1732,9 @@ window.FROTA = {
      "laminas" é a área da safra por número de lâmina (posição 0 = 1ª), no
      total e em cada região, lido da DESC. LAMINA: água e vinhaça somadas, e a
      bordadura (1ª/2ª/3ª Lam. Bordadura) entra na lâmina do mesmo número.
+     "laminasMes" é a mesma área por mês e lâmina, que empilha as barras da
+     página 9; o resíduo de arredondamento fica na maior lâmina do mês, para a
+     pilha fechar exatamente com o total do mês.
      ============================================================ -->
 <script>
 window.IRRIGACAO = {
@@ -1964,6 +1967,7 @@ window.IRRIGACAO = {
       {ha:1683.0, vel:22.0, dias:30, faz:15, puxadas:980, vinhaca:932.7, haVel:1347.8}
     ],
     laminas: {a2025: [9561.4,3524.7,809.1,341.9], a2026: [7524.2,3109.7,1444.7,1339.0]},
+    laminasMes: {a2025: [[946.0,85.1,0,0],[2086.4,267.2,0,0],[2099.8,612.6,30.3,0],[1682.7,796.8,226.1,53.1],[1320.7,1009.9,239.3,50.7],[1425.1,753.2,313.4,238.1]], a2026: [[1402.7,76.3,30.2,6.9],[2493.3,743.5,117.1,24.5],[1171.5,950.4,206.7,117.8],[854.0,606.3,490.9,231.2],[692.6,564.5,464.0,490.2],[910.2,168.7,135.7,468.4]]},
     regioes: [
       {num:1, blocos:["06 Shekinah","07 Samir"], fazTotal:[33, 24],
        laminas: {a2025: [3970.6,1409.2,152.0,18.7], a2026: [3601.4,1034.5,274.1,322.3]},
@@ -3540,6 +3544,9 @@ var PAGINAS_IRRIGA = [
 ];
 
 var irrigaModo = {};   // "mes" ou "acumulado", por página
+// tons por lâmina, do escuro (1ª) ao claro (4ª): cinza para 2025, azul para 2026
+var RAMPA_LAM = [["#6E7990","#97A2B7","#BAC2D1","#DADFE8"],
+                 ["#1B5E8C","#2E86C1","#79B3DD","#BBD8EE"]];
 
 function somaIrriga(arr){
   var o = {ha:0, dias:0};
@@ -3607,6 +3614,9 @@ function detalheIrrigaMes(cfg, ano, mes, reg){
     "<em>"+E.fmtInt(ag[qt.k])+" "+qt.nome+" &middot; "+tx.nome+" média de "+
     E.fmtDec(ag[tx.k],1)+" "+tx.un+" no mês"+
     (vin ? " &middot; "+E.fmtDec(ag.vinhaca,1)+" ha com vinhaça ("+E.pctAbs(ag.vinhaca/ag.ha,0)+")" : "")+
+    // por lâmina só no total do mês: a divisão não existe por região
+    (D.laminasMes && !reg ? "<br>Por lâmina: "+D.laminasMes[ano?"a2026":"a2025"][mes].map(function(v,k){
+      return (k+1)+"ª "+E.fmtInt(v)+" ha"; }).join(" &middot; ") : "")+
     "</em>";
 
   var corpo = "<table><thead><tr><th class='l'>Fazenda</th><th>Dias</th>"+
@@ -3657,7 +3667,6 @@ function slideIrrigaHTML(cfg){
       "</div>"+
     "</div></div>"+
     "<div class='s-legend js-legend'></div>"+
-    "<div class='ind-bar js-lam' hidden></div>"+
     "<div class='s-card'><svg class='js-svg'></svg></div>"+
     "<div class='s-insight js-insight'>carregando&hellip;</div></article>";
 }
@@ -3667,6 +3676,7 @@ function montaPaginaIrriga(cfg){
   var q = function(s){ return sl.querySelector(s); };
   var D = window.IRRIGACAO[cfg.chave];
   var tx = cfg.taxa;
+  var LM = D.laminasMes;   // só a convencional traz a lâmina por mês
   var s25 = somaIrriga(D.a2025), s26 = somaIrriga(D.a2026);
   irrigaModo[cfg.id] = "mes";
 
@@ -3686,11 +3696,6 @@ function montaPaginaIrriga(cfg){
       (dz>=0?"#7FD79B":"#F0897A")+"'>"+E.pct(dz)+"</b>";
     q(".js-abertura").innerHTML = "A safra 2026 abriu em <b>"+dataBR(D.ini2026)+
       "</b> e a 2025 em <b>"+dataBR(D.ini2025)+"</b>.";
-    // só a convencional traz a lâmina de cada aplicação
-    if(D.laminas){
-      q(".js-lam").innerHTML = fichasLamina(D.laminas, "da área de 2026");
-      q(".js-lam").hidden = false;
-    }
   }
 
   function desenha(){
@@ -3721,9 +3726,11 @@ function montaPaginaIrriga(cfg){
     E.tituloSVG(svg,16,20, acum
       ? "Área irrigada acumulada (ha) e "+tx.nome+" média do mês ("+tx.un+")"
       : "Área irrigada no mês (ha) e "+tx.nome+" média do mês ("+tx.un+")", null, W-200);
-    E.txt(svg,16,34, acum
-      ? "barras: área acumulada desde o início da safra; linhas: "+tx.nome+" média de cada mês"
-      : "barras: hectares aplicados no mês; linhas: "+tx.nome+" média com que foram aplicados",
+    E.txt(svg,16,34, (acum
+      ? "barras: área acumulada desde o início da safra"
+      : "barras: hectares aplicados no mês")+
+      (LM ? ", empilhadas por lâmina (1ª embaixo)" : "")+
+      "; linhas: "+tx.nome+" média "+(acum?"de cada mês":"com que foram aplicados"),
       {"font-size":10.5,fill:E.MUT});
 
     // --- faixa de baixo: área ---
@@ -3734,7 +3741,7 @@ function montaPaginaIrriga(cfg){
       E.add(svg,"line",{x1:padL,x2:W-padR,y1:yA,y2:yA,stroke:E.GRID});
       E.txt(svg,padL-8,yA+4,vA?E.fmtInt(vA):"0",{"text-anchor":"end","font-size":11,fill:E.MUT});
     }
-    E.txt(svg,padL-8,topoBarras-9,"hectares",{"text-anchor":"end","font-size":10.5,fill:E.MUT});
+    E.txt(svg,padL-8,topoBarras-16,"hectares",{"text-anchor":"end","font-size":10.5,fill:E.MUT});
 
     // --- faixa de cima: vazão ou velocidade, com escala própria ---
     var todos = z25.concat(z26);
@@ -3753,6 +3760,13 @@ function montaPaginaIrriga(cfg){
     E.txt(svg,W-padR+10,padT+2,tx.un,{"font-size":10.5,fill:"#2E86C1"});
 
     // --- barras ---
+    // convencional: cada barra vira uma pilha por lâmina (1ª embaixo), nos tons
+    // do ano. A soma das partes é o total do mês, então o rótulo de cima não muda.
+    function partesLam(ano,i){
+      var arr = LM[ano?"a2026":"a2025"];
+      if(!acum) return arr[i];
+      return arr[0].map(function(_,k){ var t=0; for(var j=0;j<=i;j++) t+=arr[j][k]; return t; });
+    }
     var barW=Math.min(slot*0.27,52), gap=Math.min(slot*0.05,9);
     MESES.forEach(function(mes,i){
       var cx = padL+i*slot+slot/2;
@@ -3764,7 +3778,25 @@ function montaPaginaIrriga(cfg){
         g.appendChild(E.ns("title")).textContent =
           mes+" de "+(b[4]?2026:2025)+" — clique para ver as fazendas irrigadas";
         var h=base-y(b[1]);
-        E.add(g,"path",{d:E.barraTopo(b[0],y(b[1]),barW,h,4),fill:b[2]});
+        if(!LM) E.add(g,"path",{d:E.barraTopo(b[0],y(b[1]),barW,h,4),fill:b[2]});
+        else {
+          var ps=partesLam(b[4],i), y0=base, ult=-1;
+          ps.forEach(function(v,k){ if(v>0) ult=k; });
+          ps.forEach(function(v,k){
+            if(!(v>0)) return;
+            var hk=(v/maxA)*hBarras, yk=y0-hk;
+            var seg=E.add(g,"path",{d: k===ult ? E.barraTopo(b[0],yk,barW,hk,4)
+                : "M"+b[0]+","+y0+" h"+barW+" v"+(-hk)+" h"+(-barW)+" Z",
+                fill:RAMPA_LAM[b[4]][Math.min(k,3)],stroke:"#fff","stroke-width":0.7});
+            seg.appendChild(E.ns("title")).textContent = mes+" de "+(b[4]?2026:2025)+" · "+(k+1)+
+              "ª lâmina: "+E.fmtInt(v)+" ha ("+E.pctAbs(v/b[1],0)+" da barra) — clique para ver as fazendas";
+            // número dentro do segmento só quando cabe; senão fica na dica
+            if(hk>=15 && barW>=30)
+              E.txt(g,b[0]+barW/2,yk+hk/2+3.5,E.fmtInt(v),{"text-anchor":"middle","font-size":9.5,
+                "font-weight":"700","pointer-events":"none",fill:k<(b[4]?2:1)?"#fff":"#1E2A44"});
+            y0=yk;
+          });
+        }
         E.txt(svg,b[0]+barW/2,y(b[1])-6,E.fmtInt(b[1]),
               {"text-anchor":"middle","font-size":11,"font-weight":"700",fill:b[3]});
       });
@@ -3802,6 +3834,20 @@ function montaPaginaIrriga(cfg){
             {"text-anchor":"middle","font-size":9.5,"font-weight":"700",fill:E.GRAY});
     });
 
+    var linhasLeg = [
+      {tipo:"linha",cor:E.GRAY,tracejada:true,nome:tx.Nome+" 2025",obs:"(eixo da direita)"},
+      {tipo:"linha",cor:"#2E86C1",nome:tx.Nome+" 2026",obs:"(eixo da direita)"}
+    ];
+    // convencional: o que as fichas mostravam (total de cada lâmina na safra e a
+    // variação) passa para a legenda, ao lado da cor da lâmina
+    if(LM){
+      E.legenda(q(".js-legend"), D.laminas.a2026.map(function(v26,k){
+        return {cor:RAMPA_LAM[1][Math.min(k,3)], nome:(k+1)+"ª lâmina",
+                obs:E.fmtInt(v26)+" ha ("+E.pct(v26/D.laminas.a2025[k]-1,0)+")"};
+      }).concat([{cor:RAMPA_LAM[0][0],nome:"2025",obs:"nos mesmos tons, em cinza"}], linhasLeg));
+      texto();
+      return;
+    }
     E.legenda(q(".js-legend"),[
       {cor:E.C25,nome:"Área 2025"},
       {cor:cfg.cor,nome:"Área 2026"},
