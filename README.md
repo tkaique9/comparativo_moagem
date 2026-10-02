@@ -20,7 +20,7 @@ python -m http.server 8731
 
 ## Páginas
 
-A apresentação é organizada em **módulos**. O menu do topo mostra a capa, os quatro
+A apresentação é organizada em **módulos**. O menu do topo mostra a capa, os
 módulos e, ao lado, só as páginas do módulo em que você está; clicar no módulo leva à
 primeira página dele. Nas bolinhas do rodapé, cada módulo começa depois de um
 respiro. Os módulos e suas páginas ficam na lista `MODULOS`, no script de mesmo nome
@@ -41,7 +41,8 @@ do `index.html` — uma página nova entra no módulo acrescentando o id dela al
 | | 10 | Irrigação por região | A convencional aberta por região, 2025 contra 2026, painéis na mesma escala |
 | | 11 | Região x região | Duas regiões escolhidas lado a lado numa safra, com a diferença mês a mês |
 | **Manutenção** | 12 | Disponibilidade mecânica | Disponibilidade % da frota mês a mês, 2025 x 2026, com filtro de especialidades |
-| 13 | Simulador da reta final | Dois cenários editáveis de outubro a dezembro, com o quanto ainda bisa |
+| | 13 | Custo por ordem de produção | Consumo em R$ por ordem de produção, 2025 x 2026: economia ou aumento, por preço e por volume |
+| **Projeção** | 14 | Simulador da reta final | Dois cenários editáveis de outubro a dezembro, com o quanto ainda bisa |
 
 ### A capa
 
@@ -396,7 +397,36 @@ grupos e especialidades e, por frota, as horas em oficina de cada mês nas duas 
 (`null` = fora da conta naquele mês). Fonte: `DISPONIBILIDADE MANUTENÇÃO - frente -
 2025.xlsx` e `- 2026.xlsx`, aba `Base` (% e cadastro) e abas ABR a SET (relatório).
 
-### A página 13 (simulador da reta final)
+### A página 13 (custo por ordem de produção)
+
+Consumo da manutenção em R$ por **ordem de produção** (lubrificantes, peças, pneus,
+recapagens, serviços de terceiros, material de uso e consumo), de abril a setembro,
+2025 contra 2026 — para ver onde houve **economia** e onde houve **aumento**. Aqui custo
+que cai é bom: economia em verde, aumento em vermelho.
+
+- **À esquerda:** a diferença 2026 − 2025 de cada ordem, com barras em torno do zero
+  (economia para a esquerda, aumento para a direita) e o total. Clicar numa ordem
+  filtra a página; clicar de novo volta para todas. O seletor do topo faz o mesmo.
+- **No centro:** o mês a mês do filtro, 2025 x 2026, com a variação sob cada mês e o
+  alternador mês a mês / acumulado. Clicar numa barra abre o mês ordem a ordem:
+  quantidade, R$ médio e total das duas safras e a diferença.
+- **Ao lado:** os cards do acumulado 2025, 2026 e da diferença, aberta em **efeito
+  preço** e **efeito volume**: diferença = (R$ médio 26 − R$ médio 25) × qtd 26 +
+  (qtd 26 − qtd 25) × R$ médio 25, ordem a ordem — as duas parcelas somam exatamente
+  a diferença. Ex.: o aumento de pneus é quase todo volume (982 → 1.759 unidades); o
+  de lubrificantes é preço (R$ 13,18 → R$ 16,64 por unidade).
+
+No total, as seis ordens foram de R$ 35,75 mi para R$ 31,52 mi — economia de R$ 4,23
+mi (−11,8%), quase toda de volume (−R$ 4,38 mi; o preço somou +R$ 143 mil).
+
+A quantidade está na unidade de cada ordem (litros, peças, pneus, horas…) e por isso
+não se soma entre ordens. Fonte: `consumo ordem produção.xlsx`, aba `mes`, com as
+colunas **A = 2025 e B = 2026** (a planilha traz a diferença como B − A). A aba
+`especialidade` da mesma planilha **não fecha** com a `mes` (soma R$ 30,9 mi e R$ 23,7
+mi, contra R$ 35,8 mi e R$ 31,5 mi) e por isso não entra na página. Os dados ficam em
+`window.CUSTO_OP`.
+
+### A página 14 (simulador da reta final)
 
 Reproduz a `Projeção Safra.xlsx` em dois cenários lado a lado, para rodar ao vivo na
 reunião. Abril a setembro entram **travados**, com o realizado da CRV-MG (1.717.690 t

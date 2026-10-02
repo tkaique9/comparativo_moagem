@@ -264,6 +264,12 @@ header.top,nav.toc{flex:0 0 auto}
   .dq-card{padding:6px 11px}
   .dq-card b{font-size:24px}
 }
+/* custo por ordem de produção: dois gráficos lado a lado e os cards ao lado */
+#cop-quadro{flex-basis:236px}
+.cop-g{flex:1 1 auto;min-width:0;display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.25fr);
+  grid-template-rows:minmax(0,1fr);gap:14px}
+.cop-g svg{width:100%;height:100%;display:block;min-width:0;min-height:0}
+
 /* seletor de várias especialidades: botão no lugar do <select> e lista com
    caixas por grupo (marcar o grupo marca todas as especialidades dele) */
 .msel{position:relative}
@@ -714,7 +720,8 @@ nav.toc a.on{color:var(--tm-ink);border-bottom-color:var(--accent);font-weight:6
 <a href="#irriga-regioes"><b>10</b> Irrigação por região</a>
 <a href="#irriga-reg-x-reg"><b>11</b> Região x região</a>
 <a href="#disponibilidade"><b>12</b> Disponibilidade mecânica</a>
-<a href="#simulador"><b>13</b> Simulador da reta final</a>
+<a href="#custo-op"><b>13</b> Custo por ordem de produção</a>
+<a href="#simulador"><b>14</b> Simulador da reta final</a>
 </nav>
 
 <div class="deck" id="deck">
@@ -934,11 +941,32 @@ nav.toc a.on{color:var(--tm-ink);border-bottom-color:var(--accent);font-weight:6
 <div class="s-insight" id="disp-insight">carregando…</div>
 </article>
 
-<!-- ================= 13 · SIMULADOR DA RETA FINAL ================= -->
+<!-- ================= 13 · CUSTO POR ORDEM DE PRODUÇÃO ================= -->
+<article class="slide slide-dark" id="custo-op" data-title="Custo por ordem de produção">
+<div class="s-head">
+<div>
+<div class="s-eyebrow">13 &middot; Custo por ordem de produção &middot; Manutenção</div>
+<h2 class="s-title">Custo de manutenção — 2026 x 2025</h2>
+<p class="s-sub">Consumo em R$ de cada ordem de produção de abril a setembro, nas duas safras. Verde é economia, vermelho é aumento. Clique numa ordem para filtrar e numa barra do mês para ver ordem a ordem.</p>
+</div>
+<div class="s-right">
+<select class="s-sel" id="cop-ordem" aria-label="Ordem de produção"></select>
+<div class="s-toggle" id="cop-modo">
+<button type="button" data-modo="mes" class="on">Mês a mês</button>
+<button type="button" data-modo="acumulado">Acumulado</button>
+</div>
+</div>
+</div>
+<div class="s-legend" id="cop-legend"></div>
+<div class="s-card s-quadro" id="cop-card"><div class="cop-g"><svg id="cop-svg-ord"></svg><svg id="cop-svg-mes"></svg></div><div class="quadro" id="cop-quadro"></div></div>
+<div class="s-insight" id="cop-insight">carregando…</div>
+</article>
+
+<!-- ================= 14 · SIMULADOR DA RETA FINAL ================= -->
 <article class="slide slide-dark" id="simulador" data-title="Simulador da reta final">
 <div class="s-head">
 <div>
-<div class="s-eyebrow">13 &middot; Simulador da reta final &middot; CRV Minas Gerais</div>
+<div class="s-eyebrow">14 &middot; Simulador da reta final &middot; CRV Minas Gerais</div>
 <h2 class="s-title">Quanto falta para fechar a previsão</h2>
 <p class="s-sub">Abril a setembro entram travados, com o que já foi moído. Outubro, novembro e dezembro são a projeção: mude os dias, a moagem por dia ou a própria previsão da safra e os dois cenários recalculam na hora. <b>Bisar</b> é o que ainda falta para a previsão depois da reta final.</p>
 </div>
@@ -3879,6 +3907,29 @@ window.DISPONIBILIDADE = {
 </script>
 
 <!-- ============================================================
+     DADOS DE CUSTO POR ORDEM DE PRODUÇÃO — manutenção.
+     Fonte: "consumo ordem produção.xlsx", aba "mes": consumo de cada
+     ordem de produção mês a mês, de abril a setembro. Colunas A = safra
+     2025 e B = safra 2026 (a planilha traz a diferença como B − A).
+     q = quantidade (na unidade de cada ordem: litros, peças, pneus,
+     horas…, por isso não se soma entre ordens); v = valor total em R$.
+     A aba "especialidade" da mesma planilha não fecha com esta (soma R$
+     30,9 mi e R$ 23,7 mi, contra R$ 35,8 mi e R$ 31,5 mi aqui) e não entra.
+     ============================================================ -->
+<script>
+window.CUSTO_OP = {
+  ordens: [
+    {"cod":"2.4.01.02","nome":"Lubrificantes","q25":[18499.8,23732.43,24476.8,25270.93,25132.1,24756.59],"v25":[294464,312329,310864,300553,335899,316043],"q26":[23896.9,25873.5,22864.87,25300.1,22991.57,24787.45],"v26":[303513,381233,379989,416606,465972,477747]},
+    {"cod":"2.4.01.03","nome":"Peças","q25":[47343.18,47322.18,46139.91,44002.88,47695.27,48985.98],"v25":[3015094,3784682,3653043,3519466,3470142,3496203],"q26":[45776.56,36551.82,37177.47,44738.59,39569.1,41069.01],"v26":[2433582,2728372,2858136,3399252,2825013,3130793]},
+    {"cod":"2.4.01.04","nome":"Pneus","q25":[92.0,127.0,188.0,216.0,206.0,153.0],"v25":[74783,191433,279928,382316,304743,210767],"q26":[286.0,199.0,345.0,198.0,340.0,391.0],"v26":[421513,305123,473559,297609,532142,689359]},
+    {"cod":"2.4.01.05","nome":"Recapagens","q25":[153.0,202.0,193.0,188.0,240.0,123.0],"v25":[126919,141888,141005,153485,192385,97641],"q26":[42.0,179.0,119.0,220.0,108.0,145.0],"v26":[63252,156081,96804,164612,82116,86242]},
+    {"cod":"2.4.01.06","nome":"Serviços de terceiros","q25":[8676.81,12773.8,15072.99,11160.67,15539.83,19733.14],"v25":[1302181,1394319,1126919,1306573,1469321,1350922],"q26":[4481.53,5676.07,7892.79,12686.08,15190.65,12388.1],"v26":[1004727,785787,944052,1223867,1200362,954453]},
+    {"cod":"2.4.01.08","nome":"Material de uso e consumo","q25":[55281.79,77523.77,58109.22,66700.19,70404.61,72504.61],"v25":[441912,560274,481518,380951,465282,365592],"q26":[48528.22,51810.56,49597.12,69269.41,70915.16,71419.21],"v26":[341701,362816,359854,384575,399811,388561]}
+  ]
+};
+</script>
+
+<!-- ============================================================
      MOTOR — formatação, agregação e primitivas de gráfico SVG
      ============================================================ -->
 <script>(function(){
@@ -6536,6 +6587,238 @@ function montaSimulador(){
 
 
 /* ============================================================
+   PÁGINA DE CUSTO POR ORDEM DE PRODUÇÃO (manutenção)
+   Consumo em R$ de cada ordem de produção, abril a setembro, 2025
+   contra 2026. À esquerda, a diferença por ordem (economia para a
+   esquerda, aumento para a direita) — clicar filtra. No centro, o mês
+   a mês do filtro. Ao lado, os cards do acumulado, com a diferença
+   aberta em efeito preço e efeito volume.
+   Custo que cai é bom: aqui a economia é verde e o aumento, vermelho.
+   ============================================================ */
+var COP = window.CUSTO_OP;
+var copSel = -1;          // -1 = todas as ordens; senão, o índice da ordem
+var copModo = "mes";
+var COR_COP = "#2E86C1";
+
+function copSoma(a){ return a.reduce(function(s,v){ return s+v; },0); }
+function copOrdens(){ return copSel<0 ? COP.ordens : [COP.ordens[copSel]]; }
+function copNome(){ return copSel<0 ? "Todas as ordens" : COP.ordens[copSel].nome; }
+// R$ em mil ou milhão, com sinal opcional
+function copR(v,sinal){
+  var a=Math.abs(v), s = sinal ? (v<0?"−":"+") : (v<0?"−":"");
+  return s+"R$ "+(a>=1e6 ? E.fmtDec(a/1e6,2)+" mi" : E.fmtInt(a/1e3)+" mil");
+}
+// economia (custo menor) é boa: cor pelo sinal invertido
+function copCor(d){ return E.corVar(-d); }
+function copSerie(ords,ano,acum){
+  var k = ano?"v26":"v25", s=0;
+  return MESES.map(function(_,i){
+    var v = copSoma(ords.map(function(o){ return o[k][i]; }));
+    if(!acum) return v;
+    s+=v; return s;
+  });
+}
+// efeito preço e efeito volume da safra, por ordem: a diferença de cada ordem
+// é exatamente (valor médio 26 − valor médio 25) × qtd 26 + (qtd 26 − qtd 25) × valor médio 25
+function copEfeitos(o){
+  var q25=copSoma(o.q25), q26=copSoma(o.q26), v25=copSoma(o.v25), v26=copSoma(o.v26);
+  var u25 = q25 ? v25/q25 : 0, u26 = q26 ? v26/q26 : 0;
+  return {q25:q25, q26:q26, v25:v25, v26:v26, u25:u25, u26:u26,
+          preco:(u26-u25)*q26, volume:(q26-q25)*u25};
+}
+
+function copDetalheMes(i){
+  var ords = COP.ordens;
+  var lin = ords.map(function(o,k){
+    var u25 = o.q25[i] ? o.v25[i]/o.q25[i] : 0, u26 = o.q26[i] ? o.v26[i]/o.q26[i] : 0;
+    return {o:o, k:k, u25:u25, u26:u26, d:o.v26[i]-o.v25[i]};
+  }).sort(function(a,b){ return a.d-b.d; });
+  var t25=copSoma(ords.map(function(o){ return o.v25[i]; })), t26=copSoma(ords.map(function(o){ return o.v26[i]; }));
+  var conta = "<span class='res'>"+copR(t26-t25,true)+"</span><span class='op'>=</span><b>"+copR(t26)+
+    "</b> em 2026<span class='op'>−</span><b>"+copR(t25)+"</b> em 2025"+
+    "<em>"+(t26<=t25?"economia":"aumento")+" de "+E.pctAbs(Math.abs(t26/t25-1),1)+" no mês, somando as "+ords.length+" ordens de produção</em>";
+  var corpo = "<table><thead><tr><th class='l'>Ordem de produção</th><th>Qtd 2025</th><th>Qtd 2026</th>"+
+    "<th>R$ médio 2025</th><th>R$ médio 2026</th><th>Total 2025</th><th>Total 2026</th><th class='key'>Diferença</th></tr></thead><tbody>"+
+    lin.map(function(x){
+      var dp = x.o.v25[i] ? x.d/x.o.v25[i] : null;
+      return "<tr"+(x.k===copSel?" style='background:#FDF8EA'":"")+"><td class='l'>"+E.esc(x.o.nome)+
+        " <span style='color:#5A6072'>"+x.o.cod+"</span></td>"+
+        "<td>"+E.fmtDec(x.o.q25[i],0)+"</td><td>"+E.fmtDec(x.o.q26[i],0)+"</td>"+
+        "<td>"+E.fmtDec(x.u25,2)+"</td><td>"+E.fmtDec(x.u26,2)+"</td>"+
+        "<td>"+E.fmtInt(x.o.v25[i])+"</td><td>"+E.fmtInt(x.o.v26[i])+"</td>"+
+        "<td class='key' style='color:"+copCor(x.d)+"'>"+(x.d>=0?"+":"−")+E.fmtInt(Math.abs(x.d))+
+        (dp!=null?" ("+E.pct(dp,0)+")":"")+"</td></tr>";
+    }).join("")+
+    "<tr class='tot'><td class='l'>Total — "+ords.length+" ordens</td><td></td><td></td><td></td><td></td>"+
+    "<td>"+E.fmtInt(t25)+"</td><td>"+E.fmtInt(t26)+"</td><td class='key'>"+(t26-t25>=0?"+":"−")+
+    E.fmtInt(Math.abs(t26-t25))+"</td></tr></tbody></table>"+
+    "<p style='font-size:11.5px;color:#5A6072;margin:10px 0 0;line-height:1.5'>Valores em R$. Da maior economia ao "+
+    "maior aumento. A quantidade está na unidade de cada ordem (litros, peças, pneus, horas…), por isso não se soma "+
+    "entre ordens; o R$ médio é o total dividido pela quantidade.</p>";
+  abreCaixa("Custo por ordem de produção — "+MESES[i]+" de 2026 x 2025", "Ordem a ordem no mês", conta, corpo);
+}
+
+// --- painel da esquerda: diferença 2026 − 2025 por ordem ---
+function copPainelOrdens(svg){
+  E.limpa(svg);
+  var d=E.medir(svg,320,240), W=d.W, H=d.H;
+  svg.setAttribute("viewBox","0 0 "+W+" "+H);
+  svg.setAttribute("preserveAspectRatio","xMidYMid meet");
+  var lin = COP.ordens.map(function(o,k){
+    var a=copSoma(o.v25), b=copSoma(o.v26); return {o:o, k:k, d:b-a, p:a?b/a-1:0};
+  }).sort(function(x,y){ return x.d-y.d; });
+  var tA=copSoma(COP.ordens.map(function(o){ return copSoma(o.v25); })), tB=copSoma(COP.ordens.map(function(o){ return copSoma(o.v26); }));
+  lin.push({total:true, d:tB-tA, p:tB/tA-1});
+
+  E.tituloSVG(svg,14,20,"Diferença 2026 − 2025 por ordem",null,W-28);
+  E.txt(svg,14,36,"abril a setembro · economia à esquerda, aumento à direita · clique para filtrar",{"font-size":10.5,fill:E.MUT});
+  var padT=58, padB=16, rotW=Math.min(165,W*0.36), x0=14+rotW, x1=W-14;
+  var maxAbs=Math.max.apply(null,lin.map(function(l){ return Math.abs(l.d); }));
+  var temNeg=lin.some(function(l){ return l.d<0; }), temPos=lin.some(function(l){ return l.d>0; });
+  // eixo do zero: espaço para o lado negativo e para o positivo, proporcional ao maior de cada um
+  var maxNeg=Math.max.apply(null,lin.map(function(l){ return l.d<0?-l.d:0; })), maxPos=Math.max.apply(null,lin.map(function(l){ return l.d>0?l.d:0; }));
+  // três colunas: nome | barras em torno do zero | valor, alinhado à direita —
+  // o rótulo nunca disputa espaço com a barra nem passa da borda
+  var valW = 118, a0 = x0+8, a1 = x1-valW-10;
+  var larg = Math.max(40, a1-a0);
+  var xz = a0 + larg*maxNeg/((maxNeg+maxPos)||1);
+  var esc = larg/((maxNeg+maxPos)||1);
+  var rowH=(H-padT-padB)/lin.length, barH=Math.min(rowH*0.56,26);
+  E.add(svg,"line",{x1:xz,x2:xz,y1:padT-6,y2:H-padB,stroke:"#B7BECC","stroke-width":1.2});
+  lin.forEach(function(l,r){
+    var cy=padT+r*rowH+rowH/2, w=Math.abs(l.d)*esc, x=l.d<0?xz-w:xz;
+    var sel = !l.total && l.k===copSel;
+    var g=E.add(svg,"g",{class:l.total?"":"rc-clicavel"});
+    if(!l.total){
+      g.addEventListener("click",function(){ copAplica(copSel===l.k?-1:l.k); });
+      g.appendChild(E.ns("title")).textContent=(copSel===l.k?"Voltar para todas as ordens":"Filtrar por "+l.o.nome);
+      E.add(g,"rect",{x:4,y:cy-rowH/2+1,width:W-8,height:rowH-2,rx:6,fill:sel?"#FDF2D3":"transparent"});
+    } else {
+      E.add(svg,"line",{x1:14,x2:W-14,y1:cy-rowH/2,y2:cy-rowH/2,stroke:E.GRID});
+    }
+    E.txt(g,14,cy+4,l.total?"Total das ordens":l.o.nome,
+          {"font-size":l.total?12.5:12,"font-weight":l.total||sel?"700":"600",fill:l.total?E.NAVY:"#2B2B2B"});
+    E.add(g,"rect",{x:x,y:cy-barH/2,width:Math.max(w,1.5),height:barH,rx:3,
+                    fill:l.total?(l.d<=0?"#1F6E3A":"#9B2D22"):copCor(l.d),opacity:l.total?1:.9});
+    var rot=copR(l.d,true)+" ("+E.pct(l.p,0)+")";
+    E.txt(g, x1, cy+4, rot, {"text-anchor":"end","font-size":11,"font-weight":"700",fill:copCor(l.d)});
+  });
+}
+
+// --- painel do centro: mês a mês do filtro ---
+function copPainelMes(svg){
+  E.limpa(svg);
+  var acum = copModo==="acumulado", ords=copOrdens();
+  var d=E.medir(svg,420,240), W=d.W, H=d.H;
+  svg.setAttribute("viewBox","0 0 "+W+" "+H);
+  svg.setAttribute("preserveAspectRatio","xMidYMid meet");
+  var v25=copSerie(ords,0,acum), v26=copSerie(ords,1,acum);
+  var padL=62, padR=12, padT=66, padB=60;
+  if(H<330){ padT=60; padB=56; }
+  var plotW=W-padL-padR, plotH=H-padT-padB, base=padT+plotH;
+  E.tituloSVG(svg,14,20,copNome()+" — "+(acum?"custo acumulado":"custo do mês"),null,W-28);
+  E.txt(svg,14,36,(acum?"R$ somados desde abril":"R$ consumidos no mês")+" · clique numa barra para ver ordem a ordem",
+        {"font-size":10.5,fill:E.MUT});
+  var maxV=E.niceAxis(Math.max.apply(null,v25.concat(v26))*1.12,4);
+  var y=E.eixoY(svg,{max:maxV,min:0,x0:padL,x1:W-padR,yTop:padT,yBot:base,ticks:4,fs:10.5,
+                     fmt:function(v){ return v?E.fmtInt(v/1e3):"0"; }});
+  E.txt(svg,padL-8,padT-10,"R$ mil",{"text-anchor":"end","font-size":10.5,fill:E.MUT});
+  var n=MESES.length, slot=plotW/n, barW=Math.min(slot*0.32,48), gap=Math.min(slot*0.05,8);
+  MESES.forEach(function(mes,i){
+    var cx=padL+i*slot+slot/2;
+    [[cx-gap/2-barW, v25[i], E.C25, E.MUT],[cx+gap/2, v26[i], COR_COP, E.NAVY]].forEach(function(b){
+      var g=E.add(svg,"g",{class:"rc-clicavel"});
+      g.addEventListener("click",function(){ copDetalheMes(i); });
+      g.appendChild(E.ns("title")).textContent=mes+" — clique para ver ordem a ordem";
+      E.add(g,"path",{d:E.barraTopo(b[0],y(b[1]),barW,base-y(b[1]),4),fill:b[2]});
+      E.txt(svg,b[0]+barW/2,y(b[1])-6,E.fmtInt(b[1]/1e3),
+            {"text-anchor":"middle","font-size":slot<100?9.5:10.5,"font-weight":"700",fill:b[3]});
+    });
+    E.txt(svg,cx,base+19,slot<100?MC[i]:mes,{"text-anchor":"middle","font-size":12,"font-weight":"600",fill:"#2B2B2B"});
+    var dv = v25[i] ? v26[i]/v25[i]-1 : 0;
+    E.pilula(svg,cx,base+39,E.pct(dv,0),copCor(dv),dv<=0?"#EAF5EE":"#FBEDEB");
+  });
+}
+
+// --- cards ao lado: acumulado 2025, 2026 e a diferença (preço x volume) ---
+function copCards(){
+  var ef = copOrdens().map(copEfeitos);
+  var v25=copSoma(ef.map(function(e){ return e.v25; })), v26=copSoma(ef.map(function(e){ return e.v26; }));
+  var preco=copSoma(ef.map(function(e){ return e.preco; })), volume=copSoma(ef.map(function(e){ return e.volume; }));
+  var dif=v26-v25, p=v25?dif/v25:0;
+  function cartao(cls,rot,v,sub){ return "<div class='dq-card "+cls+"'><i>"+rot+"</i><b>"+v+"</b><u>"+sub+"</u></div>"; }
+  var sub25 = copSel<0 ? COP.ordens.length+" ordens de produção" : E.fmtDec(ef[0].q25,0)+" un. · R$ "+E.fmtDec(ef[0].u25,2)+" médio";
+  var sub26 = copSel<0 ? COP.ordens.length+" ordens de produção" : E.fmtDec(ef[0].q26,0)+" un. · R$ "+E.fmtDec(ef[0].u26,2)+" médio";
+  document.getElementById("cop-quadro").innerHTML = "<h4>Safra · abril a setembro</h4><div class='dq-cards'>"+
+    cartao("c25","Acumulado 2025",copR(v25),sub25)+
+    cartao("c26","Acumulado 2026",copR(v26),sub26)+
+    "<div class='dq-card dif'><i>"+(dif<=0?"Economia":"Aumento")+" 2026 x 2025</i>"+
+      "<b style='color:"+copCor(dif)+"'>"+copR(dif,true)+"</b>"+
+      "<span class='dq-s' style='color:"+copCor(dif)+"'>"+E.pct(p,1)+" sobre 2025</span>"+
+      "<u>Efeito preço: "+copR(preco,true)+"<br>Efeito volume: "+copR(volume,true)+"</u></div></div>";
+}
+
+function copTexto(){
+  var ef = COP.ordens.map(function(o){ var e=copEfeitos(o); e.o=o; e.d=e.v26-e.v25; e.p=e.v25?e.d/e.v25:0; return e; });
+  var el = document.getElementById("cop-insight"), txt;
+  if(copSel<0){
+    var v25=copSoma(ef.map(function(e){ return e.v25; })), v26=copSoma(ef.map(function(e){ return e.v26; }));
+    var eco = ef.filter(function(e){ return e.d<0; }).sort(function(a,b){ return a.d-b.d; });
+    var aum = ef.filter(function(e){ return e.d>0; }).sort(function(a,b){ return b.d-a.d; });
+    var nom = function(e){ return E.esc(e.o.nome)+" ("+copR(e.d,true)+", "+E.pct(e.p,0)+")"; };
+    txt = "De abril a setembro, as "+ef.length+" ordens de produção somaram <strong>"+copR(v26)+"</strong> em 2026, contra "+
+      copR(v25)+" em 2025: <strong>"+(v26<=v25?"economia":"aumento")+" de "+copR(Math.abs(v26-v25))+"</strong> ("+E.pct(v26/v25-1,1)+"). ";
+    if(eco.length) txt += "<span class='sep'>|</span> Economia em "+eco.slice(0,3).map(nom).join(", ")+". ";
+    if(aum.length){
+      var a0=aum[0];
+      txt += "<span class='sep'>|</span> Aumento em "+aum.map(nom).join(" e ")+
+        " — em "+E.esc(a0.o.nome).toLowerCase()+", "+(Math.abs(a0.volume)>=Math.abs(a0.preco)?"puxado pela quantidade ("+
+        E.fmtDec(a0.q25,0)+" para "+E.fmtDec(a0.q26,0)+")":"puxado pelo preço médio (R$ "+E.fmtDec(a0.u25,2)+" para R$ "+E.fmtDec(a0.u26,2)+")")+". ";
+    }
+  } else {
+    var e=ef[copSel], m25=e.o.v25, m26=e.o.v26;
+    var dm = MESES.map(function(m,i){ return {m:m.toLowerCase(), d:m26[i]-m25[i]}; }).sort(function(a,b){ return a.d-b.d; });
+    txt = "<strong>"+E.esc(e.o.nome)+"</strong> ("+e.o.cod+"): <strong>"+copR(e.v26)+"</strong> em 2026 contra "+copR(e.v25)+
+      " em 2025 — <strong>"+(e.d<=0?"economia":"aumento")+" de "+copR(Math.abs(e.d))+"</strong> ("+E.pct(e.p,1)+"). "+
+      "<span class='sep'>|</span> Quantidade de "+E.fmtDec(e.q25,0)+" para "+E.fmtDec(e.q26,0)+" ("+E.pct(e.q25?e.q26/e.q25-1:0,0)+
+      ") e R$ médio de "+E.fmtDec(e.u25,2)+" para "+E.fmtDec(e.u26,2)+" ("+E.pct(e.u25?e.u26/e.u25-1:0,0)+"): o volume responde por "+
+      copR(e.volume,true)+" e o preço por "+copR(e.preco,true)+". "+
+      "<span class='sep'>|</span> "+(dm[0].d<0?"Maior economia":"Menor aumento")+" em "+dm[0].m+" ("+copR(dm[0].d,true)+") e "+
+      (dm[dm.length-1].d>0?"maior aumento":"menor economia")+" em "+dm[dm.length-1].m+" ("+copR(dm[dm.length-1].d,true)+").";
+  }
+  el.innerHTML = txt;
+}
+
+function graficoCusto(){
+  copPainelOrdens(document.getElementById("cop-svg-ord"));
+  copPainelMes(document.getElementById("cop-svg-mes"));
+  copCards();
+  copTexto();
+  document.getElementById("cop-ordem").value = String(copSel);
+  E.legenda(document.getElementById("cop-legend"),[
+    {cor:E.C25,nome:"Safra 2025"},{cor:COR_COP,nome:"Safra 2026"},
+    {cor:E.GREEN,nome:"Economia",obs:"custo menor que em 2025"},{cor:E.RED,nome:"Aumento",obs:"custo maior"}
+  ]);
+}
+function copAplica(k){ copSel=k; graficoCusto(); }
+
+(function(){
+  var sel=document.getElementById("cop-ordem");
+  sel.innerHTML = "<option value='-1'>Todas as ordens ("+COP.ordens.length+")</option>"+
+    COP.ordens.map(function(o,k){ return "<option value='"+k+"'>"+E.esc(o.nome)+" · "+o.cod+"</option>"; }).join("");
+  sel.addEventListener("change",function(){ copAplica(parseInt(sel.value,10)); });
+  document.getElementById("cop-modo").addEventListener("click",function(e){
+    var b=e.target.closest("button"); if(!b) return;
+    copModo=b.dataset.modo;
+    Array.prototype.forEach.call(this.children,function(x){ x.classList.toggle("on",x===b); });
+    graficoCusto();
+  });
+  window.replay = window.replay || {};
+  window.replay["custo-op"] = graficoCusto;
+})();
+
+
+/* ============================================================
    REDESENHO
    ============================================================ */
 function redesenhaTudo(){
@@ -6570,7 +6853,7 @@ var MODULOS = [
   {id:"moagem", nome:"Moagem", pags:["panorama","contribuicao","unidades","mes-a-mes"]},
   {id:"ctt", nome:"Indicadores CTT", pags:["colhedora","caminhao","transbordo"]},
   {id:"irrigacao", nome:"Irrigação", pags:["irriga-localizada","irriga-convencional","irriga-regioes","irriga-reg-x-reg"]},
-  {id:"manutencao", nome:"Manutenção", pags:["disponibilidade"]},
+  {id:"manutencao", nome:"Manutenção", pags:["disponibilidade","custo-op"]},
   {id:"projecao", nome:"Projeção", pags:["simulador"]}
 ];
 function modDe(id){
