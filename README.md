@@ -1,4 +1,4 @@
-# Comparativo de Moagem — Unidades do Grupo
+# Comparativo de Indicadores — Unidades do Grupo
 
 Apresentação de diretoria com a moagem das quatro unidades do Grupo CRV, safra 2026
 contra safra 2025, na janela de **abril a setembro** nos dois anos.
@@ -28,7 +28,7 @@ do `index.html` — uma página nova entra no módulo acrescentando o id dela al
 
 | Módulo | # | Página | O que responde |
 |---|---|---|---|
-| — | — | Capa | Números-chave da safra e a decisão em foco |
+| — | — | Capa | Números-chave da safra e curva de moagem acumulada do grupo |
 | **Moagem** | 1 | Panorama do grupo | Quanto o grupo moeu mês a mês e como a vantagem sobre 2025 encolhe |
 | | 2 | Quem puxa, quem trava | Quanto cada unidade somou ou subtraiu; o grupo com e sem a CRV-MG |
 | | 3 | Unidade a unidade | Os quatro painéis na mesma escala, mês a mês |
@@ -41,6 +41,61 @@ do `index.html` — uma página nova entra no módulo acrescentando o id dela al
 | | 10 | Irrigação por região | A convencional aberta por região, 2025 contra 2026, painéis na mesma escala |
 | | 11 | Região x região | Duas regiões escolhidas lado a lado numa safra, com a diferença mês a mês |
 | **Manutenção** | 12 | Disponibilidade mecânica | Disponibilidade % da frota mês a mês, 2025 x 2026, com filtro de especialidades |
+
+### A capa
+
+Capa de apresentação para a diretoria. Ocupa a janela inteira — por cima do cabeçalho e
+do índice, só a barra de navegação de baixo continua à vista — e entra com uma animação
+curta (respeita `prefers-reduced-motion`). Os tamanhos escalam com a janela, do projetor
+16:9 à janela baixa de notebook; em tela estreita a capa vira uma coluna, sem a curva.
+
+- **Topo:** painel branco com a logo, que sangra pela borda esquerda e alinha com o título;
+  à direita, quem apresenta e até que mês vão os dados.
+- **Meio:** o título e, ao lado, a **moagem acumulada do grupo**, 2026 contra 2025 — a curva
+  que o setor usa para acompanhar a safra. A faixa dourada entre as duas linhas é a vantagem
+  de 2026, e ela deixa de abrir perto do fim.
+- **Base:** os quatro números da safra.
+
+Tudo é calculado em tempo de execução a partir de `window.MOAGEM`, e a janela ("abril a
+setembro") sai de `meses`.
+
+**A logo.** É a logo azul oficial da CRV Industrial (`LOGOMARCA CRV AZUL.png`, do pacote de
+logos da marca), sem recolorir, sobre o painel branco — logo azul em fundo claro. O arquivo
+foi recortado da margem vazia e reduzido a 640 px de largura, em WebP sem perda (21 KB), e
+vai embutido como `data:` URI para o `index.html` continuar sendo um arquivo só, que abre
+sem servidor e sem internet. Para trocar, substitua o `src` do `<img class="capa-logo-img">`
+dentro de `<div class="capa-placa">`.
+
+### Tema visual
+
+O estilo de toda a apresentação — fundo animado, tipografia, transições e a cor de destaque
+por módulo — vem da apresentação "Seu Assessor Comercial", aplicado sem mudar a estrutura
+nem os gráficos. Fica numa **camada isolada**: um bloco de estilo de id `tema` (logo depois
+do estilo principal) e um bloco de script de id `tema-js` (no fim do arquivo). Remover os dois
+devolve o visual anterior.
+
+- **Fundo:** campo de partículas em canvas (pontos que flutuam, ligações finas entre os
+  próximos, brilho em alguns, leve paralaxe com o mouse) sobre um degradê de azul-marinho.
+  Abrir o arquivo com `?fundo=off` desliga as partículas (projetor fraco).
+- **Cor de destaque por módulo**, nas cores da paleta do grupo: dourado (Moagem), azul
+  (Indicadores CTT), verde-água (Irrigação) e creme (Manutenção). Muda em fade ao trocar de
+  módulo e aparece no rótulo, nas linhas, no fio de progresso e nas partículas. Os números e
+  as séries dos gráficos **não** mudam de cor: dourado continua sendo o valor neutro.
+- **Tipografia:** Archivo nos títulos, Source Serif 4 nos textos e IBM Plex Mono nos rótulos,
+  via Google Fonts, carregadas sem travar a página. Sem internet entram as fontes do sistema
+  e nada quebra. O texto dos gráficos (SVG) continua na fonte original.
+- **Movimento:** páginas em fade; cada elemento entra em sequência; o gráfico é varrido da
+  esquerda para a direita; a janela de detalhe e a lista de seleção abrem em fade. Com
+  `prefers-reduced-motion` ligado no sistema, tudo isso é desligado e o fundo fica parado.
+- **Cromo:** cabeçalho, índice e barra de baixo viram faixas translúcidas com linhas finas e
+  rótulos em monoespaçado; um fio de 2 px no pé da janela mostra o avanço. Na capa, o
+  cabeçalho e o índice somem em fade (continuam ocupando o lugar, então as outras páginas
+  não se deslocam).
+
+A camada não mexe em tamanho, espaçamento nem `display` dos componentes que as telas baixas
+compactam (`max-height:780px`) — só cor, fonte, borda e movimento. As variáveis do tema levam o
+prefixo `--tm-`: o CSS original já usa `--ink` para o texto escuro, e uma primeira versão que
+reaproveitava o nome deixou o texto da janela de detalhe branco sobre branco.
 
 ### A página 4
 
