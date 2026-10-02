@@ -30,7 +30,7 @@ do `index.html` — uma página nova entra no módulo acrescentando o id dela al
 |---|---|---|---|
 | — | — | Capa | Números-chave da safra e curva de moagem acumulada do grupo |
 | **Moagem** | 1 | Panorama do grupo | Quanto o grupo moeu mês a mês e como a vantagem sobre 2025 encolhe |
-| | 2 | Quem puxa, quem trava | Quanto cada unidade somou ou subtraiu; o grupo com e sem a CRV-MG |
+| | 2 | Variação por unidade | Quanto cada unidade somou ou subtraiu; o grupo com e sem a CRV-MG |
 | | 3 | Unidade a unidade | Os quatro painéis na mesma escala, mês a mês |
 | | 4 | Mês a mês por empresa | Com filtro de empresa: moagem do mês em barras e moagem média por dia em linha |
 | **Indicadores CTT** | 5 | Colhedora · CRV-MG | Seis indicadores da frota CH570, safra e mês a mês |
@@ -212,8 +212,9 @@ No caminhão, `horas` dá lugar a `km`: km/dia, l/km e t/km. Raio médio é
 
 **Cobertura:** nenhuma das três frotas cobre a moagem inteira da unidade — a
 colhedora responde por 90% da moagem da CRV-MG em 2026, o caminhão por 91% e o
-transbordo por 87%. Por isso a tonelada dessas páginas não bate com a da página 4,
-e cada uma traz essa ressalva no próprio texto.
+transbordo por 87%. Por isso a tonelada dessas páginas não bate com a da página 4.
+A ressalva saiu da tela junto com o subtítulo — as páginas 5 a 7 têm só o título
+("Desempenho Colhedora CRV-MG" e equivalentes) — e fica registrada aqui.
 
 ### A página 8 (irrigação)
 

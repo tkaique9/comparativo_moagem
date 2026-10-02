@@ -647,7 +647,7 @@ nav.toc a.on{color:var(--tm-ink);border-bottom-color:var(--accent);font-weight:6
 <nav class="toc">
 <a href="#capa">Capa</a>
 <a href="#panorama"><b>1</b> Panorama do grupo</a>
-<a href="#contribuicao"><b>2</b> Quem puxa, quem trava</a>
+<a href="#contribuicao"><b>2</b> Variação por unidade</a>
 <a href="#unidades"><b>3</b> Unidade a unidade</a>
 <a href="#mes-a-mes"><b>4</b> Mês a mês por empresa</a>
 <span id="toc-frotas"></span><span id="toc-irriga"></span>
@@ -731,7 +731,7 @@ nav.toc a.on{color:var(--tm-ink);border-bottom-color:var(--accent);font-weight:6
 </article>
 
 <!-- ================= 2 · CONTRIBUIÇÃO ================= -->
-<article class="slide slide-dark" id="contribuicao" data-title="Quem puxa, quem trava">
+<article class="slide slide-dark" id="contribuicao" data-title="Variação por unidade">
 <div class="s-head">
 <div>
 <div class="s-eyebrow">02 &middot; Composição da variação</div>
@@ -4622,16 +4622,13 @@ function indsKm(){
 var PAGINAS = [
   {id:"colhedora", chave:"colhedora", num:"05", rotulo:"Colhedora", cor:"#2E86C1",
    bruto:C_HORAS, viagens:false, inds:indsHora(),
-   titulo:"O que mudou na colhedora da CRV-MG",
-   sub:"Frota John Deere CH570 da CRV-MG, mês a mês nas duas safras. Cada ficha abaixo é uma disputa 2025 contra 2026 — clique numa delas para abrir o mês a mês daquele indicador. <b>Dia</b> é dia de máquina em operação, não dia de calendário."},
+   titulo:"Desempenho Colhedora CRV-MG"},
   {id:"caminhao", chave:"caminhao", num:"06", rotulo:"Caminhão canavieiro", cor:"#C9A227",
    bruto:C_KM, viagens:true, inds:indsKm(),
-   titulo:"O que mudou no caminhão canavieiro",
-   sub:"Frota de caminhões da CRV-MG que leva a cana da frente de corte à moenda. Aqui a máquina é medida em <b>quilômetro rodado</b>, e o raio médio entra junto porque explica boa parte do custo por tonelada."},
+   titulo:"Desempenho Caminhão Canavieiro CRV-MG"},
   {id:"transbordo", chave:"transbordo", num:"07", rotulo:"Transbordo", cor:"#2E7D46",
    bruto:C_HORAS, viagens:true, inds:indsHora([I_TVIAG]),
-   titulo:"O que mudou no transbordo",
-   sub:"Frota de transbordo da CRV-MG, que tira a cana da colhedora e abastece o caminhão. Como a colhedora, é medida em <b>horas de máquina</b>, não em quilômetro."}
+   titulo:"Desempenho Transbordo CRV-MG"}
 ];
 PAGINAS.forEach(function(p){ p.inds.forEach(function(i){ i.calc = i.calc || calcDe(i); }); });
 
@@ -4822,7 +4819,6 @@ function slideHTML(cfg){
     "<div class='s-head'><div>"+
       "<div class='s-eyebrow'>"+cfg.num+" &middot; "+E.esc(cfg.rotulo)+" &middot; CRV Minas Gerais</div>"+
       "<h2 class='s-title'>"+E.esc(cfg.titulo)+"</h2>"+
-      "<p class='s-sub'>"+cfg.sub+" <span class='js-cobertura'></span></p>"+
     "</div><div class='s-right'><div class='s-chips'>"+
       "<div class='s-chip'><div class='v js-chip-maq'>–</div><div class='k js-chip-maq-k'></div></div>"+
       "<div class='s-chip'><div class='v js-chip-ton'>–</div><div class='k js-chip-ton-k'></div></div>"+
@@ -4863,12 +4859,6 @@ function montaPaginaFrota(cfg){
     q(".js-chip-gasto-k").innerHTML = "Custo da frota <b style='color:"+
       (s26.gasto<=s25.gasto?"#7FD79B":"#F0897A")+"'>"+E.pct(s26.gasto/s25.gasto-1)+"</b>";
 
-    // a tonelada desta página é a da frota, não a moagem inteira da unidade:
-    // sem a ressalva o número bate de frente com a página 4
-    var mg = UN.filter(function(u){ return u.cod==="CRV-MG"; })[0];
-    q(".js-cobertura").innerHTML = "A frota que entrou na conta responde por <b>"+
-      E.pctAbs(s26.ton/E.total(mg.a2026),0)+"</b> da moagem da CRV-MG em 2026 ("+
-      E.pctAbs(s25.ton/E.total(mg.a2025),0)+" em 2025).";
   }
 
   function quadroCusto(mostra){
