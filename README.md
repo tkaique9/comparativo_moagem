@@ -42,7 +42,7 @@ do `index.html` — uma página nova entra no módulo acrescentando o id dela al
 | | 11 | Região x região | Duas regiões escolhidas lado a lado numa safra, com a diferença mês a mês |
 | **Manutenção** | 12 | Disponibilidade mecânica | Disponibilidade % da frota mês a mês, 2025 x 2026, com filtro de especialidades |
 | | 13 | Custo por ordem de produção | Consumo em R$ por ordem de produção, 2025 x 2026: economia ou aumento, por preço e por volume |
-| | 14 | Custo por especialidade | R$ por especialidade de frota (agrupada por grupo) e resumo por ordem de produção, 2025 x 2026 |
+| | 14 | Custo por família de equipamento | O custo da página 13 aberto por família e especialidade, com o resumo por ordem de produção |
 | **Projeção** | 15 | Simulador da reta final | Dois cenários editáveis de outubro a dezembro, com o quanto ainda bisa |
 
 ### A capa
@@ -427,25 +427,30 @@ colunas **A = 2025 e B = 2026** (a planilha traz a diferença como B − A). A a
 mi, contra R$ 35,8 mi e R$ 31,5 mi) e por isso não entra na página. Os dados ficam em
 `window.CUSTO_OP`.
 
-### A página 14 (custo por especialidade)
+### A página 14 (custo por família de equipamento)
 
-A aba **`especialidade`** da mesma planilha de consumo: R$ por especialidade de frota,
-2025 x 2026, agrupada por grupo (o prefixo da especialidade, como na disponibilidade).
+O **mesmo custo da página 13** — R$ 35,75 mi em 2025 e R$ 31,52 mi em 2026, economia de
+R$ 4,23 mi — aberto por **família de equipamento** (o prefixo da especialidade:
+COLHEDORA, CAMINHAO, TRATOR…) e, dentro dela, por especialidade.
 
-- **À esquerda:** a tabela por grupo, da maior economia ao maior aumento, com 2025,
-  2026, a diferença em R$ mil e em %, e uma barrinha em torno do zero (economia para a
-  esquerda, aumento para a direita). Clicar no grupo abre as especialidades dele; o
-  botão do topo abre ou fecha todos.
-- **À direita:** o **resumo por ordem de produção** desta aba. Clicar numa ordem (ou
-  usar o seletor do topo) filtra a tabela; clicar de novo, ou no Total, volta para
-  todas.
+- **À esquerda:** a tabela por família, da maior economia ao maior aumento, com 2025,
+  2026, a diferença em R$ mil e em %, e uma barrinha em torno do zero. Clicar na família
+  abre as especialidades; o botão do topo abre ou fecha todas.
+- **À direita:** o **resumo por ordem de produção**, igual ao da página 13. Clicar numa
+  ordem (ou usar o seletor) filtra a tabela; clicar de novo, ou no Total, volta.
 
-Por esta aba, as seis ordens vão de R$ 30,87 mi para R$ 23,67 mi (−R$ 7,19 mi,
-−23,3%), com a maior economia na colhedora (−R$ 3,17 mi). **Esta aba não fecha com a
-`mes`** da página 13 (R$ 35,75 mi e R$ 31,52 mi) — período ou filtro diferentes na
-origem —, e a página avisa isso embaixo do resumo: compare as duas pela tendência, não
-pelo valor. "(Em branco)" na planilha = sem consumo naquela safra (vale 0); uma
-especialidade sem 2025 aparece como "novo". Os dados ficam em `window.CUSTO_ESP`.
+**Como sai o número (rateio).** A aba `especialidade` da planilha soma outro total
+(R$ 30,87 mi e R$ 23,67 mi) e não fecha com a aba `mes`. Por isso ela entra só com a
+**divisão**: o total de cada ordem de produção, em cada safra, é o da página 13, e ele
+é dividido entre as especialidades pela participação de cada uma naquela ordem e safra
+na aba de especialidades. Assim o total e o resumo por ordem batem com a página 13, e a
+página avisa isso embaixo do resumo.
+
+Consequência do rateio: onde a aba de especialidades e a de mês divergem muito numa
+ordem, a família muda de leitura. Ex.: pneus e peças pesam no caminhão; na aba crua o
+caminhão economiza R$ 1,39 mi, rateado ele sobe R$ 436 mil. A colhedora fica com a
+maior economia (−R$ 2,99 mi). "(Em branco)" na planilha = sem consumo (vale 0). Os dados
+brutos ficam em `window.CUSTO_ESP`; o rateio é feito ao carregar a página.
 
 ### A página 15 (simulador da reta final)
 

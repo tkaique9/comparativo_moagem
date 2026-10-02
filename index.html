@@ -999,16 +999,16 @@ nav.toc a.on{color:var(--tm-ink);border-bottom-color:var(--accent);font-weight:6
 <div class="s-head">
 <div>
 <div class="s-eyebrow">14 &middot; Custo por especialidade &middot; Manutenção</div>
-<h2 class="s-title">Custo de manutenção por especialidade — 2026 x 2025</h2>
-<p class="s-sub">Consumo em R$ mil por especialidade de frota, agrupado por grupo — clique no grupo para abrir as especialidades. Ao lado, o resumo por ordem de produção: clique numa ordem para filtrar a tabela. Verde é economia, vermelho é aumento.</p>
+<h2 class="s-title">Custo de manutenção por família de equipamento — 2026 x 2025</h2>
+<p class="s-sub">O mesmo custo da página 13, aberto por família de equipamento — clique na família para ver as especialidades. Ao lado, o resumo por ordem de produção: clique numa ordem para filtrar a tabela. Verde é economia, vermelho é aumento.</p>
 </div>
 <div class="s-right">
 <select class="s-sel" id="ces-ordem" aria-label="Ordem de produção"></select>
-<button type="button" class="s-sel" id="ces-abrir">Abrir todos os grupos</button>
+<button type="button" class="s-sel" id="ces-abrir">Abrir todas as famílias</button>
 </div>
 </div>
 <div class="s-card" id="ces-card">
-<div class="ces-esq"><h4>Por especialidade (R$ mil)</h4><div class="ces-rolo" id="ces-tabela"></div></div>
+<div class="ces-esq"><h4>Por família de equipamento e especialidade (R$ mil)</h4><div class="ces-rolo" id="ces-tabela"></div></div>
 <div class="ces-dir"><h4>Resumo por ordem de produção (R$ mil)</h4><div class="ces-rolo" id="ces-resumo"></div></div>
 </div>
 <div class="s-insight" id="ces-insight">carregando…</div>
@@ -3988,7 +3988,9 @@ window.CUSTO_OP = {
      "(Em branco)" na planilha = sem consumo naquela safra (vale 0).
      Em "linhas": [ordem, especialidade, qtd 2025, R$ 2025, qtd 2026, R$ 2026].
      ATENÇÃO: esta aba soma R$ 30,9 mi (2025) e R$ 23,7 mi (2026) e NÃO fecha
-     com a aba "mes" da página 13 (R$ 35,8 mi e R$ 31,5 mi); a página diz isso.
+     com a aba "mes" da página 13 (R$ 35,8 mi e R$ 31,5 mi). Por isso a página
+     14 usa daqui só a divisão: o total de cada ordem é o da página 13,
+     rateado pela participação de cada especialidade nesta aba.
      ============================================================ -->
 <script>
 window.CUSTO_ESP = {
@@ -7228,13 +7230,29 @@ function copAplica(k){ copSel=k; graficoCusto(); }
 
 /* ============================================================
    PÁGINA DE CUSTO POR ESPECIALIDADE (manutenção)
-   A aba "especialidade" da planilha de consumo: R$ por especialidade de
-   frota, 2025 x 2026, agrupada por grupo (prefixo da especialidade), e
-   ao lado o resumo por ordem de produção da mesma aba — clicar numa
-   ordem filtra a tabela. Os totais desta aba não fecham com a aba por
-   mês da página 13; a página diz isso.
+   O mesmo custo da página 13 (aba por mês: R$ 35,75 mi em 2025 e R$ 31,52
+   mi em 2026), aberto por família de equipamento (prefixo da
+   especialidade) e por especialidade. A aba "especialidade" da planilha
+   não fecha com a de mês, então ela só dá a DIVISÃO: o total de cada
+   ordem de produção, em cada safra, é o da página 13, rateado entre as
+   especialidades pela participação de cada uma naquela ordem e safra na
+   aba de especialidades. Ao lado, o resumo por ordem — que bate com a
+   página 13 —; clicar numa ordem filtra a tabela.
    ============================================================ */
-var CES = window.CUSTO_ESP;
+var CES = (function(){
+  var D = window.CUSTO_ESP;
+  var tot = {};      // total de cada ordem na página 13, por código
+  COP.ordens.forEach(function(o){ tot[o.cod] = [copSoma(o.v25), copSoma(o.v26)]; });
+  var esp = D.ordens.map(function(o,k){       // soma da aba de especialidades por ordem
+    var lin = D.linhas.filter(function(l){ return l[0]===k; });
+    return [copSoma(lin.map(function(l){ return l[3]; })), copSoma(lin.map(function(l){ return l[5]; }))];
+  });
+  return {ordens:D.ordens, especialidades:D.especialidades,
+    linhas: D.linhas.map(function(l){
+      var t = tot[D.ordens[l[0]].cod] || [0,0], e = esp[l[0]];
+      return [l[0], l[1], l[2], e[0] ? l[3]*t[0]/e[0] : 0, l[4], e[1] ? l[5]*t[1]/e[1] : 0];
+    })};
+})();
 var cesSel = -1;          // -1 = todas as ordens
 var cesAbertos = {};      // grupos abertos na tabela
 
@@ -7267,14 +7285,14 @@ function cesTabela(){
   var lin=cesLinhas(), grupos=cesAgrupa(lin);
   var ta=copSoma(lin.map(function(l){ return l[3]; })), tb=copSoma(lin.map(function(l){ return l[5]; }));
   var max=Math.max.apply(null,grupos.map(function(g){ return Math.abs(g.b-g.a); }).concat([1]));
-  var h = "<table class='ces'><thead><tr><th class='l'>Grupo / especialidade</th><th>2025</th><th>2026</th>"+
+  var h = "<table class='ces'><thead><tr><th class='l'>Família / especialidade</th><th>2025</th><th>2026</th>"+
     "<th>Diferença</th><th>%</th><th class='c'>economia · aumento</th></tr></thead><tbody>"+
     "<tr class='tot'><td class='l'>Total"+(cesSel<0?"":" — "+E.esc(CES.ordens[cesSel].nome))+"</td><td>"+cesMil(ta)+"</td><td>"+cesMil(tb)+
     "</td><td style='color:"+copCor(tb-ta)+"'>"+cesDif(tb-ta)+"</td><td style='color:"+copCor(tb-ta)+"'>"+cesPct(ta,tb)+
     "</td><td class='c'></td></tr>";
   grupos.forEach(function(g){
     var d=g.b-g.a, ab=!!cesAbertos[g.nome];
-    h += "<tr class='g"+(ab?" aberto":"")+"' data-g='"+E.esc(g.nome)+"' title='"+(ab?"Fechar":"Abrir")+" as especialidades'>"+
+    h += "<tr class='g"+(ab?" aberto":"")+"' data-g='"+E.esc(g.nome)+"' title='"+(ab?"Fechar":"Abrir")+" as especialidades da família'>"+
       "<td class='l'>"+E.esc(g.nome)+" <u>"+g.lista.length+"</u></td><td>"+cesMil(g.a)+"</td><td>"+cesMil(g.b)+"</td>"+
       "<td style='color:"+copCor(d)+"'>"+cesDif(d)+"</td><td style='color:"+copCor(d)+"'>"+cesPct(g.a,g.b)+"</td>"+
       "<td class='c'>"+cesBarra(d,max)+"</td></tr>";
@@ -7306,11 +7324,10 @@ function cesResumo(){
   h += "<tr class='tot clic"+(cesSel<0?" sel":"")+"' data-k='-1' title='Todas as ordens'><td class='l'>Total</td><td>"+cesMil(ta)+
     "</td><td>"+cesMil(tb)+"</td><td style='color:"+copCor(tb-ta)+"'>"+cesDif(tb-ta)+"</td><td style='color:"+copCor(tb-ta)+"'>"+
     cesPct(ta,tb)+"</td></tr></tbody></table>";
-  // a aba de especialidade não fecha com a de mês (página 13): fica dito na tela
-  var m25=copSoma(COP.ordens.map(function(o){ return copSoma(o.v25); })), m26=copSoma(COP.ordens.map(function(o){ return copSoma(o.v26); }));
-  h += "<p class='ces-nota'>Valores em R$ mil. Fonte: aba <b>especialidade</b> da planilha de consumo. Esta aba soma "+
-    copR(ta)+" em 2025 e "+copR(tb)+" em 2026 e <b>não fecha</b> com a aba por mês da página 13 ("+copR(m25)+" e "+copR(m26)+
-    ") — compare as duas páginas pela tendência, não pelo valor.</p>";
+  // o rateio fica dito na tela: o total é o da página 13; a divisão, da aba de especialidades
+  h += "<p class='ces-nota'>Valores em R$ mil. O total de cada ordem é o da página 13 (consumo por mês). A divisão "+
+    "entre as famílias de equipamento segue a participação de cada especialidade naquela ordem e safra na aba "+
+    "<b>especialidade</b> da planilha — que, sozinha, soma outro total.</p>";
   document.getElementById("ces-resumo").innerHTML = h;
 }
 
@@ -7321,10 +7338,10 @@ function cesTexto(){
   esps.sort(function(p,q){ return p.d-q.d; });
   var eco=grupos.filter(function(g){ return g.b<g.a; }), aum=grupos.filter(function(g){ return g.b>g.a; }).reverse();
   var nomeG=function(g){ return E.esc(g.nome)+" ("+copR(g.b-g.a,true)+")"; };
-  var t = "<strong>"+(cesSel<0?"Todas as ordens":E.esc(CES.ordens[cesSel].nome))+"</strong>, pela aba de especialidades: "+
+  var t = "<strong>"+(cesSel<0?"Todas as ordens":E.esc(CES.ordens[cesSel].nome))+"</strong>: "+
     "<strong>"+copR(tb)+"</strong> em 2026 contra "+copR(ta)+" em 2025 — <strong>"+(tb<=ta?"economia":"aumento")+" de "+
     copR(Math.abs(tb-ta))+"</strong> ("+E.pct(ta?tb/ta-1:0,1)+"). ";
-  if(eco.length) t += "<span class='sep'>|</span> Maiores economias por grupo: "+eco.slice(0,3).map(nomeG).join(", ")+". ";
+  if(eco.length) t += "<span class='sep'>|</span> Maiores economias por família: "+eco.slice(0,3).map(nomeG).join(", ")+". ";
   if(aum.length) t += "<span class='sep'>|</span> Aumento em "+aum.slice(0,3).map(nomeG).join(", ")+". ";
   var top=esps[esps.length-1];
   if(top && top.d>0) t += "<span class='sep'>|</span> Especialidade que mais subiu: "+E.esc(top.nome)+" ("+copR(top.d,true)+").";
@@ -7353,7 +7370,7 @@ function graficoCustoEsp(){
   document.getElementById("ces-abrir").addEventListener("click",function(){
     var lin=cesAgrupa(cesLinhas()), todos=lin.every(function(g){ return cesAbertos[g.nome]; });
     lin.forEach(function(g){ cesAbertos[g.nome]=!todos; });
-    this.textContent = todos ? "Abrir todos os grupos" : "Fechar todos os grupos";
+    this.textContent = todos ? "Abrir todas as famílias" : "Fechar todas as famílias";
     cesTabela();
   });
   window.replay = window.replay || {};
