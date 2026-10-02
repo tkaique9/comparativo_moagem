@@ -270,16 +270,23 @@ frotas do filtro, de 07/04 a 30/09 nos dois anos. Como toda frota tem as mesmas 
 no mês (576 h em abril, 744 ou 720 nos demais), a razão entre somas é também a média
 das frotas.
 
-- **Seletor:** frota inteira, um grupo inteiro (TRATOR, CAMINHAO…) ou uma das 66
-  especialidades. O grupo é o prefixo da especialidade (`CAMINHAO - BOMBEIRO` →
-  CAMINHAO): a coluna de agrupamento do cadastro vem vazia em 10 frotas.
+- **Seletor de várias especialidades:** uma lista com caixas de marcar, agrupada
+  por grupo. Marcar o grupo marca todas as especialidades dele (o grupo fica
+  "meio marcado" quando só parte está); dá para misturar grupos (ex.: caminhão
+  canavieiro + colhedora). Nada marcado = frota inteira; "Limpar" volta para ela. O
+  grupo é o prefixo da especialidade (`CAMINHAO - BOMBEIRO` → CAMINHAO): a coluna de
+  agrupamento do cadastro vem vazia em 10 frotas.
 - **Gráfico:** barras de 2025 e 2026 em escala de 0 a 100%, a meta de 85% tracejada e,
   sob cada mês, a diferença em pontos percentuais. Alternador mês a mês / acumulado (o
   acumulado é a disponibilidade da safra até aquele mês).
 - **Quadro ao lado:** o que está dentro do filtro, do pior ao melhor na safra 2026, com
-  a variação em p.p. Clicar numa linha filtra por ela (frota inteira → grupo →
-  especialidade); dentro de uma especialidade, o quadro mostra as frotas de menor
-  disponibilidade.
+  a variação em p.p. — sem filtro, os grupos; com várias especialidades, cada uma; com
+  uma só, as frotas. Clicar numa linha filtra só por ela. No pé do quadro, os cards
+  do **acumulado da safra** (07/04 a 30/09): 2025, 2026 e a diferença em p.p., em %
+  sobre 2025 e em horas de oficina. A página não tem mais as fichas do topo.
+- **Diferenças** (pílulas, quadro, cards e texto) são calculadas entre os valores como
+  aparecem, com uma casa — 70,6% − 62,2% dá +8,4 p.p. na tela, sem a sobra do
+  arredondamento.
 - **Clicar numa barra** abre o mês frota a frota, da pior para a melhor, com a conta
   no topo e o total fechando com a barra.
 

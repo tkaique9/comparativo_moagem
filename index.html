@@ -178,6 +178,42 @@ header.top,nav.toc{flex:0 0 auto}
 .dq-row .n u{text-decoration:none;color:var(--mut);font-weight:400;font-size:10.5px}
 .dq-row b{font-variant-numeric:tabular-nums}
 .dq-row .v{font-size:10.5px;font-weight:700;font-variant-numeric:tabular-nums;min-width:58px;text-align:right}
+/* acumulado da safra no pé do quadro: 2025, 2026 e a diferença */
+.dq-cards{flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:6px;border-top:1px solid var(--line);padding-top:8px}
+.dq-card{background:#F4F6FA;border-radius:8px;padding:6px 10px;display:flex;flex-direction:column;gap:1px;
+  border-left:4px solid #B8C0D0;min-width:0}
+.dq-card.c26{border-left-color:#2E86C1}
+.dq-card.dif{grid-column:1 / -1;border-left-color:var(--gold)}
+.dq-card i{font-style:normal;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);font-weight:700}
+.dq-card b{font-size:20px;color:var(--navy);font-variant-numeric:tabular-nums;line-height:1.15}
+.dq-card .dq-l{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.dq-card .dq-l span{font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums}
+.dq-card u{text-decoration:none;font-size:10.5px;color:var(--mut);line-height:1.35}
+@media(max-height:780px){
+  .dq-card{padding:4px 9px}
+  .dq-card b{font-size:17px}
+}
+/* seletor de várias especialidades: botão no lugar do <select> e lista com
+   caixas por grupo (marcar o grupo marca todas as especialidades dele) */
+.msel{position:relative}
+.msel::after{content:"▾";position:absolute;right:11px;top:50%;transform:translateY(-50%);color:#fff;
+  font-size:11px;pointer-events:none}
+.msel-btn{min-width:230px;max-width:340px;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  padding-right:28px}
+.msel-pop{position:absolute;top:calc(100% + 6px);right:0;z-index:150;width:380px;max-height:62vh;display:flex;
+  flex-direction:column;background:#fff;color:var(--ink);border-radius:10px;box-shadow:0 18px 44px rgba(0,0,0,.45);overflow:hidden}
+.msel-pop[hidden]{display:none}
+.msel-topo{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 12px;
+  border-bottom:1px solid var(--line);font-size:12px;color:var(--navy)}
+.msel-topo button{font:inherit;font-size:11.5px;font-weight:700;border:1px solid var(--line);background:#F4F6FA;
+  border-radius:6px;padding:4px 9px;cursor:pointer;color:var(--navy)}
+.msel-lista{overflow:auto;padding:4px 4px 10px}
+.msel-lista label{display:flex;align-items:center;gap:7px;padding:3px 8px;font-size:12px;cursor:pointer;border-radius:5px}
+.msel-lista label:hover{background:#F4F6FA}
+.msel-lista input{accent-color:#2E86C1;margin:0}
+.msel-g{font-weight:700;color:var(--navy);margin-top:4px}
+.msel-e{padding-left:30px!important}
+.msel-lista u{text-decoration:none;color:var(--mut);font-weight:400;font-size:10.5px;margin-left:auto}
 
 /* quadro da composição do custo — só aparece no indicador de custo, ao lado do
    gráfico. O SVG passa a dividir a largura do cartão com ele. */
@@ -457,15 +493,15 @@ header.top,nav.toc{flex:0 0 auto}
 <div>
 <div class="s-eyebrow">12 &middot; Disponibilidade mecânica &middot; CRV Minas Gerais</div>
 <h2 class="s-title">Disponibilidade da frota — mês a mês</h2>
-<p class="s-sub">Quanto das horas do mês a frota passou fora da oficina, nas duas safras, de 07/04 a 30/09. Filtre por grupo ou especialidade no seletor ou no quadro ao lado; clique numa barra para ver frota a frota.</p>
+<p class="s-sub">Quanto das horas do mês a frota passou fora da oficina, nas duas safras, de 07/04 a 30/09. Marque uma ou mais especialidades no seletor (ou clique no quadro ao lado); clique numa barra para ver frota a frota.</p>
 </div>
 <div class="s-right">
-<select class="s-sel" id="disp-filtro" aria-label="Especialidade"></select>
+<div class="msel"><button type="button" class="s-sel msel-btn" id="disp-msel-btn" aria-haspopup="true" aria-expanded="false">Frota inteira</button>
+<div class="msel-pop" id="disp-msel-pop" hidden></div></div>
 <div class="s-toggle" id="disp-modo">
 <button type="button" data-modo="mes" class="on">Mês a mês</button>
 <button type="button" data-modo="acumulado">Acumulado</button>
 </div>
-<div class="s-chips" id="disp-chips"></div>
 </div>
 </div>
 <div class="s-legend" id="disp-legend"></div>
@@ -5258,13 +5294,14 @@ function textoRxR(){
 /* ============================================================
    PÁGINA DE DISPONIBILIDADE MECÂNICA
    Disponibilidade = horas fora da oficina ÷ horas do período, somadas
-   sobre as frotas do filtro que aparecem no relatório daquele mês.
-   Filtro: a frota inteira, um grupo (prefixo da especialidade) ou uma
-   especialidade. O quadro ao lado lista o que está dentro do filtro, do
-   pior para o melhor, e serve de atalho para filtrar.
+   sobre as frotas do filtro que entram na conta daquele mês.
+   Filtro: uma ou mais especialidades (marcar o grupo marca todas as
+   dele); nenhuma marcada = frota inteira. O quadro ao lado lista o que
+   está dentro do filtro, do pior para o melhor, serve de atalho para
+   filtrar e fecha com o acumulado da safra 2025 x 2026.
    ============================================================ */
 var DSP = window.DISPONIBILIDADE;
-var dspFiltro = {tipo:"t", idx:-1};
+var dspSel = [];          // índices de especialidade marcados; vazio = frota inteira
 var dspModo = "mes";
 var COR_DSP = "#2E86C1";
 
@@ -5272,16 +5309,30 @@ var COR_DSP = "#2E86C1";
 function dspPP(d){ return (Math.abs(d)<0.05?"":d>=0?"+":"−")+E.fmtDec(Math.abs(d),1)+" p.p."; }
 // o 1e-9 desfaz o resto binário: 60,45% digitado na Base sai 60,5, como no Excel
 function dspPct(v){ return v==null ? "–" : E.fmtDec(v+1e-9,1)+"%"; }
+// diferença entre os números como aparecem na tela (1 casa), para a conta
+// que o leitor faz de cabeça bater: 70,6% − 62,2% = +8,4 p.p.
+function dspR1(v){ return Math.round((v+1e-9)*10)/10; }
+function dspDif(a,b){ return dspR1(b)-dspR1(a); }
 function dspEspGrupo(e){ return DSP.especialidades[e][1]; }
-function dspFrotas(f){
-  return DSP.frotas.filter(function(r){
-    return f.tipo==="t" || (f.tipo==="g" && dspEspGrupo(r[2])===f.idx) || (f.tipo==="e" && r[2]===f.idx);
-  });
+function dspEspsDoGrupo(g){
+  return DSP.especialidades.map(function(_,i){ return i; }).filter(function(i){ return dspEspGrupo(i)===g; });
 }
-function dspNome(f){
-  return f.tipo==="t" ? "Frota inteira" : f.tipo==="g" ? DSP.grupos[f.idx] : DSP.especialidades[f.idx][0];
+function dspFrotas(sel){
+  if(!sel.length) return DSP.frotas;
+  return DSP.frotas.filter(function(r){ return sel.indexOf(r[2])>=0; });
 }
-// horas do período e em oficina do conjunto num mês (só frotas presentes no relatório)
+function dspMesmo(a,b){ return a.length===b.length && a.every(function(x){ return b.indexOf(x)>=0; }); }
+// nome do filtro: frota inteira, um grupo inteiro, uma especialidade ou a lista curta
+function dspNome(sel){
+  if(!sel.length) return "Frota inteira";
+  var gs = sel.map(dspEspGrupo).filter(function(g,i,a){ return a.indexOf(g)===i; });
+  if(gs.length===1 && dspMesmo(sel,dspEspsDoGrupo(gs[0])))
+    return DSP.grupos[gs[0]]+(sel.length>1?" (grupo inteiro)":"");
+  if(sel.length===1) return DSP.especialidades[sel[0]][0];
+  var nomes = sel.map(function(e){ return DSP.especialidades[e][0]; });
+  return sel.length===2 ? nomes.join(" + ") : nomes[0]+" e mais "+(sel.length-1);
+}
+// horas do período e em oficina do conjunto num mês (só frotas na conta)
 function dspMes(frs,ano,i){
   var k = ano?4:3, per = DSP.horasPer[ano?"a2026":"a2025"][i], n=0, ofi=0;
   frs.forEach(function(r){ var o=r[k][i]; if(o!=null){ n++; ofi+=o; } });
@@ -5298,17 +5349,24 @@ function dspSerie(frs,ano,acum){
   });
 }
 function dspSafra(frs,ano){ var s=dspSerie(frs,ano,true); return s[s.length-1]; }
+function dspTotais(frs,ano){
+  var t={per:0, ofi:0, frotas:0}, k=ano?4:3;
+  MESES.forEach(function(_,i){ var m=dspMes(frs,ano,i); t.per+=m.per; t.ofi+=m.ofi; });
+  frs.forEach(function(r){ if(r[k].some(function(v){ return v!=null; })) t.frotas++; });
+  t.disp = t.per ? 100*(1-t.ofi/t.per) : null;
+  return t;
+}
 
-// o que está dentro do filtro: grupos, especialidades ou, numa especialidade, as frotas
-function dspFilhos(f){
-  if(f.tipo==="t") return DSP.grupos.map(function(g,i){ return {f:{tipo:"g",idx:i}, nome:g}; });
-  if(f.tipo==="g") return DSP.especialidades.map(function(e,i){ return {f:{tipo:"e",idx:i}, nome:e[0]}; })
-                          .filter(function(x){ return dspEspGrupo(x.f.idx)===f.idx; });
+// o que está dentro do filtro: sem filtro, os grupos; com várias
+// especialidades, cada uma; com uma só, as frotas (quadro só de leitura)
+function dspFilhos(sel){
+  if(!sel.length) return DSP.grupos.map(function(g,i){ return {sel:dspEspsDoGrupo(i), nome:g}; });
+  if(sel.length>1) return sel.map(function(e){ return {sel:[e], nome:DSP.especialidades[e][0]}; });
   return null;
 }
 
 function dspDetalheMes(ano,i){
-  var frs = dspFrotas(dspFiltro), k=ano?4:3, per=DSP.horasPer[ano?"a2026":"a2025"][i];
+  var frs = dspFrotas(dspSel), k=ano?4:3, per=DSP.horasPer[ano?"a2026":"a2025"][i];
   var lin = frs.filter(function(r){ return r[k][i]!=null; })
     .map(function(r){ return {r:r, o:r[k][i], d:100*(1-r[k][i]/per)}; })
     .sort(function(a,b){ return a.d-b.d; });
@@ -5330,19 +5388,19 @@ function dspDetalheMes(ano,i){
     "<p style='font-size:11.5px;color:#5A6072;margin:10px 0 0;line-height:1.5'>Da pior para a melhor. "+
     "A disponibilidade do total é a soma das horas fora da oficina sobre a soma das horas do período — "+
     "como toda frota tem as mesmas "+E.fmtInt(per)+" h no mês, é também a média das frotas.</p>";
-  abreCaixa("Disponibilidade — "+dspNome(dspFiltro)+" — "+MESES[i]+" de "+(ano?2026:2025),
+  abreCaixa("Disponibilidade — "+dspNome(dspSel)+" — "+MESES[i]+" de "+(ano?2026:2025),
             "Frota a frota no mês", conta, corpo);
 }
 
 function graficoDisp(){
   var acum = dspModo==="acumulado";
-  var frs = dspFrotas(dspFiltro);
+  var frs = dspFrotas(dspSel);
   var card=document.getElementById("disp-card"), svg=document.getElementById("disp-svg");
-  var quadro=document.getElementById("disp-quadro");
   dspQuadro(frs);
+  dspBotao();
   E.limpa(svg);
   var rc=card.getBoundingClientRect();
-  var W=Math.max(520,Math.round(rc.width-24-(quadro.hidden?0:322))), H=Math.max(260,Math.round(rc.height-16));
+  var W=Math.max(520,Math.round(rc.width-24-322)), H=Math.max(260,Math.round(rc.height-16));
   svg.setAttribute("viewBox","0 0 "+W+" "+H);
   svg.setAttribute("preserveAspectRatio","xMidYMid meet");
 
@@ -5351,7 +5409,7 @@ function graficoDisp(){
   if(H<330){ padT=50; padB=58; }
   var plotW=W-padL-padR, plotH=H-padT-padB, base=padT+plotH;
 
-  E.tituloSVG(svg,16,20,"Disponibilidade mecânica "+(acum?"acumulada na safra":"no mês")+" — "+dspNome(dspFiltro),null,W-32);
+  E.tituloSVG(svg,16,20,"Disponibilidade mecânica "+(acum?"acumulada na safra":"no mês")+" — "+dspNome(dspSel),null,W-32);
   E.txt(svg,16,37,(acum?"barras: horas fora da oficina ÷ horas do período, somadas desde 07/04"
                        :"barras: horas fora da oficina ÷ horas do período no mês")+"; tracejado: meta de "+DSP.meta+"%",
         {"font-size":10.5,fill:E.MUT});
@@ -5368,12 +5426,12 @@ function graficoDisp(){
       g.addEventListener("click",function(){ dspDetalheMes(b[4],i); });
       g.appendChild(E.ns("title")).textContent=mes+" de "+(b[4]?2026:2025)+" — clique para ver frota a frota";
       E.add(g,"path",{d:E.barraTopo(b[0],y(b[1]),barW,base-y(b[1]),4),fill:b[2]});
-      E.txt(svg,b[0]+barW/2,y(b[1])-6,E.fmtDec(b[1],1)+"%",
+      E.txt(svg,b[0]+barW/2,y(b[1])-6,dspPct(b[1]),
             {"text-anchor":"middle","font-size":slot<110?10:11,"font-weight":"700",fill:b[3]});
     });
     E.txt(svg,cx,base+20,mes,{"text-anchor":"middle","font-size":12.5,"font-weight":"600",fill:"#2B2B2B"});
     if(v25[i]!=null && v26[i]!=null){
-      var d=v26[i]-v25[i];
+      var d=dspDif(v25[i],v26[i]);
       E.pilula(svg,cx,base+40,dspPP(d),E.corVar(d),d>=0?"#EAF5EE":"#FBEDEB");
     }
   });
@@ -5387,98 +5445,143 @@ function graficoDisp(){
     {tipo:"linha",cor:E.GOLD,tracejada:true,nome:"Meta",obs:DSP.meta+"%"},
     {cor:"#fff",borda:"#8E9AB4",nome:"Sob cada mês",obs:"a diferença em pontos percentuais"}
   ]);
-  dspChips(frs);
   dspTexto(frs);
 }
 
-function dspChips(frs){
-  var s25=dspSafra(frs,0), s26=dspSafra(frs,1), d=s26-s25;
-  var o25=0,o26=0; MESES.forEach(function(_,i){ o25+=dspMes(frs,0,i).ofi; o26+=dspMes(frs,1,i).ofi; });
-  var nAtual = dspMes(frs,1,MESES.length-1).n;
-  document.getElementById("disp-chips").innerHTML =
-    "<div class='s-chip'><div class='v'>"+dspPct(s26)+"</div><div class='k'>Disponibilidade 2026 (abr–set) "+
-      "<b style='color:"+(d>=0?"#7FD79B":"#F0897A")+"'>"+dspPP(d)+"</b></div></div>"+
-    "<div class='s-chip'><div class='v'>"+E.fmtInt(o26/1000)+" mil h</div><div class='k'>Em oficina na safra "+
-      "<b style='color:"+(o26<=o25?"#7FD79B":"#F0897A")+"'>"+E.pct(o26/o25-1,0)+"</b></div></div>"+
-    "<div class='s-chip'><div class='v'>"+nAtual+"</div><div class='k'>Frotas no filtro (set/2026)</div></div>";
-}
-
+// quadro ao lado: a lista do filtro e, embaixo, o acumulado da safra 2025 x 2026
 function dspQuadro(frs){
   var q=document.getElementById("disp-quadro");
-  var filhos=dspFilhos(dspFiltro), linhas;
+  var filhos=dspFilhos(dspSel), html;
   if(filhos){
-    linhas = filhos.map(function(x){
-      var fx=dspFrotas(x.f); return {x:x, n:fx.length, a:dspSafra(fx,0), b:dspSafra(fx,1)};
+    var linhas = filhos.map(function(x){
+      var fx=dspFrotas(x.sel); return {x:x, n:fx.length, a:dspSafra(fx,0), b:dspSafra(fx,1)};
     }).filter(function(l){ return l.b!=null; }).sort(function(p,q2){ return p.b-q2.b; });
-  }
-  // dentro de uma especialidade, o quadro mostra as frotas de pior disponibilidade
-  var titulo = filhos ? (dspFiltro.tipo==="t"?"Grupos":"Especialidades")+" — safra 2026, do pior ao melhor"
-                      : "Frotas de menor disponibilidade em 2026";
-  var html = "<h4>"+titulo+"</h4><div class='dq-lista'>";
-  if(filhos){
-    html += linhas.map(function(l){
-      var d=l.a!=null?l.b-l.a:null;
-      return "<button type='button' class='dq-row' data-f='"+l.x.f.tipo+":"+l.x.f.idx+"' title='Filtrar por "+E.esc(l.x.nome)+"'>"+
-        "<span class='n'>"+E.esc(l.x.nome)+" <u>"+l.n+"</u></span><b style='color:"+(l.b<DSP.meta?"#C0392B":"#2E7D46")+"'>"+
-        dspPct(l.b)+"</b><span class='v' style='color:"+(d==null?E.MUT:E.corVar(d))+"'>"+(d==null?"":dspPP(d))+"</span></button>";
-    }).join("");
+    html = "<h4>"+(dspSel.length?"Especialidades do filtro":"Grupos")+" — safra 2026, do pior ao melhor</h4><div class='dq-lista'>"+
+      linhas.map(function(l){
+        var d=l.a!=null?dspDif(l.a,l.b):null;
+        return "<button type='button' class='dq-row' data-sel='"+l.x.sel.join(",")+"' title='Filtrar por "+E.esc(l.x.nome)+"'>"+
+          "<span class='n'>"+E.esc(l.x.nome)+" <u>"+l.n+"</u></span><b style='color:"+(l.b<DSP.meta?"#C0392B":"#2E7D46")+"'>"+
+          dspPct(l.b)+"</b><span class='v' style='color:"+(d==null?E.MUT:E.corVar(d))+"'>"+(d==null?"":dspPP(d))+"</span></button>";
+      }).join("")+"</div>";
   } else {
+    // uma especialidade só: as frotas de menor disponibilidade em 2026
     var fr = frs.map(function(r){ return {r:r, a:dspSafra([r],0), b:dspSafra([r],1)}; })
-      .filter(function(x){ return x.b!=null; }).sort(function(p,q2){ return p.b-q2.b; }).slice(0,12);
-    html += fr.map(function(x){
-      var d=x.a!=null?x.b-x.a:null;
-      return "<div class='dq-row sem'><span class='n'>"+x.r[0]+" <u>"+E.esc(x.r[1])+"</u></span><b style='color:"+
-        (x.b<DSP.meta?"#C0392B":"#2E7D46")+"'>"+dspPct(x.b)+"</b><span class='v' style='color:"+
-        (d==null?E.MUT:E.corVar(d))+"'>"+(d==null?"":dspPP(d))+"</span></div>";
-    }).join("");
+      .filter(function(x){ return x.b!=null; }).sort(function(p,q2){ return p.b-q2.b; });
+    html = "<h4>Frotas — safra 2026, da pior à melhor</h4><div class='dq-lista'>"+
+      fr.map(function(x){
+        var d=x.a!=null?dspDif(x.a,x.b):null;
+        return "<div class='dq-row sem'><span class='n'>"+x.r[0]+" <u>"+E.esc(x.r[1])+"</u></span><b style='color:"+
+          (x.b<DSP.meta?"#C0392B":"#2E7D46")+"'>"+dspPct(x.b)+"</b><span class='v' style='color:"+
+          (d==null?E.MUT:E.corVar(d))+"'>"+(d==null?"":dspPP(d))+"</span></div>";
+      }).join("")+"</div>";
   }
-  q.innerHTML = html+"</div>";
+  // acumulado da safra (07/04 a 30/09): 2025, 2026 e a diferença em pontos,
+  // em % sobre 2025 e em horas de oficina
+  var t25=dspTotais(frs,0), t26=dspTotais(frs,1);
+  var dp = (t25.disp!=null && t26.disp!=null) ? dspDif(t25.disp,t26.disp) : null;
+  var dr = (dp!=null && t25.disp) ? dspR1(t26.disp)/dspR1(t25.disp)-1 : null;
+  var dh = t26.ofi-t25.ofi;
+  function cartao(cls,rot,v,sub){
+    return "<div class='dq-card "+cls+"'><i>"+rot+"</i><b>"+v+"</b><u>"+sub+"</u></div>";
+  }
+  html += "<div class='dq-cards'>"+
+    cartao("c25","Acumulado 2025",dspPct(t25.disp),t25.frotas+" frotas · "+E.fmtInt(t25.ofi)+" h em oficina")+
+    cartao("c26","Acumulado 2026",dspPct(t26.disp),t26.frotas+" frotas · "+E.fmtInt(t26.ofi)+" h em oficina")+
+    "<div class='dq-card dif'><i>Diferença 2026 x 2025</i>"+
+      (dp==null ? "<b>–</b>" :
+       "<div class='dq-l'><b style='color:"+E.corVar(dp)+"'>"+dspPP(dp)+"</b><span style='color:"+E.corVar(dr)+"'>"+
+       E.pct(dr,1)+" sobre 2025</span></div>")+
+      "<u>Oficina: "+(dh>=0?"+":"−")+E.fmtInt(Math.abs(dh))+" h"+(t25.ofi?" ("+E.pct(t26.ofi/t25.ofi-1,0)+")":"")+
+      " · meta "+DSP.meta+"%</u></div>"+
+    "</div>";
+  q.innerHTML = html;
   q.hidden = false;
 }
 
 function dspTexto(frs){
-  var s25=dspSafra(frs,0), s26=dspSafra(frs,1), d=s26-s25;
+  var s25=dspSafra(frs,0), s26=dspSafra(frs,1), d=dspDif(s25,s26);
   var m25=dspSerie(frs,0,false), m26=dspSerie(frs,1,false);
-  var dif=MESES.map(function(m,i){ return {m:m.toLowerCase(), d:m26[i]-m25[i]}; }).filter(function(x){ return isFinite(x.d); })
+  var dif=MESES.filter(function(_,i){ return m25[i]!=null && m26[i]!=null; })
+    .map(function(m){ var i=MESES.indexOf(m); return {m:m.toLowerCase(), d:dspDif(m25[i],m26[i])}; })
     .sort(function(a,b){ return a.d-b.d; });
   var meta26=m26.filter(function(v){ return v!=null && v>=DSP.meta; }).length;
   var meta25=m25.filter(function(v){ return v!=null && v>=DSP.meta; }).length;
-  var txt = "<strong>"+E.esc(dspNome(dspFiltro))+"</strong>: disponibilidade de <strong>"+dspPct(s26)+
-    "</strong> na safra 2026 (07/04 a 30/09), contra "+dspPct(s25)+" em 2025 — <strong>"+dspPP(d)+"</strong> "+
-    "<span class='sep'>|</span> Maior ganho em "+dif[dif.length-1].m+" ("+dspPP(dif[dif.length-1].d)+
-    ") e maior perda em "+dif[0].m+" ("+dspPP(dif[0].d)+"). <span class='sep'>|</span> Meta de "+DSP.meta+
-    "% batida em "+meta26+" de "+MESES.length+" meses em 2026 ("+meta25+" em 2025). ";
-  var filhos=dspFilhos(dspFiltro);
+  var txt = "<strong>"+E.esc(dspNome(dspSel))+"</strong>: disponibilidade de <strong>"+dspPct(s26)+
+    "</strong> na safra 2026 (07/04 a 30/09), contra "+dspPct(s25)+" em 2025 — <strong>"+dspPP(d)+"</strong> ";
+  if(dif.length){
+    var top=dif[dif.length-1], bai=dif[0];
+    txt += "<span class='sep'>|</span> "+(top.d>=0?"Maior ganho":"Menor perda")+" em "+top.m+" ("+dspPP(top.d)+
+      ") e "+(bai.d<0?"maior perda":"menor ganho")+" em "+bai.m+" ("+dspPP(bai.d)+"). ";
+  }
+  txt += "<span class='sep'>|</span> Meta de "+DSP.meta+"% batida em "+meta26+" de "+MESES.length+
+    " meses em 2026 ("+meta25+" em 2025). ";
+  var filhos=dspFilhos(dspSel);
   if(filhos){
-    var l=filhos.map(function(x){ var fx=dspFrotas(x.f); return {nome:x.nome, n:fx.length, b:dspSafra(fx,1), a:dspSafra(fx,0)}; })
+    var l=filhos.map(function(x){ var fx=dspFrotas(x.sel); return {nome:x.nome, n:fx.length, b:dspSafra(fx,1)}; })
       .filter(function(x){ return x.b!=null && x.n>=3; }).sort(function(p,q2){ return p.b-q2.b; });
-    if(l.length) txt += "<span class='sep'>|</span> Mais longe da meta (com 3 frotas ou mais): "+
+    if(l.length>1) txt += "<span class='sep'>|</span> Mais longe da meta (com 3 frotas ou mais): "+
       l.slice(0,2).map(function(x){ return E.esc(x.nome)+" ("+dspPct(x.b)+")"; }).join(" e ")+". ";
   }
-  if(dspFiltro.tipo==="t") txt += "<span class='sep'>|</span> Só frotas de 60000 a 69999, já compradas e presentes "+
+  if(!dspSel.length) txt += "<span class='sep'>|</span> Só frotas de 60000 a 69999, já compradas e presentes "+
     "no relatório do mês; mês em branco na Base fica fora. Por isso não bate com a aba GERAL, que inclui "+
     "Goiás, conta frota ausente como 0% e frota ainda não comprada como 100%.";
   document.getElementById("disp-insight").innerHTML = txt;
 }
 
+// --- seletor de várias especialidades ---
+function dspBotao(){
+  var b=document.getElementById("disp-msel-btn");
+  b.textContent = dspSel.length ? dspNome(dspSel) : "Frota inteira ("+DSP.frotas.length+" frotas)";
+  b.title = dspSel.length ? dspSel.map(function(e){ return DSP.especialidades[e][0]; }).join("\n") : "";
+  // reflete a seleção nas caixas da lista
+  var pop=document.getElementById("disp-msel-pop");
+  Array.prototype.forEach.call(pop.querySelectorAll("input[data-e]"),function(c){
+    c.checked = dspSel.indexOf(+c.dataset.e)>=0;
+  });
+  Array.prototype.forEach.call(pop.querySelectorAll("input[data-g]"),function(c){
+    var es=dspEspsDoGrupo(+c.dataset.g), n=es.filter(function(e){ return dspSel.indexOf(e)>=0; }).length;
+    c.checked = n===es.length; c.indeterminate = n>0 && n<es.length;
+  });
+}
+function dspAplica(sel){
+  dspSel = sel.slice().sort(function(a,b){ return a-b; });
+  graficoDisp();
+}
+
 (function(){
-  var sel=document.getElementById("disp-filtro");
-  sel.innerHTML = "<option value='t:-1'>Frota inteira ("+DSP.frotas.length+" frotas)</option>"+
+  var btn=document.getElementById("disp-msel-btn"), pop=document.getElementById("disp-msel-pop");
+  pop.innerHTML = "<div class='msel-topo'><b>Especialidades</b><button type='button' data-acao='limpar'>"+
+    "Limpar (frota inteira)</button></div><div class='msel-lista'>"+
     DSP.grupos.map(function(g,gi){
-      var esps = DSP.especialidades.map(function(e,i){ return {e:e,i:i}; }).filter(function(x){ return x.e[1]===gi; });
-      var nG = dspFrotas({tipo:"g",idx:gi}).length;
-      return "<optgroup label='"+E.esc(g)+"'><option value='g:"+gi+"'>"+E.esc(g)+" — todas ("+nG+")</option>"+
-        (esps.length>1 ? esps.map(function(x){
-          return "<option value='e:"+x.i+"'>"+E.esc(x.e[0])+" ("+dspFrotas({tipo:"e",idx:x.i}).length+")</option>";
-        }).join("") : "")+"</optgroup>";
-    }).join("");
-  function aplica(v){
-    var p=v.split(":"); dspFiltro={tipo:p[0], idx:parseInt(p[1],10)}; sel.value=v; graficoDisp();
+      var es=dspEspsDoGrupo(gi), nG=dspFrotas(es).length;
+      return "<label class='msel-g'><input type='checkbox' data-g='"+gi+"'> "+E.esc(g)+" <u>"+nG+"</u></label>"+
+        (es.length>1 ? es.map(function(e){
+          return "<label class='msel-e'><input type='checkbox' data-e='"+e+"'> "+
+            E.esc(DSP.especialidades[e][0].replace(g+" - ",""))+" <u>"+dspFrotas([e]).length+"</u></label>";
+        }).join("") : "");
+    }).join("")+"</div>";
+  function abre(on){
+    pop.hidden=!on; btn.setAttribute("aria-expanded",on?"true":"false");
   }
-  sel.addEventListener("change",function(){ aplica(sel.value); });
-  // o quadro também filtra: clicar numa linha desce um nível
+  btn.addEventListener("click",function(e){ e.stopPropagation(); abre(pop.hidden); });
+  pop.addEventListener("click",function(e){ e.stopPropagation(); });
+  document.addEventListener("click",function(){ if(!pop.hidden) abre(false); });
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape" && !pop.hidden) abre(false); });
+  pop.addEventListener("change",function(e){
+    var c=e.target, sel=dspSel.slice();
+    var es = c.dataset.g!=null ? dspEspsDoGrupo(+c.dataset.g) : [+c.dataset.e];
+    es.forEach(function(x){
+      var k=sel.indexOf(x);
+      if(c.checked && k<0) sel.push(x);
+      if(!c.checked && k>=0) sel.splice(k,1);
+    });
+    dspAplica(sel);
+  });
+  pop.querySelector("[data-acao=limpar]").addEventListener("click",function(){ dspAplica([]); });
+  // o quadro também filtra: clicar numa linha passa a olhar só ela
   document.getElementById("disp-quadro").addEventListener("click",function(e){
-    var b=e.target.closest(".dq-row[data-f]"); if(b) aplica(b.dataset.f);
+    var b=e.target.closest(".dq-row[data-sel]");
+    if(b) dspAplica(b.dataset.sel.split(",").map(Number));
   });
   document.getElementById("disp-modo").addEventListener("click",function(e){
     var b=e.target.closest("button"); if(!b) return;
