@@ -473,8 +473,13 @@ de 2025 trazem valores redondos (3.000, 2.800) que não batem com o banco de dad
 ## Convenções mantidas do `comparativo_colhedora`
 
 - Paleta: navy `#12224A`, dourado `#C9A227`, verde `#2E7D46`, vermelho `#C0392B`.
-- Cor fixa por unidade, a mesma dos dois relatórios: Rubiataba navy, CRV-GO dourado,
-  CRV-MG azul `#2E86C1`, Uruaçu verde.
+- Cor fixa por unidade, a mesma dos dois relatórios: CRV-MG azul `#2E86C1`, CRV-GO
+  dourado, Rubiataba navy, Uruaçu verde.
+- **Ordem fixa das unidades em todas as telas:** CRV Minas Gerais, CRV Goiás, Agro
+  Rubiataba e Agro Uruaçu — legendas, pilhas da página 1, barras da página 2 (que
+  deixaram de ser ordenadas pela contribuição), painéis da página 3 e seletor da
+  página 4. A ordem é a da lista `MOAGEM.unidades`; o código busca unidade pelo
+  código (`cod`), nunca pela posição, para a ordem poder mudar sem quebrar texto.
 - Safra anterior sempre em cinza-azulado `#B8C0D0` ou na cor da unidade esmaecida;
   a safra corrente em cor cheia.
 - Gráficos em SVG montado em JavaScript, sem biblioteca externa.

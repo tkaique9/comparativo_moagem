@@ -941,21 +941,22 @@ nav.toc a.on{color:var(--tm-ink);border-bottom-color:var(--accent);font-weight:6
 window.MOAGEM = {
   meses: ["Abril","Maio","Junho","Julho","Agosto","Setembro"],
   mesesCurto: ["Abr","Mai","Jun","Jul","Ago","Set"],
-  // ordem de exibição: mesma do relatório de colhedoras, para o grupo
-  // aparecer sempre na mesma sequência nos dois materiais
+  // ordem de exibição em todas as páginas: CRV Minas Gerais, CRV Goiás,
+  // Agro Rubiataba e Agro Uruaçu — legendas, pilhas, painéis e seletores
+  // seguem esta lista
   unidades: [
-    {cod:"AGRO-RTB", nome:"Agro Rubiataba", curto:"Rubiataba", cor:"#12224A",
-     a2025:[69811,281855,260228,260783,260544,229565],
-     a2026:[117633,266287,270519,233736,232837,187157],
-     ini2025:"2025-04-21", ini2026:"2026-04-16"},
-    {cod:"CRV-GO", nome:"CRV Goiás", curto:"CRV-GO", cor:"#C9A227",
-     a2025:[167341,279275,256910,262655,258073,225164],
-     a2026:[126134,282523,260922,261383,234320,190435],
-     ini2025:"2025-04-08", ini2026:"2026-04-15"},
     {cod:"CRV-MG", nome:"CRV Minas Gerais", curto:"CRV-MG", cor:"#2E86C1",
      a2025:[155253,241284,214425,230575,232628,213822],
      a2026:[173325,298863,251632,346417,339312,308141],
      ini2025:"2025-04-08", ini2026:"2026-04-07"},
+    {cod:"CRV-GO", nome:"CRV Goiás", curto:"CRV-GO", cor:"#C9A227",
+     a2025:[167341,279275,256910,262655,258073,225164],
+     a2026:[126134,282523,260922,261383,234320,190435],
+     ini2025:"2025-04-08", ini2026:"2026-04-15"},
+    {cod:"AGRO-RTB", nome:"Agro Rubiataba", curto:"Rubiataba", cor:"#12224A",
+     a2025:[69811,281855,260228,260783,260544,229565],
+     a2026:[117633,266287,270519,233736,232837,187157],
+     ini2025:"2025-04-21", ini2026:"2026-04-16"},
     {cod:"AGRO-URU", nome:"Agro Uruaçu", curto:"Uruaçu", cor:"#2E7D46",
      a2025:[29693,150162,152583,154375,138564,104958],
      a2026:[73879,159866,138289,135530,121552,94086],
@@ -4260,8 +4261,8 @@ function graficoContribuicao(){
     E.tituloSVG(svg,padL-50,22,"Contribuição de cada unidade",null,W-(padL-50)-12);
     E.txt(svg,padL-50,36,"quanto somou ou subtraiu da moagem do grupo, em mil t",{"font-size":10.5,fill:E.MUT});
 
-    var itens = UN.slice().sort(function(a,b){ return b.delta-a.delta; })
-                   .map(function(u){ return {rot:u.curto, v:u.delta/1000, cor:u.delta>=0?E.GREEN:E.RED, sub:E.pct(u.var)}; });
+    // na ordem fixa das unidades (CRV-MG, CRV-GO, Rubiataba, Uruaçu), como nas demais páginas
+    var itens = UN.map(function(u){ return {rot:u.curto, v:u.delta/1000, cor:u.delta>=0?E.GREEN:E.RED, sub:E.pct(u.var)}; });
     itens.push({rot:"GRUPO", v:(E.T26-E.T25)/1000, cor:E.GOLD, sub:E.pct(E.T26/E.T25-1), destaque:true});
 
     // folga em cima e embaixo para os rótulos dos valores caberem fora da barra
@@ -4401,10 +4402,12 @@ function graficoUnidades(){
   var q2 = mg.a2026.slice(3).reduce(function(a,b){return a+b;},0)/mg.a2025.slice(3).reduce(function(a,b){return a+b;},0)-1;
   document.getElementById("unidades-insight").innerHTML =
     "A CRV-MG acelera quando as outras desaceleram: <strong>"+E.pct(q1)+"</strong> no trimestre abril&ndash;junho e <strong>"+
-    E.pct(q2)+"</strong> em julho&ndash;setembro. <span class='sep'>|</span> Nas outras três, abril é o único mês com variação forte — e é o mês da abertura de safra, não de desempenho. <span class='sep'>|</span> De maio em diante, Rubiataba ("+
-    E.pct(somaJanela(UN[0],1,6))+"), CRV-GO ("+E.pct(somaJanela(UN[1],1,6))+") e Uruaçu ("+
-    E.pct(somaJanela(UN[3],1,6))+") moem menos que em 2025.";
+    E.pct(q2)+"</strong> em julho&ndash;setembro. <span class='sep'>|</span> Nas outras três, abril é o único mês com variação forte — e é o mês da abertura de safra, não de desempenho. <span class='sep'>|</span> De maio em diante, CRV-GO ("+
+    E.pct(somaJanela(un("CRV-GO"),1,6))+"), Rubiataba ("+E.pct(somaJanela(un("AGRO-RTB"),1,6))+") e Uruaçu ("+
+    E.pct(somaJanela(un("AGRO-URU"),1,6))+") moem menos que em 2025.";
 }
+// unidade pelo código, nunca pela posição na lista
+function un(cod){ return UN.filter(function(u){ return u.cod===cod; })[0]; }
 function somaJanela(u,de,ate){
   var a=u.a2025.slice(de,ate).reduce(function(a,b){return a+b;},0);
   var b=u.a2026.slice(de,ate).reduce(function(a,b){return a+b;},0);
