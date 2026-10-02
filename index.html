@@ -2458,8 +2458,9 @@ window.IRRIGACAO = {
        - a frota ainda não tinha sido comprada no início do período (o
          relatório a mostra a 100% antes da compra): 87 frotas em parte de
          2025, 4 em 2026;
-       - pedido da operação: os caminhões 60551 a 60555 saem de 2025 (100% o
-         ano todo sem uma hora de oficina; 60553-55 nem têm data de compra).
+       - pedido da operação: os caminhões 60549 e 60551 a 60555 saem de 2025
+         (100% o ano todo sem uma hora de oficina; 60553-55 nem têm data de
+         compra).
      Ficam fora também os equipamentos do relatório sem cadastro (sopradores,
      geradores, motosserras). O grupo é o prefixo da especialidade
      ("CAMINHAO - BOMBEIRO" -> CAMINHAO).
@@ -2625,7 +2626,7 @@ window.DISPONIBILIDADE = {
     [60546,"CAMINHAO VOLVO FM 540 TFF-1J01",7,[0,0,0,0,6.7,16.4],[28.7,51.3,260.4,744.0,744.0,720.0]],
     [60547,"CAMINHAO VOLVO FM 540 TGF-2E11",7,[0,0,0,0,17.6,14.4],[44.1,57.2,52.4,36.0,59.8,128.7]],
     [60548,"CAMINHAO VOLVO FM 540 TFK-4G41",7,[0,0,0,0,5.9,7.2],[249.4,43.1,34.6,39.8,30.5,73.7]],
-    [60549,"CAMINHAO VOLVO FM 540 SCA-8G02",7,[0,0,0,0,0,0],[27.1,99.1,128.3,123.1,68.0,55.5]],
+    [60549,"CAMINHAO VOLVO FM 540 SCA-8G02",7,[null,null,null,null,null,null],[27.1,99.1,128.3,123.1,68.0,55.5]],
     [60550,"CAMINHAO VOLVO FM 540 SCG-5J18",4,[0,0,0,0,0,0],[95.7,51.1,88.5,131.1,430.5,80.1]],
     [60551,"CAMINHAO VOLVO FM 540 SCM-8B72",7,[null,null,null,null,null,null],[41.0,61.0,165.3,203.7,153.5,82.5]],
     [60552,"CAMINHAO VOLVO FM 540 SCG-5I38",7,[null,null,null,null,null,null],[242.2,565.1,35.8,427.0,72.1,284.6]],
@@ -5545,6 +5546,9 @@ function dspAplica(sel){
     Array.prototype.forEach.call(this.children,function(x){ x.classList.toggle("on",x===b); });
     graficoDisp();
   });
+  // a página abre filtrada no grupo COLHEDORA
+  var gCol = DSP.grupos.indexOf("COLHEDORA");
+  if(gCol>=0) dspSel = dspEspsDoGrupo(gCol);
   window.replay = window.replay || {};
   window.replay["disponibilidade"] = graficoDisp;
 })();

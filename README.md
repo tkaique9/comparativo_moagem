@@ -273,7 +273,8 @@ das frotas.
 - **Seletor de várias especialidades:** uma lista com caixas de marcar, agrupada
   por grupo. Marcar o grupo marca todas as especialidades dele (o grupo fica
   "meio marcado" quando só parte está); dá para misturar grupos (ex.: caminhão
-  canavieiro + colhedora). Nada marcado = frota inteira; "Limpar" volta para ela. O
+  canavieiro + colhedora). Nada marcado = frota inteira; "Limpar" volta para ela. A página **abre filtrada
+  na COLHEDORA**. O
   grupo é o prefixo da especialidade (`CAMINHAO - BOMBEIRO` → CAMINHAO): a coluna de
   agrupamento do cadastro vem vazia em 10 frotas.
 - **Gráfico:** barras de 2025 e 2026 em escala de 0 a 100%, a meta de 85% tracejada e,
@@ -313,7 +314,7 @@ O relatório mensal diz também quem esteve no relatório do mês e as horas do 
   período (07/04 em abril, dia 1 nos demais) — o mês da compra, parcial, também fica
   fora. Isso tira 87 frotas de parte de 2025 (as colhedoras 62522 a 62529, os
   tratores 62272 a 62284, caminhões, motos, implementos…) e 4 de 2026.
-- **Pedido da operação:** os caminhões canavieiros 60551 a 60555 saem de 2025 — 100% o
+- **Pedido da operação:** os caminhões canavieiros 60549 e 60551 a 60555 saem de 2025 — 100% o
   ano todo sem uma hora de oficina; os 60553-55 nem têm data de compra (placas novas,
   ativos a partir de julho/2026).
 - Equipamentos do relatório **sem cadastro** (40 a 52 por mês: sopradores,
