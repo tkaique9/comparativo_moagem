@@ -41,6 +41,7 @@ do `index.html` — uma página nova entra no módulo acrescentando o id dela al
 | | 10 | Irrigação por região | A convencional aberta por região, 2025 contra 2026, painéis na mesma escala |
 | | 11 | Região x região | Duas regiões escolhidas lado a lado numa safra, com a diferença mês a mês |
 | **Manutenção** | 12 | Disponibilidade mecânica | Disponibilidade % da frota mês a mês, 2025 x 2026, com filtro de especialidades |
+| 13 | Simulador da reta final | Dois cenários editáveis de outubro a dezembro, com o quanto ainda bisa |
 
 ### A capa
 

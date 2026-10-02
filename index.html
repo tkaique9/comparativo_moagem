@@ -332,6 +332,51 @@ header.top,nav.toc{flex:0 0 auto}
   .ind .ind-pct{font-size:10px;padding:1px 6px}
   .ind .ind-lupa{display:none}
 }
+/* simulador da reta final: dois cenários lado a lado, tudo editável */
+.s-card.s-sim{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:10px 14px;overflow:hidden}
+.cen{display:flex;flex-direction:column;gap:7px;min-width:0;overflow:hidden}
+.cen + .cen{border-left:1px solid var(--line);padding-left:16px}
+.cen-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cen-tag{width:11px;height:11px;border-radius:3px;flex:none}
+.cen-top b{font-size:14.5px;color:var(--navy)}
+.cen-prev{margin-left:auto;font-size:11.5px;color:var(--mut);display:flex;align-items:center;gap:6px}
+.cen-real{font-size:12px;color:var(--mut);background:var(--bgsoft);border-radius:6px;padding:6px 10px}
+.cen-real b{color:var(--navy);font-size:13.5px;font-variant-numeric:tabular-nums}
+.cen-real i{font-style:normal;display:block;font-size:11px;margin-top:1px}
+table.cen-tab{width:100%;border-collapse:collapse;font-size:12.5px}
+table.cen-tab th{background:var(--navy);color:#fff;font-weight:600;font-size:11.5px;padding:5px 7px;text-align:center}
+table.cen-tab th.l{text-align:left}
+table.cen-tab td{padding:3px 7px;border-bottom:1px solid var(--line);text-align:center;
+  font-variant-numeric:tabular-nums}
+table.cen-tab td.l{text-align:left;color:var(--mut)}
+table.cen-tab tr.cen-sub td{background:#FFF3D0;font-weight:700;color:var(--navy);border-bottom:0}
+table.cen-tab input{font:inherit;font-size:12.5px;font-weight:700;color:var(--navy);text-align:right;
+  border:1px solid var(--line);border-radius:5px;padding:2px 6px;background:#fff;
+  font-variant-numeric:tabular-nums}
+.cen-prev input{font:inherit;font-size:13px;font-weight:700;color:var(--navy);text-align:right;
+  border:1px solid var(--line);border-radius:5px;padding:2px 6px;font-variant-numeric:tabular-nums}
+table.cen-tab input:focus,.cen-prev input:focus{outline:2px solid var(--gold);border-color:var(--gold)}
+.cen-barra{width:100%;height:42px;display:block;flex:none}
+/* sem margin-top:auto: com ele o vão sobrava no meio da coluna, entre a barra
+   e o bloco final; assim o conteúdo flui de cima e a folga fica embaixo */
+.cen-fim{display:flex;flex-direction:column;gap:3px;margin-top:6px}
+.cen-fim .cf{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  font-size:12.5px;color:var(--mut);padding:3px 8px;border-radius:5px}
+.cen-fim .cf b{font-size:15px;color:var(--navy);font-variant-numeric:tabular-nums}
+.cen-fim .cf-bisar{padding:5px 8px}
+.cen-fim .cf-bisar span{font-weight:700;color:var(--ink)}
+.cen-fim .cf-bisar b{font-size:19px}
+.sim-reset{font:inherit;font-size:12px;font-weight:700;color:#C6CEE0;cursor:pointer;
+  background:transparent;border:1px solid rgba(198,206,224,.45);border-radius:8px;padding:6px 12px}
+.sim-reset:hover{color:var(--gold);border-color:var(--gold)}
+@media(max-height:780px){
+  .cen{gap:4px}
+  .cen-barra{height:34px}
+  table.cen-tab td{padding:2px 6px}
+  .cen-fim .cf-bisar b{font-size:16px}
+  .cen-real{padding:4px 9px}
+}
+
 /* painel de detalhe: a conta por trás do número clicado */
 .mf{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:28px}
 .mf[hidden]{display:none!important}
@@ -598,6 +643,7 @@ nav.toc a.on{color:var(--tm-ink);border-bottom-color:var(--accent);font-weight:6
 <a href="#irriga-regioes"><b>10</b> Irrigação por região</a>
 <a href="#irriga-reg-x-reg"><b>11</b> Região x região</a>
 <a href="#disponibilidade"><b>12</b> Disponibilidade mecânica</a>
+<a href="#simulador"><b>13</b> Simulador da reta final</a>
 </nav>
 
 <div class="deck" id="deck">
@@ -816,6 +862,22 @@ nav.toc a.on{color:var(--tm-ink);border-bottom-color:var(--accent);font-weight:6
 <div class="s-legend" id="disp-legend"></div>
 <div class="s-card s-quadro" id="disp-card"><svg id="disp-svg"></svg><div class="quadro" id="disp-quadro" hidden></div></div>
 <div class="s-insight" id="disp-insight">carregando…</div>
+</article>
+
+<!-- ================= 13 · SIMULADOR DA RETA FINAL ================= -->
+<article class="slide slide-dark" id="simulador" data-title="Simulador da reta final">
+<div class="s-head">
+<div>
+<div class="s-eyebrow">13 &middot; Simulador da reta final &middot; CRV Minas Gerais</div>
+<h2 class="s-title">Quanto falta para fechar a previsão</h2>
+<p class="s-sub">Abril a setembro entram travados, com o que já foi moído. Outubro, novembro e dezembro são a projeção: mude os dias, a moagem por dia ou a própria previsão da safra e os dois cenários recalculam na hora. <b>Bisar</b> é o que ainda falta para a previsão depois da reta final.</p>
+</div>
+<div class="s-right">
+<button type="button" class="sim-reset" id="sim-reset">Restaurar cenários</button>
+</div>
+</div>
+<div class="s-card s-sim js-card"></div>
+<div class="s-insight js-insight">carregando&hellip;</div>
 </article>
 
 </div><!-- /deck -->
@@ -5962,6 +6024,181 @@ function dspAplica(sel){
 
 
 /* ============================================================
+   SIMULADOR DA RETA FINAL — CRV-MG
+   Reproduz a Projeção Safra.xlsx: abril a setembro são o realizado e
+   entram travados; outubro, novembro e dezembro são a projeção, com
+   dias e moagem/dia editáveis. Dois cenários lado a lado.
+
+     Falta  = Previsão − Realizado
+     Bisar  = Falta − Projetado (out+nov+dez)
+
+   "Bisar" é o que ainda fica faltando para a previsão mesmo depois da
+   reta final; negativo quer dizer que a projeção passa da previsão.
+   ============================================================ */
+var SIM_MG = UN.filter(function(u){ return u.cod==="CRV-MG"; })[0];
+var SIM_DIAS_MES = [30,31,30,31,31,30];          // abril..setembro
+var SIM_FIM = [{mes:"Outubro",dias:31},{mes:"Novembro",dias:30},{mes:"Dezembro",dias:15}];
+// valores de partida iguais aos da planilha
+var SIM_CEN = [
+  {rot:"Cenário 1", cor:"#2E86C1", previsao:2500000, meses:[9500,8500,7500]},
+  {rot:"Cenário 2", cor:"#C9A227", previsao:2500000, meses:[10000,9000,8000]}
+];
+
+// dias de cada mês do realizado: abril conta da abertura da safra até 30/04
+function simDiasRealizado(i){
+  return i===0 ? (30-parseInt(SIM_MG.ini2026.slice(8,10),10)+1) : SIM_DIAS_MES[i];
+}
+var SIM_REAL_TON = E.total(SIM_MG.a2026);
+var SIM_REAL_DIAS = MESES.reduce(function(a,_,i){ return a+simDiasRealizado(i); },0);
+
+// entrada numérica em pt-BR: aceita o que o usuário digitar e devolve número
+function numBR(txt){
+  var t=String(txt).replace(/\s/g,"").replace(/\./g,"").replace(",",".");
+  var v=parseFloat(t);
+  return isFinite(v) && v>=0 ? v : 0;
+}
+
+function montaSimulador(){
+  var sl = document.getElementById("simulador");
+  var card = sl.querySelector(".js-card");
+
+  function painel(c,ci){
+    function campo(cls,val,larg){
+      return "<input type='text' inputmode='decimal' autocomplete='off' spellcheck='false' "+
+             "class='"+cls+"' value='"+val+"' style='width:"+larg+"px'>";
+    }
+    return "<div class='cen' data-cen='"+ci+"'>"+
+      "<div class='cen-top'><span class='cen-tag' style='background:"+c.cor+"'></span>"+
+        "<b>"+E.esc(c.rot)+"</b>"+
+        "<span class='cen-prev'>Previsão da safra "+
+          campo("js-prev",E.fmtInt(c.previsao),102)+" t</span></div>"+
+      "<div class='cen-real'>Realizado de abril a setembro <b>"+E.fmtInt(SIM_REAL_TON)+" t</b>"+
+        "<i>"+SIM_REAL_DIAS+" dias &middot; "+E.fmtInt(SIM_REAL_TON/SIM_REAL_DIAS)+" t/dia</i></div>"+
+      "<table class='cen-tab'><thead><tr><th class='l'>Reta final</th><th>Dias</th>"+
+        "<th>Moagem/dia</th><th>Volume do mês</th></tr></thead><tbody>"+
+        SIM_FIM.map(function(m,i){
+          return "<tr><td class='l'>"+m.mes+"</td>"+
+            "<td>"+campo("js-dias",m.dias,44)+"</td>"+
+            "<td>"+campo("js-tdia",E.fmtInt(c.meses[i]),78)+"</td>"+
+            "<td class='js-vol'>–</td></tr>";
+        }).join("")+
+        "<tr class='cen-sub'><td class='l'>Projetado out–dez</td><td class='js-pdias'>–</td>"+
+        "<td class='js-ptdia'>–</td><td class='js-pvol'>–</td></tr>"+
+      "</tbody></table>"+
+      "<svg class='js-barra cen-barra'></svg>"+
+      "<div class='cen-fim'>"+
+        "<div class='cf'><span>Total da safra</span><b class='js-total'>–</b></div>"+
+        "<div class='cf'><span>Falta para a previsão</span><b class='js-falta'>–</b></div>"+
+        "<div class='cf cf-bisar'><span class='js-bisar-rot'>Bisar</span><b class='js-bisar'>–</b></div>"+
+      "</div></div>";
+  }
+  card.innerHTML = SIM_CEN.map(painel).join("");
+
+  function calcula(){
+    var resumo=[];
+    SIM_CEN.forEach(function(c,ci){
+      var p = card.querySelector(".cen[data-cen='"+ci+"']");
+      var prev = numBR(p.querySelector(".js-prev").value);
+      var dias=[], tdia=[], vol=[];
+      SIM_FIM.forEach(function(_,i){
+        dias.push(numBR(p.querySelectorAll(".js-dias")[i].value));
+        tdia.push(numBR(p.querySelectorAll(".js-tdia")[i].value));
+        vol.push(dias[i]*tdia[i]);
+        p.querySelectorAll(".js-vol")[i].textContent = E.fmtInt(vol[i]);
+      });
+      var pDias=dias.reduce(function(a,b){return a+b;},0);
+      var pVol=vol.reduce(function(a,b){return a+b;},0);
+      var total=SIM_REAL_TON+pVol, falta=prev-SIM_REAL_TON, bisar=falta-pVol;
+
+      p.querySelector(".js-pdias").textContent = E.fmtInt(pDias);
+      p.querySelector(".js-ptdia").textContent = pDias ? E.fmtInt(pVol/pDias) : "–";
+      p.querySelector(".js-pvol").textContent = E.fmtInt(pVol);
+      p.querySelector(".js-total").textContent = E.fmtInt(total)+" t";
+      p.querySelector(".js-falta").textContent = E.fmtInt(falta)+" t";
+
+      // bisar negativo = a projeção passou da previsão: vira sobra, em verde
+      var sobra = bisar<0;
+      p.querySelector(".js-bisar-rot").textContent = sobra ? "Sobra sobre a previsão" : "Bisar";
+      var el=p.querySelector(".js-bisar");
+      el.textContent = E.fmtInt(Math.abs(bisar))+" t";
+      el.style.color = sobra ? E.GREEN : E.RED;
+      p.querySelector(".cf-bisar").style.background = sobra ? "#EAF5EE" : "#FBEDEB";
+
+      barra(p.querySelector(".js-barra"), c, prev, pVol, total);
+      resumo.push({c:c, prev:prev, pVol:pVol, total:total, bisar:bisar, pDias:pDias});
+    });
+    texto(resumo);
+  }
+
+  // barra de progresso: realizado + projetado contra a previsão
+  function barra(svg,c,prev,pVol,total){
+    E.limpa(svg);
+    var W=560, H=42;
+    svg.setAttribute("viewBox","0 0 "+W+" "+H);
+    svg.setAttribute("preserveAspectRatio","none");
+    var esc=Math.max(prev,total)||1, x=function(v){ return (v/esc)*W; };
+    E.add(svg,"rect",{x:0,y:12,width:W,height:16,rx:4,fill:"#EDEFF3"});
+    E.add(svg,"rect",{x:0,y:12,width:x(SIM_REAL_TON),height:16,rx:4,fill:c.cor});
+    E.add(svg,"rect",{x:x(SIM_REAL_TON),y:12,width:x(pVol),height:16,fill:c.cor,opacity:".45"});
+    if(total<prev){
+      E.add(svg,"rect",{x:x(total),y:12,width:x(prev-total),height:16,fill:"#C0392B",opacity:".22"});
+    }
+    // marca da previsão
+    E.add(svg,"line",{x1:x(prev),x2:x(prev),y1:6,y2:34,stroke:E.NAVY,"stroke-width":2});
+    E.txt(svg,Math.min(x(prev),W-4),4,"previsão",
+          {"text-anchor":"end","font-size":9,"font-weight":"700",fill:E.NAVY});
+    E.txt(svg,2,40,"realizado",{"font-size":9,fill:E.MUT});
+    E.txt(svg,x(SIM_REAL_TON)+3,40,"projetado",{"font-size":9,fill:E.MUT});
+  }
+
+  function texto(r){
+    function frase(x){
+      return "<strong>"+E.esc(x.c.rot)+"</strong>: "+E.fmtInt(x.total)+" t ("+
+        (x.bisar<0 ? "<strong>sobra "+E.fmtInt(-x.bisar)+" t</strong>"
+                   : "<strong>bisa "+E.fmtInt(x.bisar)+" t</strong>")+")";
+    }
+    var d=r[1].total-r[0].total;
+    document.querySelector("#simulador .js-insight").innerHTML =
+      frase(r[0])+" <span class='sep'>|</span> "+frase(r[1])+
+      " <span class='sep'>|</span> Entre os dois cenários, <strong>"+E.fmtInt(Math.abs(d))+
+      " t</strong> de diferença na safra — "+
+      (r[0].pDias===r[1].pDias
+        ? "com os mesmos "+E.fmtInt(r[0].pDias)+" dias de reta final, só mudando o ritmo diário."
+        : "com "+E.fmtInt(r[0].pDias)+" e "+E.fmtInt(r[1].pDias)+" dias de reta final.")+
+      " <span class='sep'>|</span> Abril a setembro entram travados: são "+
+      E.fmtInt(SIM_REAL_TON)+" t já moídas.";
+  }
+
+  card.addEventListener("input",function(e){
+    if(e.target.tagName==="INPUT") calcula();
+  });
+  // ao sair do campo, reescreve no formato pt-BR
+  card.addEventListener("blur",function(e){
+    var t=e.target;
+    if(t.tagName!=="INPUT") return;
+    if(t.classList.contains("js-dias")) t.value=E.fmtInt(numBR(t.value));
+    else t.value=E.fmtInt(numBR(t.value));
+    calcula();
+  },true);
+
+  document.getElementById("sim-reset").addEventListener("click",function(){
+    SIM_CEN.forEach(function(c,ci){
+      var p=card.querySelector(".cen[data-cen='"+ci+"']");
+      p.querySelector(".js-prev").value=E.fmtInt(c.previsao);
+      SIM_FIM.forEach(function(m,i){
+        p.querySelectorAll(".js-dias")[i].value=m.dias;
+        p.querySelectorAll(".js-tdia")[i].value=E.fmtInt(c.meses[i]);
+      });
+    });
+    calcula();
+  });
+
+  calcula();
+  return calcula;
+}
+
+
+/* ============================================================
    REDESENHO
    ============================================================ */
 function redesenhaTudo(){
@@ -5976,6 +6213,7 @@ window.replay.panorama = graficoPanorama;
 window.replay.contribuicao = graficoContribuicao;
 window.replay.unidades = graficoUnidades;
 window.replay["mes-a-mes"] = graficoMesAMes;
+window.replay.simulador = montaSimulador();   // monta uma vez; o replay só recalcula
 
 pintaCapa();
 
@@ -5995,7 +6233,8 @@ var MODULOS = [
   {id:"moagem", nome:"Moagem", pags:["panorama","contribuicao","unidades","mes-a-mes"]},
   {id:"ctt", nome:"Indicadores CTT", pags:["colhedora","caminhao","transbordo"]},
   {id:"irrigacao", nome:"Irrigação", pags:["irriga-localizada","irriga-convencional","irriga-regioes","irriga-reg-x-reg"]},
-  {id:"manutencao", nome:"Manutenção", pags:["disponibilidade"]}
+  {id:"manutencao", nome:"Manutenção", pags:["disponibilidade"]},
+  {id:"projecao", nome:"Projeção", pags:["simulador"]}
 ];
 function modDe(id){
   for(var i=0;i<MODULOS.length;i++) if(MODULOS[i].pags.indexOf(id)>=0) return MODULOS[i];
