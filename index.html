@@ -360,6 +360,10 @@ table.cen-tab tr.cen-reg td{background:var(--bgsoft);font-size:11.5px;padding:2p
 table.cen-tab tr.cen-reg td.l.reg{padding-left:22px;color:var(--mut)}
 table.cen-tab tr.cen-reg td.reg-dias{color:#9AA4B8}
 table.cen-tab tr.cen-reg input{font-size:11.5px;padding:1px 5px}
+/* ajuste do mês: campo pequeno antes do ritmo já ajustado */
+td.mes-aj{display:flex;align-items:center;justify-content:center;gap:3px}
+td.mes-aj i{font-style:normal;font-size:10px;color:#9AA4B8}
+td.mes-aj b{font-weight:700;color:var(--navy);min-width:48px;text-align:right}
 .cen-real{font-size:12px;color:var(--mut);background:var(--bgsoft);border-radius:6px;
   padding:5px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:none}
 .cen-real b{color:var(--navy);font-size:13.5px;font-variant-numeric:tabular-nums}
@@ -6166,7 +6170,9 @@ function montaSimulador(){
         "<td class='l'><button type='button' class='js-abre cen-abre' data-mes='"+i+"'>"+
           "<span class='seta'>&#9656;</span>"+m.mes+"</button></td>"+
         "<td>"+campo("js-dias",m.dias,42)+"</td>"+
-        "<td class='js-mtdia'>–</td><td class='js-mvol'>–</td></tr>";
+        "<td class='mes-aj'>"+campo("js-mpct",0,34)+"<i>%</i>"+
+          "<b class='js-mtdia'>–</b></td>"+
+        "<td class='js-mvol'>–</td></tr>";
       var regs = SIM_REG.map(function(r,ri){
         return "<tr class='cen-reg' data-mes='"+i+"' data-reg='"+ri+"' hidden>"+
           "<td class='l reg'>"+E.esc(r.nome)+"</td><td class='reg-dias'>–</td>"+
@@ -6265,18 +6271,22 @@ function montaSimulador(){
       // o ritmo em % multiplica a moagem/dia de todas as regiões, para os dois
       // lados: 10 acelera, -20 desacelera. O piso é -100%, que zera o ritmo.
       var rit = Math.max(0, 1 + numSig(p.querySelector(".js-rit").value)/100);
-      var dias=[], taxa=[], pDias=0, cap=0;
+      var dias=[], taxa=[], pDias=0, cap=0, fatorMes=[];
       SIM_FIM.forEach(function(_,i){
-        var d = numBR(p.querySelector("tr.cen-mes[data-mes='"+i+"'] .js-dias").value);
+        var mtr = p.querySelector("tr.cen-mes[data-mes='"+i+"']");
+        var d = numBR(mtr.querySelector(".js-dias").value);
         dias.push(d); pDias += d;
-        var linha=[];
+        // o ajuste do mês se multiplica com o do cenário
+        var fm = Math.max(0, 1 + numSig(mtr.querySelector(".js-mpct").value)/100);
+        fatorMes.push(fm);
+        var f = rit*fm, linha=[];
         SIM_REG.forEach(function(r,ri){
           var tr = p.querySelector("tr.cen-reg[data-mes='"+i+"'][data-reg='"+ri+"']");
-          var t = numBR(tr.querySelector(".js-rtdia").value)*rit;
+          var t = numBR(tr.querySelector(".js-rtdia").value)*f;
           linha.push(t); cap += d*t;
-          // com ritmo diferente de 100%, o valor de fato usado fica ao lado do campo
-          var ef = tr.querySelector(".js-ef");
-          ef.textContent = Math.abs(rit-1)<1e-9 ? "" : "→ "+E.fmtInt(t);
+          // fora de 100%, o valor de fato usado fica ao lado do campo digitado
+          tr.querySelector(".js-ef").textContent =
+            Math.abs(f-1)<1e-9 ? "" : "→ "+E.fmtInt(t);
         });
         taxa.push(linha);
       });
@@ -6294,7 +6304,10 @@ function montaSimulador(){
         });
         var mtr = p.querySelector("tr.cen-mes[data-mes='"+i+"']");
         var somaDia = taxa[i].reduce(function(a,b){ return a+b; },0);
-        mtr.querySelector(".js-mtdia").textContent = E.fmtInt(somaDia);
+        var el = mtr.querySelector(".js-mtdia");
+        el.textContent = E.fmtInt(somaDia);
+        el.style.color = fatorMes[i]>1.0001 ? E.GREEN
+                       : (fatorMes[i]<0.9999 ? E.RED : "");
         mtr.querySelector(".js-mvol").textContent = E.fmtInt(sim.porMes[i]);
       });
 
@@ -6454,7 +6467,8 @@ function montaSimulador(){
   card.addEventListener("blur",function(e){
     var t=e.target;
     if(t.tagName!=="INPUT") return;
-    if(!t.classList.contains("js-aum") && !t.classList.contains("js-rit"))
+    if(!t.classList.contains("js-aum") && !t.classList.contains("js-rit") &&
+       !t.classList.contains("js-mpct"))
       t.value=E.fmtInt(numBR(t.value));
     calcula();
   },true);
@@ -6466,6 +6480,7 @@ function montaSimulador(){
       p.querySelector(".js-rit").value=0;
       SIM_FIM.forEach(function(m,i){
         p.querySelector("tr.cen-mes[data-mes='"+i+"'] .js-dias").value=m.dias;
+        p.querySelector("tr.cen-mes[data-mes='"+i+"'] .js-mpct").value=0;
         SIM_REG.forEach(function(r,ri){
           p.querySelector("tr.cen-reg[data-mes='"+i+"'][data-reg='"+ri+"'] .js-rtdia")
             .value=E.fmtInt(simPadrao(c,r));
