@@ -1,0 +1,2889 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparativo de Moagem — Unidades do Grupo | UGS</title>
+<style>
+:root{--navy:#12224A;--navy2:#1E3566;--gold:#C9A227;--red:#C0392B;--green:#2E7D46;--ink:#2B2B2B;--mut:#5A6072;--line:#D6DAE2;--bgsoft:#F4F6FA;}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:#fff}
+header.top{background:var(--navy);color:#fff;padding:10px 28px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--gold);flex-wrap:wrap;gap:6px}
+header.top .brand{font-weight:700;font-size:15px} header.top .meta{font-size:12.5px;color:#C6CEE0}
+nav.toc{background:#fff;border-bottom:1px solid var(--line);padding:7px 28px;overflow-x:auto;white-space:nowrap}
+nav.toc a{color:var(--navy);text-decoration:none;font-size:12.5px;font-weight:500;margin-right:16px;
+  padding-bottom:4px;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
+nav.toc a b{color:var(--gold);font-weight:700;margin-right:4px}
+nav.toc a:hover{color:var(--gold)}
+nav.toc a.on{color:var(--gold);border-bottom-color:var(--gold);font-weight:700}
+
+.kpis{display:flex;flex-wrap:wrap;gap:1px;background:var(--line);border:1px solid var(--line)}
+.kpi{background:var(--navy2);padding:16px 12px;text-align:center;flex:1 1 0;min-width:150px}
+.kpi-num{color:var(--gold);font-size:21px;font-weight:700;font-variant-numeric:tabular-nums}
+/* dourado é o valor neutro; só o número negativo muda de cor, para não passar
+   por crescimento numa leitura rápida de sala */
+.kpi-num.neg,.s-chip .v.neg{color:#F0897A}
+.kpi-lab{color:#C6CEE0;font-size:11.5px;margin-top:4px;line-height:1.35}
+.band{background:var(--gold);color:#fff;font-weight:700;font-size:14px;padding:12px 18px;line-height:1.45}
+
+/* ============================================================
+   MODO APRESENTAÇÃO — uma página por tópico, sem rolagem
+   ============================================================ */
+html,body{height:100%}
+body{margin:0;display:flex;flex-direction:column;overflow:hidden}
+header.top,nav.toc{flex:0 0 auto}
+
+.deck{position:relative;flex:1 1 auto;min-height:0}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;visibility:hidden;
+  transform:translateY(14px);transition:opacity .38s ease,transform .38s ease,visibility .38s}
+.slide.active{opacity:1;visibility:visible;transform:none}
+
+.deck-nav{flex:0 0 auto;display:flex;align-items:center;gap:14px;background:var(--navy);
+  border-top:3px solid var(--gold);padding:7px 20px}
+.deck-nav button{font:inherit;font-size:13px;font-weight:700;color:var(--navy);background:var(--gold);
+  border:0;border-radius:6px;padding:6px 15px;cursor:pointer}
+.deck-nav button:disabled{opacity:.32;cursor:default}
+.deck-dots{display:flex;gap:8px;margin:0 auto;flex-wrap:wrap;justify-content:center}
+.deck-dots button{width:11px;height:11px;padding:0;border-radius:50%;background:rgba(255,255,255,.3);border:0;cursor:pointer}
+.deck-dots button.on{background:var(--gold);transform:scale(1.3)}
+.deck-count{color:#C6CEE0;font-size:12.5px;font-variant-numeric:tabular-nums;min-width:58px;text-align:right}
+.deck-hint{color:#8C97AE;font-size:11px;letter-spacing:.02em}
+
+/* ---- capa ---- */
+/* sem position:relative aqui — isso sobrescreveria o position:absolute de .slide
+   e a capa deixaria de ocupar a altura toda do deck. O absolute já serve de
+   referência para a curva de fundo. */
+.slide-cover{background:radial-gradient(1200px 700px at 8% -20%,#22407D 0%,#152A5C 45%,#0A1330 100%);
+  color:#fff;justify-content:flex-end;padding:0;gap:0;overflow:hidden}
+.capa-fundo{position:absolute;left:0;right:0;bottom:92px;width:100%;height:46%;pointer-events:none;opacity:.5}
+.capa-corpo{position:relative;z-index:1;padding:34px 42px 0;display:flex;flex-direction:column;gap:16px}
+.capa-selo{display:inline-flex;align-items:center;gap:10px;font-size:11.5px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--gold);font-weight:700}
+.capa-selo::before{content:"";width:34px;height:3px;background:var(--gold);border-radius:2px}
+.slide-cover h1{font-size:44px;line-height:1.08;margin:0;font-weight:700;letter-spacing:-.5px;max-width:900px}
+.slide-cover h1 em{display:block;font-style:normal;font-size:26px;font-weight:600;color:#AEBBD8;margin-top:8px;letter-spacing:0}
+.slide-cover p.sub{margin:0;color:#C6CEE0;font-size:14.5px;max-width:800px;line-height:1.5}
+.capa-rodape{position:relative;z-index:1;margin-top:auto}
+.slide-cover .kpis{margin:0;background:transparent;border:0;gap:10px;padding:0 42px}
+.slide-cover .kpi{background:rgba(9,17,40,.72);border:1px solid rgba(201,162,39,.32);border-radius:10px;padding:14px 14px 13px}
+.slide-cover .kpi-num{font-size:25px}
+.slide-cover .kpi-lab{color:#D5DDF0;font-size:12px}
+.slide-cover .band{margin:14px 0 0;color:#1A1A1A;background:linear-gradient(90deg,var(--gold) 0%,#E0B93A 100%)}
+.capa-aviso{display:inline-block;background:rgba(201,162,39,.16);border:1px solid var(--gold);color:#F0DFA8;
+  font-size:11.5px;font-weight:600;padding:5px 12px;border-radius:12px}
+@media(max-height:780px){
+  .capa-corpo{padding:20px 34px 0;gap:11px}
+  .slide-cover h1{font-size:34px}
+  .slide-cover h1 em{font-size:20px;margin-top:5px}
+  .slide-cover .kpi-num{font-size:21px}
+  .slide-cover .kpi{padding:10px 12px 9px}
+  .slide-cover .kpis{padding:0 34px;gap:8px}
+  .slide-cover .band{margin-top:10px}
+  .capa-fundo{bottom:80px;height:42%}
+}
+
+/* ---- páginas de conteúdo ---- */
+.slide-dark{background:radial-gradient(1100px 620px at 12% -12%,#20386E 0%,#111F45 55%,#0A1330 100%);
+  color:#fff;padding:20px 30px 16px;gap:13px}
+.s-head{display:flex;align-items:flex-start;gap:22px;flex:0 0 auto}
+.s-eyebrow{font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.s-title{font-size:25px;font-weight:700;margin:3px 0 0;line-height:1.15}
+.s-sub{font-size:13px;color:#AEBBD8;margin:5px 0 0;max-width:820px;line-height:1.45}
+.s-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.s-chips{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}
+.s-chip{background:rgba(255,255,255,.07);border:1px solid rgba(201,162,39,.45);border-radius:10px;padding:8px 14px;min-width:120px}
+.s-chip .v{color:var(--gold);font-size:17.5px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.s-chip .k{color:#AEBBD8;font-size:10.5px;margin-top:3px;line-height:1.3}
+.s-toggle{display:flex;border:1px solid rgba(201,162,39,.5);border-radius:8px;overflow:hidden}
+.s-toggle button{font:inherit;font-size:12px;font-weight:700;padding:6px 14px;border:0;cursor:pointer;background:transparent;color:#C6CEE0}
+.s-toggle button.on{background:var(--gold);color:var(--navy)}
+.s-sel{font:inherit;font-size:12.5px;font-weight:700;padding:6px 12px;border:1px solid rgba(201,162,39,.5);
+  border-radius:8px;background:rgba(255,255,255,.08);color:#fff;cursor:pointer;max-width:250px}
+.s-sel:focus{outline:2px solid var(--gold)}
+.s-sel option{background:#12224A;color:#fff}
+.s-legend{display:flex;gap:18px;flex-wrap:wrap;align-items:center;font-size:11.5px;color:#C6CEE0;flex:0 0 auto}
+.s-legend .lg{display:inline-flex;align-items:center;gap:7px}
+.s-legend .lg svg{display:block;flex:none}
+.s-legend b{color:#fff;font-weight:600}
+
+.s-card{flex:1 1 auto;min-height:0;background:#fff;border-radius:12px;box-shadow:0 18px 44px rgba(0,0,0,.38);
+  padding:8px 12px;display:flex;color:var(--ink)}
+.s-card > svg{width:100%;height:100%;display:block}
+.s-card.s-grid{display:grid;gap:9px}
+.s-card.s-grid.cols4{grid-template-columns:repeat(4,1fr);grid-template-rows:1fr}
+.s-card.s-grid.cols2{grid-template-columns:repeat(2,1fr);grid-template-rows:1fr}
+/* overflow:hidden é a rede de segurança: se um rótulo ainda estourar o viewBox
+   do painel, ele é cortado em vez de invadir o painel vizinho */
+.s-card.s-grid > svg{width:100%;height:100%;display:block;min-width:0;min-height:0;overflow:hidden}
+.s-insight{flex:0 0 auto;background:linear-gradient(90deg,rgba(201,162,39,.24),rgba(201,162,39,.04));
+  border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 16px;font-size:13.5px;line-height:1.55;color:#EAF0FF}
+.s-insight strong{color:var(--gold)}
+.s-insight .sep{color:#5B6B90;margin:0 8px}
+
+/* fichas de indicador da página da colhedora: elas também SÃO o seletor —
+   mostram o resultado da safra e abrem o mês a mês daquele indicador */
+.ind-bar{display:flex;gap:8px;flex:0 0 auto;flex-wrap:wrap}
+.ind{flex:1 1 0;min-width:118px;text-align:left;font:inherit;cursor:pointer;color:#fff;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:10px;
+  padding:8px 12px;transition:background .15s,border-color .15s}
+.ind:hover{border-color:rgba(201,162,39,.6)}
+.ind.on{background:rgba(201,162,39,.16);border-color:var(--gold)}
+.ind{position:relative}
+.ind .ind-k{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#AEBBD8;font-weight:700;line-height:1.25}
+.ind.on .ind-k{color:var(--gold)}
+.ind .ind-k u{text-decoration:none;color:#78859F;font-weight:600;letter-spacing:0;text-transform:none}
+/* a disputa 2025 x 2026: os dois valores lado a lado, 2026 maior, e a variação
+   num selo ao lado — não mais o percentual sozinho na frente do número */
+.ind .ind-vs{display:flex;align-items:flex-end;gap:7px;margin-top:5px;flex-wrap:wrap}
+.ind .iv{display:flex;flex-direction:column;line-height:1.05}
+.ind .iv i{font-style:normal;font-size:8.5px;letter-spacing:.09em;color:#8795AF;font-weight:700;margin-bottom:2px}
+.ind .iv b{font-size:14.5px;font-weight:700;color:#A9B6D2;font-variant-numeric:tabular-nums}
+.ind .iv.on i{color:var(--gold)}
+.ind .iv.on b{font-size:21px;color:#fff;line-height:.95}
+.ind .ia{color:#67739A;font-size:12px;padding-bottom:3px}
+.ind .ind-pct{font-size:11px;font-weight:700;padding:2px 7px;border-radius:9px;margin-bottom:1px}
+.ind .ind-pct.bom{background:rgba(46,125,70,.3);color:#9BE5B4}
+.ind .ind-pct.ruim{background:rgba(192,57,43,.28);color:#F3A79B}
+/* indicador de contexto (raio médio): varia, mas não é bom nem ruim subir */
+.ind .ind-pct.neutro{background:rgba(255,255,255,.12);color:#C6CEE0}
+.ind .ind-lupa{position:absolute;right:10px;top:8px;font-size:9px;letter-spacing:.06em;
+  text-transform:uppercase;color:#6E7BA0;font-weight:700;opacity:0;transition:opacity .15s}
+.ind:hover .ind-lupa,.ind.on .ind-lupa{opacity:1}
+.ind.on .ind-lupa{color:var(--gold)}
+
+/* quadro da composição do custo — só aparece no indicador de custo, ao lado do
+   gráfico. O SVG passa a dividir a largura do cartão com ele. */
+.s-card.s-quadro{gap:14px}
+.s-card.s-quadro > svg{flex:1 1 auto;width:auto;min-width:0}
+/* --qf é o fator de ajuste do quadro: o JS mede a altura que sobrou no cartão e
+   encolhe tudo junto, para o "Custo total" nunca ser cortado embaixo */
+.quadro{--qf:1;flex:0 0 236px;min-width:0;border-left:1px solid var(--line);padding:4px 2px 2px 16px;
+  display:flex;flex-direction:column;gap:calc(9px*var(--qf));overflow:hidden}
+.quadro[hidden]{display:none}
+.quadro h4{margin:0;font-size:calc(10.5px*var(--qf));letter-spacing:.12em;text-transform:uppercase;
+  color:var(--mut);font-weight:700;line-height:1.3}
+.q-item{display:flex;flex-direction:column;gap:1px}
+.q-nome{display:flex;align-items:center;gap:7px;font-size:calc(12.5px*var(--qf));font-weight:700;color:var(--navy)}
+.q-nome i{width:11px;height:11px;border-radius:3px;flex:none}
+.q-v{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.q-v b{font-size:calc(19px*var(--qf));font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums;line-height:1.15}
+.q-v u{text-decoration:none;font-size:calc(11px*var(--qf));color:var(--mut);font-weight:600}
+.q-v span{font-size:calc(12px*var(--qf));font-weight:700}
+.q-sub{font-size:calc(11.5px*var(--qf));color:var(--mut);line-height:1.45}
+.q-sub b{color:var(--navy);font-weight:700}
+.q-tot{border-top:1px solid var(--line);padding-top:calc(9px*var(--qf));margin-top:auto}
+@media(max-height:780px){
+  .quadro{flex:0 0 206px;padding-left:12px}
+}
+
+/* telas baixas (projetor de sala, janela larga e curta): compacta o cabeçalho
+   para sobrar altura ao gráfico */
+@media(max-height:780px){
+  .slide-dark{padding:13px 24px 11px;gap:8px}
+  .s-title{font-size:21px}
+  .s-sub{display:none}
+  .s-eyebrow{font-size:10.5px}
+  .s-chip{padding:5px 11px;min-width:0}
+  .s-chip .v{font-size:15px}
+  .s-chip .k{font-size:9.5px}
+  .s-toggle button{padding:5px 11px;font-size:11.5px}
+  .s-sel{padding:5px 10px;font-size:11.5px}
+  .s-insight{padding:8px 14px;font-size:12.5px}
+  .s-legend{font-size:11px;gap:12px}
+  .ind{padding:5px 10px;min-width:98px}
+  .ind .ind-k{font-size:9px}
+  .ind .iv.on b{font-size:17px}
+  .ind .iv b{font-size:12.5px}
+  .ind .ind-pct{font-size:10px;padding:1px 6px}
+  .ind .ind-lupa{display:none}
+}
+/* painel de detalhe: a conta por trás do número clicado */
+.mf{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:28px}
+.mf[hidden]{display:none!important}
+.mf-fundo{position:absolute;inset:0;background:rgba(6,12,28,.72);backdrop-filter:blur(2px)}
+.mf-caixa{position:relative;background:#fff;border-radius:12px;box-shadow:0 24px 70px rgba(0,0,0,.5);
+  width:min(1180px,95vw);max-height:88vh;display:flex;flex-direction:column;overflow:hidden}
+.mf-topo{flex:0 0 auto;display:flex;align-items:flex-start;gap:16px;padding:15px 20px 12px;
+  background:var(--navy);color:#fff;border-bottom:3px solid var(--gold)}
+.mf-titulo{font-size:17px;font-weight:700}
+.mf-sub{font-size:12.5px;color:#C6CEE0;margin-top:3px}
+.mf-fechar{margin-left:auto;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;
+  background:var(--gold);color:var(--navy);border:0;border-radius:6px;padding:7px 16px}
+.mf-conta{flex:0 0 auto;background:#FDF8EA;border-bottom:1px solid var(--line);padding:11px 20px;
+  font-size:14px;color:var(--ink);line-height:1.6}
+.mf-conta b{color:var(--navy);font-variant-numeric:tabular-nums}
+.mf-conta .op{color:var(--gold);font-weight:700;margin:0 7px}
+.mf-conta .res{font-size:17px;font-weight:700;color:var(--navy)}
+.mf-conta em{font-style:normal;display:block;font-size:11.5px;color:var(--mut);margin-top:3px}
+.mf-corpo{flex:1 1 auto;min-height:0;overflow:auto;padding:0 20px 18px}
+.mf-corpo table{width:100%;border-collapse:collapse;font-size:12.5px}
+.mf-corpo thead th{position:sticky;top:0;background:var(--navy);color:#fff;text-align:center;
+  padding:8px 9px;font-weight:600;font-size:12px;z-index:1}
+.mf-corpo thead th.l{text-align:left}
+.mf-corpo thead th.key{background:#1E3566;border-bottom:2px solid var(--gold)}
+.mf-corpo td{padding:5px 9px;border-bottom:1px solid var(--line);text-align:center;
+  font-variant-numeric:tabular-nums}
+.mf-corpo td.l{text-align:left}
+.mf-corpo td.key{font-weight:700;color:var(--navy);background:#FBF6E6}
+.mf-corpo tbody tr:nth-child(even) td{background:var(--bgsoft)}
+.mf-corpo tbody tr:nth-child(even) td.key{background:#F6EFDC}
+.mf-corpo tr.tot td{background:#FFF3D0!important;font-weight:700;border-top:2px solid var(--navy)}
+.mf-corpo td.pos{color:var(--green);font-weight:700} .mf-corpo td.neg{color:var(--red);font-weight:700}
+.rc-clicavel{cursor:pointer}
+.rc-clicavel:hover{opacity:.78}
+
+@media(prefers-reduced-motion:reduce){.slide{transition:none}}
+</style></head><body>
+
+<header class="top">
+<div class="brand">UGS — Unidade Gestão Suporte &nbsp;|&nbsp; Grupo CRV</div>
+<div class="meta">Comparativo de moagem &middot; safra 2026 x 2025 &middot; abril a setembro</div>
+</header>
+
+<nav class="toc">
+<a href="#capa">Capa</a>
+<a href="#panorama"><b>1</b> Panorama do grupo</a>
+<a href="#contribuicao"><b>2</b> Quem puxa, quem trava</a>
+<a href="#unidades"><b>3</b> Unidade a unidade</a>
+<a href="#mes-a-mes"><b>4</b> Mês a mês por empresa</a>
+<span id="toc-frotas"></span>
+</nav>
+
+<div class="deck" id="deck">
+
+<!-- ================= CAPA ================= -->
+<article class="slide slide-cover" id="capa" data-title="Capa">
+<svg class="capa-fundo" id="capa-fundo" preserveAspectRatio="none" aria-hidden="true"></svg>
+<div class="capa-corpo">
+<div class="capa-selo">UGS &middot; Grupo CRV &middot; safra 2026 x 2025</div>
+<h1>Comparativo de Moagem<em>Unidades do Grupo</em></h1>
+<p class="sub">Cana moída mês a mês nas quatro unidades, na mesma janela das duas safras. Cada página responde a uma pergunta — e a última abre empresa por empresa, com o ritmo de moagem por dia.</p>
+<span class="capa-aviso" id="capa-aviso">Safra parcial &mdash; abril a setembro nos dois anos</span>
+</div>
+<div class="capa-rodape">
+<div class="kpis">
+<div class="kpi"><div class="kpi-num" id="kpi-grupo26">–</div><div class="kpi-lab">Moagem do grupo<br>safra 2026 (abr&ndash;set)</div></div>
+<div class="kpi"><div class="kpi-num" id="kpi-var">–</div><div class="kpi-lab">Variação sobre 2025<br><span id="kpi-var-sub"></span></div></div>
+<div class="kpi"><div class="kpi-num" id="kpi-mg">–</div><div class="kpi-lab">Contribuição da CRV-MG<br>no ganho do grupo</div></div>
+<div class="kpi"><div class="kpi-num" id="kpi-sem-mg">–</div><div class="kpi-lab">Grupo sem a CRV-MG<br><span id="kpi-sem-mg-sub"></span></div></div>
+<div class="kpi"><div class="kpi-num">4</div><div class="kpi-lab">Unidades do grupo<br>consolidadas</div></div>
+</div>
+<div class="band" id="decisao-band">DECISÃO EM FOCO: carregando…</div>
+</div>
+</article>
+
+<!-- ================= 1 · PANORAMA ================= -->
+<article class="slide slide-dark" id="panorama" data-title="Panorama do grupo">
+<div class="s-head">
+<div>
+<div class="s-eyebrow">01 &middot; Panorama do grupo</div>
+<h2 class="s-title">Quanto o grupo moeu — e onde o ganho foi embora</h2>
+<p class="s-sub">Em cada mês, duas colunas lado a lado: a safra 2025 e a safra 2026. A linha dourada é a variação do mês sobre o mesmo mês do ano anterior. O ganho começa em dois dígitos em abril e termina praticamente zerado em setembro.</p>
+</div>
+<div class="s-right">
+<div class="s-toggle" id="pan-modo">
+<button type="button" data-modo="unidade" class="on">Por empresa</button>
+<button type="button" data-modo="grupo">Grupo consolidado</button>
+</div>
+<div class="s-chips">
+<div class="s-chip"><div class="v" id="pan-chip-26">–</div><div class="k">Moagem 2026 (abr–set)</div></div>
+<div class="s-chip"><div class="v" id="pan-chip-var">–</div><div class="k">Variação sobre 2025</div></div>
+<div class="s-chip"><div class="v" id="pan-chip-set">–</div><div class="k">Variação em setembro</div></div>
+</div>
+</div>
+</div>
+<div class="s-legend" id="pan-legend"></div>
+<div class="s-card" id="panorama-card"></div>
+<div class="s-insight" id="panorama-insight">carregando…</div>
+</article>
+
+<!-- ================= 2 · CONTRIBUIÇÃO ================= -->
+<article class="slide slide-dark" id="contribuicao" data-title="Quem puxa, quem trava">
+<div class="s-head">
+<div>
+<div class="s-eyebrow">02 &middot; Composição da variação</div>
+<h2 class="s-title">O grupo cresce por causa de uma unidade só</h2>
+<p class="s-sub">À esquerda, quanto cada unidade somou ou subtraiu da moagem do grupo, em mil toneladas. À direita, o grupo com e sem a CRV-MG na conta — a mesma safra lida de duas formas.</p>
+</div>
+<div class="s-right">
+<div class="s-chips">
+<div class="s-chip"><div class="v" id="con-chip-mg">–</div><div class="k">CRV-MG sobre 2025</div></div>
+<div class="s-chip"><div class="v" id="con-chip-outras">–</div><div class="k">Outras três somadas</div></div>
+<div class="s-chip"><div class="v" id="con-chip-part">–</div><div class="k">Peso da CRV-MG no grupo</div></div>
+</div>
+</div>
+</div>
+<div class="s-legend" id="con-legend"></div>
+<div class="s-card s-grid cols2" id="contrib-card"></div>
+<div class="s-insight" id="contrib-insight">carregando…</div>
+</article>
+
+<!-- ================= 3 · UNIDADE A UNIDADE ================= -->
+<article class="slide slide-dark" id="unidades" data-title="Unidade a unidade">
+<div class="s-head">
+<div>
+<div class="s-eyebrow">03 &middot; Unidade a unidade</div>
+<h2 class="s-title">A mesma safra, empresa por empresa</h2>
+<p class="s-sub">Quatro painéis na mesma escala, para comparar direto: barra clara é 2025, barra cheia é 2026. Sob cada mês, a variação. A CRV-MG abre o segundo semestre e as outras três fecham.</p>
+</div>
+<div class="s-right">
+<div class="s-toggle" id="uni-escala">
+<button type="button" data-escala="comum" class="on">Escala comum</button>
+<button type="button" data-escala="propria">Escala própria</button>
+</div>
+<div class="s-chips">
+<div class="s-chip"><div class="v" id="uni-chip-melhor">–</div><div class="k">Maior crescimento</div></div>
+<div class="s-chip"><div class="v" id="uni-chip-pior">–</div><div class="k">Maior queda</div></div>
+</div>
+</div>
+</div>
+<div class="s-legend" id="uni-legend"></div>
+<div class="s-card s-grid cols4" id="unidades-card"></div>
+<div class="s-insight" id="unidades-insight">carregando…</div>
+</article>
+
+<!-- ================= 4 · MÊS A MÊS POR EMPRESA ================= -->
+<article class="slide slide-dark" id="mes-a-mes" data-title="Mês a mês por empresa">
+<div class="s-head">
+<div>
+<div class="s-eyebrow">04 &middot; Mês a mês por empresa</div>
+<h2 class="s-title">Quanto moeu no mês — e a que ritmo por dia</h2>
+<p class="s-sub">As barras são a moagem total de cada mês nas duas safras. As linhas são a moagem média por dia daquele mês. O total do mês depende de quantos dias a unidade moeu; o ritmo diário mostra o que ela entrega quando está rodando.</p>
+</div>
+<div class="s-right">
+<select class="s-sel" id="mes-unidade" aria-label="Empresa analisada"></select>
+<div class="s-chips">
+<div class="s-chip"><div class="v" id="mes-chip-total">–</div><div class="k" id="mes-chip-total-k">Moagem abr–set 2026</div></div>
+<div class="s-chip"><div class="v" id="mes-chip-dia">–</div><div class="k" id="mes-chip-dia-k">Ritmo médio da safra</div></div>
+<div class="s-chip"><div class="v" id="mes-chip-melhor">–</div><div class="k" id="mes-chip-melhor-k">Melhor ritmo de 2026</div></div>
+</div>
+</div>
+</div>
+<div class="s-legend" id="mes-legend"></div>
+<div class="s-card" id="mes-card"></div>
+<div class="s-insight" id="mes-insight">carregando…</div>
+</article>
+
+<!-- páginas de frota (colhedora, caminhão, transbordo): montadas por JS a
+     partir de PAGINAS, logo acima deste marcador -->
+<div id="frota-slots" hidden></div>
+
+</div><!-- /deck -->
+
+<!-- painel de detalhe: de onde saiu o número que foi clicado -->
+<div class="mf" id="mf" hidden>
+<div class="mf-fundo" id="mf-fundo"></div>
+<div class="mf-caixa" role="dialog" aria-modal="true" aria-labelledby="mf-titulo">
+<div class="mf-topo">
+<div><div class="mf-titulo" id="mf-titulo"></div><div class="mf-sub" id="mf-sub"></div></div>
+<button type="button" class="mf-fechar" id="mf-fechar">Fechar &times;</button>
+</div>
+<div class="mf-conta" id="mf-conta"></div>
+<div class="mf-corpo" id="mf-corpo"></div>
+</div>
+</div>
+
+<div class="deck-nav">
+<button id="deck-prev" type="button">&lsaquo; Anterior</button>
+<div class="deck-dots" id="deck-dots"></div>
+<span class="deck-hint">Trocar de página: botões, bolinhas ou &larr; &rarr;</span>
+<button id="deck-next" type="button">Próxima &rsaquo;</button>
+<span class="deck-count" id="deck-count">–</span>
+</div>
+
+<!-- ============================================================
+     DADOS — moagem mensal por unidade, safras 2025 e 2026.
+     Fonte: MOAGEM COMPARATIVO.xlsx (UGS). Janela abril–setembro
+     nos dois anos: a safra 2026 segue em andamento, então toda
+     comparação deste relatório usa a MESMA janela de seis meses.
+     ============================================================ -->
+<script>
+window.MOAGEM = {
+  meses: ["Abril","Maio","Junho","Julho","Agosto","Setembro"],
+  mesesCurto: ["Abr","Mai","Jun","Jul","Ago","Set"],
+  // ordem de exibição: mesma do relatório de colhedoras, para o grupo
+  // aparecer sempre na mesma sequência nos dois materiais
+  unidades: [
+    {cod:"AGRO-RTB", nome:"Agro Rubiataba", curto:"Rubiataba", cor:"#12224A",
+     a2025:[69811,281855,260228,260783,260544,229565],
+     a2026:[117633,266287,270519,233736,232837,187157],
+     ini2025:"2025-04-21", ini2026:"2026-04-16"},
+    {cod:"CRV-GO", nome:"CRV Goiás", curto:"CRV-GO", cor:"#C9A227",
+     a2025:[167341,279275,256910,262655,258073,225164],
+     a2026:[126134,282523,260922,261383,234320,190435],
+     ini2025:"2025-04-08", ini2026:"2026-04-15"},
+    {cod:"CRV-MG", nome:"CRV Minas Gerais", curto:"CRV-MG", cor:"#2E86C1",
+     a2025:[155253,241284,214425,230575,232628,213822],
+     a2026:[173325,298863,251632,346417,339312,308141],
+     ini2025:"2025-04-08", ini2026:"2026-04-07"},
+    {cod:"AGRO-URU", nome:"Agro Uruaçu", curto:"Uruaçu", cor:"#2E7D46",
+     a2025:[29693,150162,152583,154375,138564,104958],
+     a2026:[73879,159866,138289,135530,121552,94086],
+     ini2025:"2025-04-24", ini2026:"2026-04-14"}
+  ]
+};
+</script>
+
+<!-- ============================================================
+     DADOS DE FROTA — indicadores por máquina, agregados por mês.
+     Fonte: MOAGEM COMPARATIVO.xlsx, aba "colhedora" (UGS).
+
+     ATENÇÃO À ORIGEM: a aba vem do relatório de transporte, então a coluna
+     "Km Rodado" guarda, na verdade, HORAS DE COLHEDORA — e as colunas
+     derivadas dela seguem a mesma troca de rótulo:
+        Km / Dia  = horas por dia      lt / Km = litros por hora
+        Ton / Km  = tonelada por hora
+     Os valores confirmam: 33 l/h, 30 t/h e 14 h/dia são números de colhedora;
+     em quilômetro não fariam sentido. Aqui os campos já estão renomeados.
+
+     "dias" é a soma dos dias de operação de CADA máquina no mês (dias-máquina),
+     e é esse o denominador de t/dia e h/dia. "comb" e "manut" são o gasto
+     separado em combustível e manutenção.
+
+     Só entra o detalhe por máquina: os totais de cada mês são calculados em
+     tempo de execução por preparaFrota(), já com o corte de MIN_TON aplicado.
+     Um equipamento novo entra como mais uma chave deste objeto.
+     ============================================================ -->
+<script>
+window.FROTA = {
+  colhedora: {
+    nome: "Colhedora", unidade: "CRV Minas Gerais", modelo: "JOHN DEERE CH570",
+    // detalhe por máquina para o modal de "como se chegou neste número":
+    // [frota, ano (0=2025, 1=2026), mês (0=abril … 5=setembro),
+    //  horas, litros, tonelada, gasto, combustível, manutenção, dias]
+    campos: ["frota","ano","mes","horas","litros","ton","gasto","comb","manut","dias"],
+    maquinas: [
+      [62511,0,0,355.9,14158.6,15279,129741,77617,52101,23],
+      [62502,0,0,337.8,12101.6,13996.1,122657,66481,56264,23],
+      [62521,0,0,400.7,14939.1,12686.1,129556,81952,47573,23],
+      [62515,0,0,307.7,11306,11673.2,192421,61868,130506,22],
+      [62520,0,0,368.9,14094.8,11482.4,101951,77277,24687,19],
+      [62510,0,0,315.4,11546.5,11456.9,146498,63357,83063,22],
+      [62512,0,0,350.9,14227.8,11380,136859,77839,58948,23],
+      [62519,0,0,338,11578.2,10234.2,104421,63452,40937,22],
+      [62508,0,0,309.6,11018.4,8000,103534,60320,43200,20],
+      [62514,0,0,332.9,11318.5,7665.5,112748,62167,50516,22],
+      [62517,0,0,295.6,10767.4,7360.7,103585,59180,44385,21],
+      [62500,0,0,199.3,7395.6,6773.8,103819,40304,63538,19],
+      [62504,0,0,157.8,5356,5959.7,117694,29083,88621,20],
+      [62516,0,0,336.3,11683.8,5689.7,109679,64009,45688,22],
+      [62509,0,0,243.6,8452.6,5272.3,80650,46185,34428,17],
+      [62505,0,0,304,10039.1,5225.5,143183,55129,88102,18],
+      [62513,0,0,285.2,11209.1,5118.2,79056,61418,17607,20],
+      [62512,0,1,474.8,18474,24998,175409,97242,77994,31],
+      [62520,0,1,431.4,16437,20755,121816,86548,35284,31],
+      [62511,0,1,372.8,14962,17608.1,118672,78884,39794,31],
+      [62502,0,1,420.4,16650,16873.2,214470,87572,126886,31],
+      [62521,0,1,437.7,14950,15807,159771,78719,81090,31],
+      [62519,0,1,474.3,16053,15632.6,163926,84572,79414,31],
+      [62515,0,1,409.2,14885,15104.9,178068,78394,99692,31],
+      [62510,0,1,443,17528.2,14003.8,157669,92285,65398,31],
+      [62517,0,1,461.9,15887,13696.4,125754,83685,42048,31],
+      [62500,0,1,327.6,11616,13111.4,187024,61230,125869,31],
+      [62505,0,1,405.2,12536.6,11668.8,134977,66045,68963,31],
+      [62508,0,1,393.5,13229,10755.4,105893,69695,36246,30],
+      [62513,0,1,415.6,15816,10530.8,300726,83299,217461,31],
+      [62516,0,1,453.1,15245.7,10351.1,102314,80325,22048,31],
+      [62514,0,1,466.3,15682.1,9235,144752,82561,62152,31],
+      [62509,0,1,374.3,13767,8968,258958,72551,186445,31],
+      [62504,0,1,325.5,12084,6753.4,382326,63617,318693,31],
+      [62507,0,1,174.3,5057,5301,81645,26558,55077,20],
+      [62521,0,2,504.6,16354.3,18085.6,113295,85002,28394,29],
+      [62520,0,2,482.6,16627.7,18077.8,225659,86412,139199,29],
+      [62519,0,2,463,14809.6,14760.8,113731,76904,36754,29],
+      [62515,0,2,425.6,15533.3,14746.4,126033,80810,45271,29],
+      [62512,0,2,404,13690,14686.7,120582,71084,49494,28],
+      [62517,0,2,416.5,14411.7,12847.2,111948,74899,37128,29],
+      [62511,0,2,381.5,14589.5,12567.6,134232,75783,58439,27],
+      [62509,0,2,398.4,15508.1,12389.5,166832,80532,86231,29],
+      [62500,0,2,391,13452.3,12108.6,128417,69867,58485,29],
+      [62514,0,2,452.8,15906.5,11819.5,185143,82618,102475,30],
+      [62513,0,2,390.3,15497,11041.7,139410,80494,58963,30],
+      [62510,0,2,430.1,15621.6,9670.3,140358,81134,59182,29],
+      [62504,0,2,331.5,12158.3,9670.1,144794,63049,81712,26],
+      [62502,0,2,329.2,11951.8,9199,160555,62093,98429,28],
+      [62505,0,2,367.2,12303.8,8658,136892,63896,72987,30],
+      [62508,0,2,342.7,10174.7,7737.1,146252,52767,93464,25],
+      [62516,0,2,330.8,10770.5,7610.7,146838,56015,90796,27],
+      [62507,0,2,259.2,7320.6,5915.4,194382,38095,156285,23],
+      [62522,0,2,78.7,3136.8,2812.7,21751,16454,5288,4],
+      [62522,0,3,574.5,21298.8,23309.4,120928,112118,8858,31],
+      [62523,0,3,490.8,19184.7,21771.1,112344,101236,11103,27],
+      [62520,0,3,489.4,15342.2,17497.6,129458,80839,48468,31],
+      [62521,0,3,480.7,16886.6,16782,116252,88945,27187,31],
+      [62509,0,3,362.6,14503.8,15628.8,110510,76425,34071,30],
+      [62519,0,3,440.1,13944.2,13199.3,111858,73520,38278,31],
+      [62510,0,3,402.5,14818.6,12789.3,118838,78015,40926,29],
+      [62516,0,3,484.1,15189.1,12022.1,215884,79947,135850,30],
+      [62517,0,3,382.5,12324.2,11289.3,138309,64801,73493,31],
+      [62515,0,3,331.8,11764,10930.8,128563,61978,66678,29],
+      [62511,0,3,295,10676.8,9427,191506,56373,135183,21],
+      [62514,0,3,478.3,14442.9,8876.7,105625,76073,29559,31],
+      [62513,0,3,384.4,13927.9,7962.4,137973,73334,64655,30],
+      [62512,0,3,359.5,10073,7459.8,92392,53039,39313,30],
+      [62500,0,3,258,8193.9,6985.8,94697,42963,51695,22],
+      [62504,0,3,231,7946,6003.2,171991,41722,130269,25],
+      [62507,0,3,311.5,8694.6,5933.5,102806,45807,57021,27],
+      [62508,0,3,239.9,6790.3,5816.3,188222,35828,152445,25],
+      [62503,0,3,151.9,5493.1,3564.1,217733,29047,188683,17],
+      [62505,0,3,149.5,4691,3492.9,142454,24625,117850,10],
+      [62502,0,3,101.6,3202.9,3266.8,58887,16824,42044,10],
+      [62522,0,4,606.5,22952.7,24399.8,142935,122731,20008,31],
+      [62523,0,4,493.8,18518.2,18982,167293,99086,68145,29],
+      [62509,0,4,389.8,15099,15160.5,242646,80805,161763,29],
+      [62521,0,4,456.9,14922.5,15007,128262,79837,48323,31],
+      [62520,0,4,421.6,13653.8,14822.7,147024,73076,73965,31],
+      [62515,0,4,409.8,14453.3,14351,143539,77352,66158,30],
+      [62503,0,4,369.6,12800.6,10689.9,153453,68522,84985,30],
+      [62511,0,4,309.6,11052.5,10180.3,193858,59249,134584,24],
+      [62519,0,4,424.4,12619,9975.8,103098,67536,35614,28],
+      [62510,0,4,346.6,12996.6,9804.6,140492,69515,70985,29],
+      [62517,0,4,395.3,12154.9,9283.6,134353,65078,69256,27],
+      [62516,0,4,419.6,11945.9,8799.2,147895,63970,83944,30],
+      [62513,0,4,396.4,13710,8488.7,268190,73342,194816,27],
+      [62508,0,4,340.8,10036.1,8200,162410,53792,108650,26],
+      [62502,0,4,369.5,12231.9,7584.5,147451,65454,81988,29],
+      [62514,0,4,414.5,12160,7513.5,104574,65067,39446,30],
+      [62504,0,4,164.7,5519.1,5401.1,279503,29490,250017,19],
+      [62512,0,4,281.3,7829.5,5293.7,102456,41873,60560,26],
+      [62507,0,4,250.7,8276.4,3893,98786,44341,54424,19],
+      [62505,0,4,121,3239.3,1960.8,177524,17333,160178,9],
+      [62518,0,4,89,2833,1758,408980,15101,393880,8],
+      [62522,0,5,535.7,20106.3,23711.3,130917,106938,23948,30],
+      [62523,0,5,505.7,18017.1,17869.2,126882,95779,31092,30],
+      [62509,0,5,322.6,11882.5,13439.2,131930,63164,68674,27],
+      [62519,0,5,432.3,12502,11038.9,158074,66454,91623,30],
+      [62520,0,5,353.5,11750.7,10239.5,177096,62461,114580,27],
+      [62502,0,5,377.3,12350.5,9691.3,203860,65707,138198,28],
+      [62521,0,5,346.4,10267.1,9368,96028,54615,41407,29],
+      [62513,0,5,378.3,11942,9007.6,144209,63504,80708,28],
+      [62518,0,5,345.1,10861,8748.7,124033,57741,66228,30],
+      [62505,0,5,394.4,11798.1,7509.3,102744,62778,40025,29],
+      [62515,0,5,329,11110.1,7463.6,176916,59112,117850,26],
+      [62508,0,5,354.8,9373,6608,122404,49824,72556,26],
+      [62503,0,5,260.3,7841.7,6582.5,156660,41733,114930,25],
+      [62504,0,5,208.3,7440,6292,261871,39577,222296,20],
+      [62517,0,5,282.2,8932.6,6159.2,166383,47487,118873,25],
+      [62510,0,5,336,11344,5947.1,218768,60363,158431,23],
+      [62514,0,5,309.9,10231.8,5524.3,106624,54414,52205,27],
+      [62516,0,5,256.8,7457,4974.9,227747,39650,188101,21],
+      [62512,0,5,227.2,6473,4927.8,109138,34445,74705,21],
+      [62511,0,5,35.8,1396.4,485.1,126093,7538,118549,3],
+      [62525,1,0,402.5,15545.4,18577.4,109878,96974,12818,24],
+      [62524,1,0,450.8,14483.3,14661.2,96365,90313,6011,24],
+      [62515,1,0,230.2,6878.7,14586.1,74005,42883,31068,21],
+      [62526,1,0,374.7,12098,12912,85639,75535,10071,23],
+      [62510,1,0,254.5,8609.9,11788.7,99430,53639,45858,21],
+      [62527,1,0,346,10406.6,11004.5,75216,64817,10344,23],
+      [62529,1,0,332.8,10833.5,10411.9,83754,67573,16243,23],
+      [62514,1,0,263.2,9511.2,10311.4,75779,59291,16498,17],
+      [62517,1,0,265.2,8414.4,10305.1,69148,52453,16694,19],
+      [62523,1,0,363.1,12252.1,9300.5,125752,76357,49386,22],
+      [62516,1,0,321.6,10708.2,9259,96727,66850,29907,22],
+      [62512,1,0,200.8,7269.4,8782.7,71908,45494,26348,15],
+      [62519,1,0,339.6,10440.7,7835.7,84334,65115,19197,21],
+      [62521,1,0,207.4,6917.6,5977.6,57696,43397,14286,15],
+      [62503,1,0,260.5,7458.9,5953.8,65637,46559,19112,17],
+      [62528,1,0,317.1,9075.7,5915.1,67953,56608,11298,21],
+      [62513,1,0,146.2,3672.2,2399.7,70046,22893,47154,6],
+      [62507,1,0,156,4540.9,2384.8,50129,28093,22036,8],
+      [62504,1,0,79.1,2527,621.2,55160,15629,39527,5],
+      [62518,1,0,35.1,957,207.5,48552,5895,42650,2],
+      [62520,1,0,157.8,4053,106.9,62001,25297,36690,2],
+      [62522,1,0,171.6,4759.9,10.1,66846,29920,37086,1],
+      [62524,1,1,496.4,17019.5,26212.6,118757,103278,15465,31],
+      [62523,1,1,432.5,15894.1,23067.6,131471,96653,34832,30],
+      [62522,1,1,514,17971.3,20593.7,162441,109147,53338,28],
+      [62525,1,1,490.3,18345.2,20389.9,130860,111533,19370,29],
+      [62503,1,1,416.6,13915.1,20009.1,126006,84638,41419,30],
+      [62526,1,1,454,13720.8,18948.1,98627,83372,15348,31],
+      [62528,1,1,477.3,14166.2,17454,102476,86048,16407,31],
+      [62527,1,1,426.2,12041.7,16040,86467,73142,13313,31],
+      [62515,1,1,390.2,13325.2,15412.4,152789,80915,71822,29],
+      [62517,1,1,332.9,10856.8,15139,138217,66006,72213,28],
+      [62529,1,1,492,15403.1,14997.4,102243,93584,8698,29],
+      [62519,1,1,392.1,13386.2,14860,101499,81284,20210,30],
+      [62516,1,1,364.1,11786.1,14490.8,138556,71585,66947,29],
+      [62510,1,1,348.9,11929.6,9693.1,149044,72504,76575,21],
+      [62521,1,1,370.1,11766.5,8743.9,91299,71438,19849,26],
+      [62518,1,1,221.7,5727.4,8193,73687,34820,38917,17],
+      [62514,1,1,221.8,6999.5,8081.8,76596,42510,34024,19],
+      [62520,1,1,301.2,8134.2,7526.2,88041,49447,38609,23],
+      [62512,1,1,215.6,7601.9,5455.1,127233,46205,81063,15],
+      [62513,1,1,202.8,5809.8,4583,61149,35289,25848,17],
+      [62507,1,1,199.8,5611.8,2732.7,74576,34104,40471,15],
+      [62504,1,1,203.1,5843.3,1667.6,76696,35503,41190,7],
+      [62525,1,2,392.9,14573.1,18505,110083,87899,22206,25],
+      [62524,1,2,411.1,14323.5,17826.8,99474,86282,13192,27],
+      [62503,1,2,298.3,11226.3,17007.1,109671,67688,42008,27],
+      [62515,1,2,316.5,11678.6,15179,135920,70127,65725,28],
+      [62517,1,2,291.5,9866.1,13639.6,107844,59741,48148,24],
+      [62528,1,2,379.4,11672.9,13368.4,87453,70451,16978,26],
+      [62526,1,2,395.9,12913.1,13292.1,97670,78025,19672,27],
+      [62523,1,2,355,12434.9,12642.2,112959,75348,37674,24],
+      [62522,1,2,367.6,12223.1,12211.1,107590,73877,33703,23],
+      [62519,1,2,280.4,8910.4,11918,89510,53750,35873,25],
+      [62516,1,2,253,8292.4,11874.6,91426,49636,41799,25],
+      [62529,1,2,361.8,11980.5,11555.7,92322,72339,19991,25],
+      [62527,1,2,389.6,12012.8,10226.8,83688,72508,11147,26],
+      [62514,1,2,242.5,8404.3,9462.2,85012,50623,34442,23],
+      [62520,1,2,335.2,10166.9,9378.1,83394,61333,22039,26],
+      [62521,1,2,292.5,10490.4,9290.2,113344,63359,49981,21],
+      [62518,1,2,244.8,7391.5,6637.8,74662,44540,30136,20],
+      [62513,1,2,227.1,7294.4,6507.7,78904,44252,34686,22],
+      [62510,1,2,257.6,8074.3,5370.3,123737,48494,75238,14],
+      [62504,1,2,221.3,7394.2,5365.9,70194,44483,25703,18],
+      [62512,1,2,207.3,6730.9,5141.6,66967,40362,26633,16],
+      [62507,1,2,132.9,3794,3356.4,98942,22723,76224,14],
+      [62525,1,3,580.7,21536.3,28806.6,145512,125597,19877,31],
+      [62529,1,3,545.5,19242.8,24766.1,123674,112190,11640,31],
+      [62524,1,3,579.7,20300.3,24600.6,135331,118329,16974,31],
+      [62519,1,3,513.7,16185.3,20978.1,127569,94401,33355,31],
+      [62526,1,3,479.5,15687.1,15764.8,100419,91436,8986,31],
+      [62515,1,3,389.7,14768.7,15043.2,126764,86047,40767,29],
+      [62527,1,3,468.7,14727,14887.1,92988,85750,7146,31],
+      [62523,1,3,431.5,15667,14450.1,139245,91325,47974,30],
+      [62522,1,3,450.7,15856.8,14277.4,137917,92375,45545,30],
+      [62516,1,3,413.8,13662.9,13047.5,169365,79590,89767,29],
+      [62521,1,3,387.3,13253.6,12513.3,208663,77207,131390,30],
+      [62528,1,3,474.7,15910.2,12453,109936,92775,17185,29],
+      [62503,1,3,321.1,12018.3,12210.8,150376,69968,80347,21],
+      [62513,1,3,362.9,12140.4,11596.1,109872,70736,39195,29],
+      [62520,1,3,388.6,11322.1,11577.2,84996,65990,18987,31],
+      [62510,1,3,376.3,12714,11413.1,126606,74071,52500,24],
+      [62514,1,3,311.5,10690.1,9054.5,159216,62295,96883,25],
+      [62517,1,3,346.6,11810.8,8676.4,147365,68804,78608,23],
+      [62518,1,3,249.5,7947.2,7932.6,146982,46326,100665,21],
+      [62504,1,3,276.1,8152.5,7688.8,93749,47517,46210,26],
+      [62512,1,3,312.2,11215.2,7555.8,139773,65433,74349,23],
+      [62505,1,3,181.2,4949.4,2341.9,110970,28876,82107,5],
+      [62507,1,3,119,3425.3,1270.4,222709,19945,202769,8],
+      [62524,1,4,504.8,17573.5,21724.9,133761,103193,30415,30],
+      [62528,1,4,478.5,16240.7,21125.2,111770,95486,16266,31],
+      [62525,1,4,489.7,18232,19537,137755,107258,30478,31],
+      [62529,1,4,469.6,16588.1,18490.2,107720,97628,9985,31],
+      [62522,1,4,441.6,14188,18401.5,126844,83543,43244,30],
+      [62519,1,4,422.4,14051.3,16359.5,164556,82615,81961,30],
+      [62526,1,4,433.1,14070.9,16250.3,102560,82877,19663,31],
+      [62523,1,4,354.7,12301,15876.9,127926,72399,55410,28],
+      [62527,1,4,450.6,13815.2,14975.5,101276,81317,19917,31],
+      [62516,1,4,355.2,11415.5,13727.7,133692,67128,66442,28],
+      [62510,1,4,360.7,11339.7,11796.1,114197,66766,47420,29],
+      [62514,1,4,352.2,11758,11391.8,148941,69148,79743,28],
+      [62515,1,4,377.8,13408.7,11275.6,129011,78816,50176,28],
+      [62512,1,4,338,11772.5,10232.8,182311,69378,112970,29],
+      [62505,1,4,291.5,8891.8,9221.3,101200,52377,48873,28],
+      [62517,1,4,341.3,10180.2,8881.5,117907,60039,57907,26],
+      [62503,1,4,308,12635.9,8441.6,154016,74539,79435,25],
+      [62521,1,4,329.1,10228,7059.8,212178,60220,151927,24],
+      [62520,1,4,279.7,7931.9,5956.7,93778,46522,47237,23],
+      [62513,1,4,207.3,6504.4,5172.1,81059,38118,42928,20],
+      [62518,1,4,213.2,7139.6,3767.8,114789,41973,72794,23],
+      [62504,1,4,233.3,6656.5,3528.9,95102,39418,55686,19],
+      [62525,1,5,498.8,19138.4,23926.6,146986,115565,31344,29],
+      [62524,1,5,537.3,19364.8,22907.2,147013,117056,30008,30],
+      [62522,1,5,442,15571.1,18578,176128,94005,82115,30],
+      [62523,1,5,389.8,14643.8,17520.1,159450,88477,70956,30],
+      [62528,1,5,414.8,13650.9,15612.3,95585,82433,13114,30],
+      [62526,1,5,436.2,14075.7,15015.3,102125,84987,17117,30],
+      [62519,1,5,368.6,12601.4,14701.9,182550,76156,106442,27],
+      [62529,1,5,411,13983,12253.7,106175,84428,21689,29],
+      [62521,1,5,367,10960.4,11850.2,135764,66243,69561,30],
+      [62527,1,5,433.1,13023.4,11665.4,95267,78625,16565,30],
+      [62514,1,5,347.8,11356.2,11181.2,187851,68541,119303,30],
+      [62516,1,5,342.6,11541.9,10793.5,100772,69726,31085,28],
+      [62512,1,5,309.7,11318.1,10574.9,126857,68314,58479,27],
+      [62510,1,5,392.9,13170.4,10555.8,144830,79591,65340,30],
+      [62503,1,5,384,15036.7,8874.8,161455,90789,70643,28],
+      [62517,1,5,334.1,10872.9,8149,113910,65681,48242,30],
+      [62518,1,5,325.1,11184,7821.1,133029,67574,65463,30],
+      [62515,1,5,306.3,10328.1,7810.2,137392,62403,74978,26],
+      [62505,1,5,286.7,8570.5,6676.3,76533,51741,24769,29],
+      [62520,1,5,271.5,7591.3,5254.7,117768,45821,71937,27],
+      [62513,1,5,226.6,6839.7,3996.4,90381,41323,49076,27],
+      [62504,1,5,151.2,4206.4,2099.6,95316,25405,69917,14]
+    ]
+  },
+  caminhao: {
+    nome: "Caminhão canavieiro", unidade: "CRV Minas Gerais",
+    campos: ["frota","ano","mes","km","litros","ton","gasto","comb","manut","dias","viagens"],
+    maquinas: [
+      [60542,0,0,5277.3,5547,22449.3,35773,30307,5612,23,356],
+      [60525,0,0,10674,8494.7,10790.8,84983,46400,38631,23,171],
+      [60529,0,0,6357.9,6097,10482.2,73449,33543,39937,20,172],
+      [60535,0,0,10182,8912.3,9786.4,68474,48932,19573,23,154],
+      [60523,0,0,6549.3,7022,9710.2,52380,38549,13886,23,156],
+      [60512,0,0,9466.8,8481.9,8473,49731,46432,3220,19,135],
+      [60522,0,0,7055.7,6797.3,8178.4,57155,37130,20037,23,133],
+      [60531,0,0,6532.6,5830.7,7201.2,69575,31829,37734,19,116],
+      [60514,0,0,6218.3,5645.8,6812.4,46607,30724,15873,18,108],
+      [60527,0,0,5401.6,5302.9,6538.6,41861,29097,12750,20,106],
+      [60552,0,0,5432,6299.3,5419.4,39728,34793,4932,22,94],
+      [60541,0,0,10022.5,8799.5,5326.4,52688,48097,4581,22,84],
+      [60520,0,0,4887.6,3965.4,4806,43847,21483,22348,16,79],
+      [60551,0,0,5990,6475.4,4802.6,39691,35779,3890,22,83],
+      [60507,0,0,5020.9,4649.5,4412.6,55525,25505,30050,13,71],
+      [60528,0,0,4974,4768.2,4042.7,58364,25954,32382,15,66],
+      [60550,0,0,8421.3,6630.7,3848.9,40247,36372,3887,20,72],
+      [60545,0,0,8148.4,7586.8,3411.5,60464,41484,19002,22,54],
+      [60536,0,0,9419.7,7864.3,3151,61257,42980,18276,21,50],
+      [60526,0,0,8257.3,7417.9,3084.3,57389,40466,16902,20,49],
+      [60549,0,0,5660.5,5257.5,3054.4,53805,28772,25016,16,58],
+      [60544,0,0,9370.7,8235.2,2918.3,50528,45000,5545,21,46],
+      [60532,0,0,6601.5,6414.5,2855.4,46610,35150,11450,18,45],
+      [60533,0,0,8132.2,7382.6,2813.4,55891,40344,15558,21,45],
+      [60538,0,0,7964.2,6896.6,2507.7,41698,37691,4012,17,40],
+      [60502,0,0,2785.6,2853.2,736.8,18369,15635,2734,4,12],
+      [60509,0,0,3643.6,3004.1,369.7,45865,16367,29502,2,6],
+      [60539,0,0,3450.2,3205.8,295.4,22850,17387,5462,2,5],
+      [60515,0,0,1179.5,2227.3,229.2,69345,12262,57071,4,4],
+      [60534,0,0,713.9,668,193.5,19317,3694,15625,2,3],
+      [60542,0,1,13898.2,12258,21210.5,73241,64480,8696,31,333],
+      [60535,0,1,15790.4,14340.6,19682.1,78161,75579,2559,31,305],
+      [60514,0,1,14754.4,13027.2,17986.6,77947,68709,9353,31,281],
+      [60525,0,1,15041.8,12162.3,17737.9,83542,64034,19512,31,275],
+      [60520,0,1,12691.4,11937.7,14950.8,135363,62943,72511,30,232],
+      [60522,0,1,13588.3,12472.7,12840.5,80571,65743,14895,31,210],
+      [60531,0,1,13605.2,12516.3,12606.5,104673,65932,38702,31,207],
+      [60512,0,1,10363,9794.7,11704.3,72336,51616,20717,24,188],
+      [60523,0,1,9578.6,9551.3,10641,61381,50226,11067,28,170],
+      [60550,0,1,14982.9,13625.6,9728.4,77605,71698,5837,31,168],
+      [60549,0,1,15298.8,14264,9144.2,85161,75074,10059,31,161],
+      [60509,0,1,7244,6660.7,9130,74954,35242,39716,17,142],
+      [60529,0,1,11134.3,10058.3,9107.4,71683,52914,18761,24,148],
+      [60551,0,1,10666.9,12166.3,8627.3,96926,64187,32697,31,136],
+      [60552,0,1,10107,11263.9,8048.5,64835,59478,5392,30,134],
+      [60534,0,1,13890.8,12556.3,7353.2,87479,66105,21398,29,120],
+      [60533,0,1,17505.1,15502.7,5927.4,86309,81680,4623,31,91],
+      [60516,0,1,5810.6,5270.5,5623,43362,27609,15744,13,93],
+      [60526,0,1,17202,15687.1,5543.2,106251,82594,23669,31,85],
+      [60536,0,1,17582.1,15982.8,5539.6,102058,84147,17948,30,87],
+      [60541,0,1,16484.7,14091,5294.5,80676,74335,6353,29,83],
+      [60528,0,1,14299.4,12785.4,5284.2,87927,67321,20608,28,82],
+      [60532,0,1,16479.4,15219.7,5273.2,105863,80205,25628,30,83],
+      [60545,0,1,17185,15747.6,5218.5,90394,82922,7462,31,79],
+      [60527,0,1,16433.7,14849.8,5146.9,86678,78233,8441,31,80],
+      [60544,0,1,14431.5,12946.1,4199.6,85240,68118,17092,26,65],
+      [60515,0,1,4334.5,5600.4,3819.8,86742,29489,57221,14,62],
+      [60502,0,1,8124.4,6875.4,1135.2,47021,36167,10853,3,19],
+      [60517,0,1,1765.7,2115,795.4,26914,11175,15733,4,13],
+      [60539,0,1,10599.5,7597.8,303.4,46278,40021,6253,2,5],
+      [60538,0,1,10960.5,7655.5,133.5,58991,40252,18722,2,2],
+      [60507,0,1,6917.2,5370.8,63.5,77036,28378,48707,1,1],
+      [60542,0,2,9054.4,8849.7,22102.8,52293,45974,6189,28,338],
+      [60516,0,2,12181.7,11284.6,13454.4,178407,58661,119744,29,210],
+      [60520,0,2,10165.9,10452,13057.1,67989,54318,13710,28,201],
+      [60525,0,2,14078.9,11972.1,12323,87878,62231,25632,29,194],
+      [60529,0,2,12572.2,11637.3,12054.7,90110,60515,29655,29,185],
+      [60512,0,2,10362.4,9251.8,11410.6,105038,48153,56939,27,177],
+      [60523,0,2,9609.8,10196.4,10954.9,70261,53022,17309,28,169],
+      [60535,0,2,12466.6,11152.5,10797,81325,57872,23429,26,173],
+      [60522,0,2,10538,10078.4,10742.6,73008,52424,20626,28,166],
+      [60514,0,2,11328.1,10057.7,10055.8,76972,52190,24737,28,159],
+      [60531,0,2,7867,7219.7,9524.6,50605,37432,13144,21,147],
+      [60552,0,2,10520,11796.1,8134.7,82569,61742,20825,30,132],
+      [60549,0,2,15230.2,14326,7270.2,84010,75028,8942,30,139],
+      [60550,0,2,15200.3,13592,7184.3,92484,71196,21266,30,140],
+      [60551,0,2,9132.1,9824.7,6746,73944,51472,22464,30,109],
+      [60513,0,2,7410.7,7236.1,6496.4,97490,37614,59832,19,100],
+      [60510,0,2,6208.7,6198.6,6043.2,109182,32210,76930,20,94],
+      [60541,0,2,13522.1,11512.5,5634.6,105606,59839,45809,28,88],
+      [60545,0,2,14367.4,13054.5,5580.3,89955,67801,22154,29,86],
+      [60532,0,2,13481.8,12466.4,5394.3,81297,64786,16507,29,87],
+      [60544,0,2,14361.5,13437,5215.5,74153,69783,4381,29,81],
+      [60533,0,2,10946.8,9457.2,5015.4,110633,49151,61489,27,79],
+      [60527,0,2,10402.8,9363.7,4879.7,81737,48651,33084,27,76],
+      [60526,0,2,14173.3,12914.8,4848.5,77700,67103,10618,29,77],
+      [60528,0,2,12051,10389.6,4449.6,76762,53974,22782,27,70],
+      [60536,0,2,11250.2,9618,4234.4,68638,49966,18674,27,66],
+      [60534,0,2,5635.9,5088.7,3896.7,55208,26498,28680,16,63],
+      [60515,0,2,1688.6,2745.1,1124.3,27332,14290,13042,9,18],
+      [60542,0,3,11120,11191,21194.4,79751,58920,20771,31,330],
+      [60516,0,3,10898.8,10403.6,14438.8,72564,54867,17760,31,219],
+      [60525,0,3,15603.4,13828.5,12437.9,90358,72886,17537,31,186],
+      [60527,0,3,12198.4,12081.1,11543.2,80081,63718,16391,30,173],
+      [60535,0,3,14288.9,13140.4,11497.8,92716,69217,23456,28,172],
+      [60520,0,3,10752.4,10877.6,10892.3,87680,57402,30281,27,163],
+      [60529,0,3,12294.4,12077.7,10880.3,69804,63650,6093,31,164],
+      [60522,0,3,11130.8,10916.4,10697.4,72422,57445,14976,30,164],
+      [60523,0,3,10448.8,10670.4,9199.4,71607,56208,15363,30,138],
+      [60549,0,3,14759,13895.2,8815.9,86000,74847,11108,31,156],
+      [60514,0,3,10453.9,9267.9,8604.7,71043,48617,22372,24,130],
+      [60550,0,3,14324.4,13261,8276.7,85936,71511,14484,31,155],
+      [60510,0,3,9917.3,9846,8259.2,58808,51868,6938,31,131],
+      [60552,0,3,13548.3,12710.6,8204.2,72535,68341,4184,31,142],
+      [60513,0,3,9568.6,9066.3,8032.6,101623,47874,53738,26,121],
+      [60534,0,3,14525.7,12575,7983.4,70511,66262,4311,31,124],
+      [60551,0,3,11899,12588.6,7900.9,118841,67711,51119,31,127],
+      [60518,0,3,8462.4,8097.9,7411.2,64809,42540,22234,24,114],
+      [60541,0,3,16159.5,14178.4,6864.5,84662,74617,10022,31,102],
+      [60533,0,3,15307.5,13440.6,6862.7,87208,70823,16402,31,103],
+      [60532,0,3,17073.4,14833.6,6152.1,82370,78132,4245,31,96],
+      [60515,0,3,5423.2,5831.4,5969.3,35341,30802,4537,24,93],
+      [60528,0,3,15486.4,12801.8,5398.1,94428,67476,26937,29,82],
+      [60536,0,3,14905,12317.9,5184.9,92117,64863,27221,29,80],
+      [60512,0,3,4805.4,4330.6,5107.8,72659,22730,49954,18,76],
+      [60500,0,3,7165.2,6656.9,4998.6,51142,35190,15946,16,76],
+      [60544,0,3,13137.6,11343.3,4436.2,87429,59844,27593,24,68],
+      [60517,0,3,4298.2,4410.9,3828.1,46089,23275,22815,14,61],
+      [60501,0,3,4529.1,4197,3065.4,78360,22255,56127,13,48],
+      [60526,0,3,6989.7,6262.9,2853.6,69210,33187,36012,14,44],
+      [60545,0,3,7913,6803.6,2658,43961,35803,8160,16,42],
+      [60508,0,3,5774.6,5340.4,1876.2,36148,28068,8086,9,28],
+      [60509,0,3,1220.6,1900.7,64.2,31108,10024,21074,1,1],
+      [60542,0,4,7699.5,7888.2,21093.8,53005,42188,10758,29,324],
+      [60500,0,4,9915.3,9317.7,14073.3,66002,49819,16184,30,211],
+      [60520,0,4,9561.8,9765.9,13066,68742,52264,16463,29,195],
+      [60527,0,4,10149.2,10460.2,11843.3,76687,56019,20726,30,177],
+      [60535,0,4,12836.7,11918.3,11818.2,77333,63818,13591,31,175],
+      [60513,0,4,10327.9,9141.5,11512.8,56363,48929,7483,30,172],
+      [60518,0,4,10930.3,10648.9,11471.1,74608,56897,17665,27,172],
+      [60516,0,4,6492.6,6495.5,9935.1,45573,34773,10829,22,152],
+      [60545,0,4,13995.2,13107.3,9840.8,82369,70066,12301,30,147],
+      [60523,0,4,8804.8,9229.3,9774.3,64740,49360,15346,29,144],
+      [60549,0,4,14216.3,13413.9,9572.6,95208,73613,21634,31,165],
+      [60519,0,4,6428,6762.8,9075.4,57869,36120,21690,21,136],
+      [60517,0,4,8415.8,8396.4,9010.1,61636,44870,16759,22,133],
+      [60550,0,4,13895.6,12549.2,8748,86482,68847,17583,31,153],
+      [60525,0,4,8285.1,7231.3,8700.4,49044,38717,10353,22,127],
+      [60551,0,4,12172,12768.1,8296.2,81150,69024,12112,31,141],
+      [60510,0,4,7791.7,8105.9,7703.7,74118,43372,30738,31,116],
+      [60552,0,4,13444.6,13970.2,6988.6,120098,75547,44587,31,125],
+      [60529,0,4,15432,14298.9,6723.2,85867,76510,9345,30,98],
+      [60522,0,4,15197,14592.5,6595.9,111389,78095,33309,31,98],
+      [60528,0,4,16570.4,14656.1,5321,102221,78378,23838,31,78],
+      [60544,0,4,17510,15546.9,5241.7,92651,83186,9487,31,79],
+      [60533,0,4,15843.9,13931.9,5110.8,79077,74515,4549,30,77],
+      [60534,0,4,14555.1,13376.2,4736.9,81737,71575,10137,28,72],
+      [60526,0,4,16534.5,15282.9,4634.4,119267,81751,37492,31,70],
+      [60536,0,4,14486.2,12763.8,4386.4,82381,68252,14124,29,64],
+      [60546,0,4,4112.9,4400.3,4123.2,24637,23626,990,14,62],
+      [60541,0,4,13382.3,11926.4,3802.8,89412,63925,25479,25,58],
+      [60514,0,4,4292.7,4062.2,3353.4,52175,21663,30516,9,51],
+      [60548,0,4,2234.1,2234.7,3125,15438,11938,3500,9,45],
+      [60547,0,4,2298.1,2347.1,3023.5,15838,12517,3326,9,43],
+      [60532,0,4,8155.6,7265.4,2881.5,60526,38929,21582,17,44],
+      [60515,0,4,2099.4,3314.9,1227,28664,17730,10933,4,18],
+      [60503,0,4,6985,5440.6,1039.7,44708,29080,15627,2,16],
+      [60509,0,4,444.4,858,754.5,37910,4595,33311,4,12],
+      [60508,0,4,14202.8,9838.9,708.3,59999,52662,7338,3,10],
+      [60507,0,4,10898,8052.5,136.2,59222,43102,16112,1,2],
+      [60546,0,5,8581.6,8191.5,16555.8,48505,43542,4967,30,249],
+      [60547,0,5,8086.7,8192.6,15341.3,48329,43569,4756,30,232],
+      [60548,0,5,7939.6,7854.4,15301.1,46493,41772,4743,30,232],
+      [60507,0,5,6846,6975.3,11399.7,44995,37049,7866,27,178],
+      [60517,0,5,10215.4,10443.2,10608.5,70906,55589,15382,29,158],
+      [60551,0,5,10125,11500.4,9806.8,73070,62077,10984,30,185],
+      [60514,0,5,9887.8,9751.6,8715.7,86255,51858,34427,28,134],
+      [60513,0,5,7856.8,7661.1,7961.4,65156,40762,24441,22,116],
+      [60552,0,5,11358,11589.1,7312.9,88276,62525,25741,30,147],
+      [60550,0,5,14034.9,12783,6976.7,81835,69000,12837,30,128],
+      [60549,0,5,12833.7,12366,6550,85623,66744,18864,29,118],
+      [60542,0,5,14342.1,13448.9,6248.7,86831,71548,15309,27,96],
+      [60508,0,5,11700,10807.9,6164.5,86072,57453,28603,24,90],
+      [60510,0,5,14348.3,14081.6,5919.3,98332,74879,23440,28,88],
+      [60500,0,5,14789,13527.4,5911.4,81584,71942,9636,27,87],
+      [60519,0,5,5275.2,5490.8,5806.6,49316,29207,20091,19,87],
+      [60529,0,5,15975.1,14854.8,5557.6,92329,79029,13338,30,82],
+      [60511,0,5,4635,4677.2,5368.9,108453,24912,83540,12,83],
+      [60535,0,5,14512.8,13770.3,5249.1,94318,73225,21101,29,79],
+      [60520,0,5,9373.2,9835.4,5228,89874,52332,37589,25,79],
+      [60526,0,5,14457.8,14726.6,5172.5,88147,78312,9828,26,79],
+      [60545,0,5,16770,16091.2,5089.5,110233,85605,24633,30,75],
+      [60544,0,5,16913.3,16818.6,4532.1,117153,89464,27691,27,68],
+      [60523,0,5,7741.5,8102.6,4272.3,74760,43065,31658,18,66],
+      [60534,0,5,10399.3,10359.8,4250.3,67222,55084,12113,23,64],
+      [60528,0,5,15384.9,14144.1,4236.2,93205,75235,17961,29,64],
+      [60522,0,5,12449.5,11963.6,4169.1,69333,63620,5712,21,62],
+      [60536,0,5,14434.1,13358.9,4027.1,98631,71078,27586,28,62],
+      [60518,0,5,5362.3,5267,4021.6,41146,28031,13110,13,61],
+      [60533,0,5,14953.4,14144.6,3903.4,94683,75219,19439,26,59],
+      [60527,0,5,9438.4,8979.7,3339,52188,47748,4441,18,50],
+      [60509,0,5,2017.9,2285,2580.8,47146,12156,34996,13,40],
+      [60516,0,5,2792.3,3892.5,2456.3,28941,20707,8229,11,38],
+      [60501,0,5,4843.3,4675.3,1844.2,70986,24878,46105,6,28],
+      [60515,0,5,1308.9,2647.1,1584.4,18215,14085,4135,6,25],
+      [60541,0,5,5530.1,5483.8,1490.3,35711,29180,6528,9,22],
+      [60525,0,5,4250.7,4221,1194.8,50922,22450,28472,8,19],
+      [60531,0,5,2716.4,2481.2,976.1,31251,13216,18038,6,15],
+      [60503,0,5,803.8,735.8,352.4,47398,3912,43479,1,5],
+      [60542,1,0,4046.6,4900.4,30858.3,22005,15121,6789,24,450],
+      [60515,1,0,5019.3,5172.2,10571,207038,28330,178650,22,151],
+      [60526,1,0,9237.9,9254.3,9340.2,84765,9901,74908,23,133],
+      [60525,1,0,9656.5,8883.4,8811.9,20062,6609,13482,24,125],
+      [60511,1,0,4868.6,4792.3,8609.4,14364,9126,5252,21,125],
+      [60516,1,0,4726.2,4944.9,8175.4,29351,14716,14634,20,118],
+      [60535,1,0,8395.7,8325.7,8154.8,81289,44525,36778,22,117],
+      [60502,1,0,5022.6,5002.5,7758.3,34007,22111,11870,19,112],
+      [60513,1,0,8993,8985.6,6885.6,99188,51229,47924,22,99],
+      [60529,1,0,9758.2,9826.9,6469.1,57229,52594,4658,20,92],
+      [60519,1,0,3613.4,3932.1,5409.4,28262,21584,6654,19,80],
+      [60517,1,0,3884,4361.3,4468.3,67401,25335,42091,12,63],
+      [60520,1,0,2766.9,2804.1,3931.5,53961,14193,39787,14,57],
+      [60527,1,0,11197.3,11672.7,3922,65964,59497,6471,23,54],
+      [60528,1,0,10592,11042.1,3892.3,95991,57217,38767,24,54],
+      [60547,1,0,11691.4,11352.6,3789.2,62630,59490,3145,21,52],
+      [60546,1,0,10422.8,10194.4,3746.4,60934,43983,16934,23,53],
+      [60523,1,0,10297.5,10489.5,3610.7,77648,61021,16645,22,50],
+      [60549,1,0,11047.7,11844.5,3559.9,67691,60839,6871,21,49],
+      [60551,1,0,9907.7,9822,3438.7,44291,39098,5192,23,48],
+      [60532,1,0,10929.5,11919.3,3363,100828,55658,45165,23,47],
+      [60508,1,0,5612.4,4685.1,3145.5,93411,16105,77285,9,46],
+      [60531,1,0,8229.2,8399.6,2860.9,52236,45546,6695,20,39],
+      [60536,1,0,10099.9,10059.7,2828.3,37859,31338,6533,21,40],
+      [60550,1,0,8036.5,8279.7,2725.1,50385,40986,9402,20,37],
+      [60539,1,0,8109.4,7394,2599.4,58418,27476,30933,15,37],
+      [60548,1,0,6663.3,6132.8,2153.6,60944,27609,33338,14,30],
+      [60552,1,0,6429.8,6389.8,1929.6,40149,30565,9590,14,27],
+      [60500,1,0,2372.8,3153.3,1855.6,10066,9538,520,9,28],
+      [60538,1,0,4583.3,3602.4,1138.5,20526,14664,5863,8,17],
+      [60545,1,0,4324.7,3936,837.9,18706,13616,5094,5,11],
+      [60544,1,0,2878.2,2632.9,304.4,15098,9911,5184,3,4],
+      [60533,1,0,1184.1,1082.2,211.2,20310,5419,14894,3,3],
+      [60518,1,0,839.2,1625.8,144.5,17035,10131,6904,1,2],
+      [60534,1,0,267.5,273,127.2,79806,1716,78089,1,2],
+      [60542,1,1,12191,14217.3,21151,51094,46532,4442,31,293],
+      [60525,1,1,15146.1,14059.6,19473.1,30656,6426,24341,30,265],
+      [60517,1,1,13263.8,12757,15431.6,77011,65430,11574,30,214],
+      [60535,1,1,12550.5,12258.5,15229.2,75749,62744,12945,27,210],
+      [60526,1,1,12702.3,11751.3,14980.9,40211,23220,16928,29,205],
+      [60518,1,1,11159.4,11822.5,14776.8,83618,70633,13004,27,207],
+      [60515,1,1,9089.6,9071,13148.7,59264,50360,8941,27,186],
+      [60529,1,1,14523.1,14497.4,13090.9,102408,70691,31811,29,181],
+      [60519,1,1,9941,10284,13032.5,84199,58125,26065,30,184],
+      [60547,1,1,16020.1,15463.1,11239.5,65164,53725,11464,31,153],
+      [60501,1,1,6966.3,7195.9,9690,65641,37985,27616,27,135],
+      [60520,1,1,5752.3,5854.2,8787,45687,29876,15817,18,124],
+      [60527,1,1,13673,14271.3,8077.5,82940,75040,7835,30,113],
+      [60536,1,1,16670.7,17585,8027.1,79209,65341,13887,31,109],
+      [60528,1,1,15351.6,15384.6,7680,91819,82176,9600,31,107],
+      [60531,1,1,14026.3,13901.9,7619.3,93655,75507,18134,31,104],
+      [60516,1,1,4775.8,4713.4,6804.8,28169,14426,13746,14,94],
+      [60545,1,1,15534.1,15747.9,6601.9,71818,61464,10365,31,88],
+      [60550,1,1,16700.3,16949,6563.1,91990,76723,15292,31,87],
+      [60546,1,1,17567.8,17196.3,6508.1,85570,73151,12430,30,86],
+      [60548,1,1,17790.1,17430.6,6340.1,86029,72087,13948,31,86],
+      [60523,1,1,14342.3,14492.8,6297.7,103410,74187,29221,30,86],
+      [60532,1,1,16065,17122.1,6156,90820,66977,23885,31,83],
+      [60551,1,1,15523,15549.5,6018,82642,75165,7522,30,81],
+      [60549,1,1,16588.5,17851.3,6016,121341,95534,25809,31,81],
+      [60534,1,1,6235.2,6003.7,5482.2,68444,22422,46050,17,77],
+      [60544,1,1,12323.4,12606.3,5377.4,105740,64367,41352,24,71],
+      [60511,1,1,3559.1,3314,4396.2,34611,12925,21673,10,62],
+      [60552,1,1,3890.2,3622,3362.5,19866,14358,5481,8,47],
+      [60533,1,1,4829.3,4849.3,3265.7,120439,19268,101171,14,46],
+      [60513,1,1,2093.3,2069,2571.5,17853,10466,7380,8,36],
+      [60514,1,1,1399.1,1592.6,1154,164725,8713,156009,6,16],
+      [60500,1,1,6631,5581.6,765.6,48216,29407,18811,3,11],
+      [60509,1,1,6722.7,4935.4,736,22031,20343,1693,2,10],
+      [60507,1,1,6822.4,5042.7,571.4,43204,23073,20125,4,8],
+      [60510,1,1,1555.3,3204.1,352.8,24277,17644,6636,3,5],
+      [60541,1,1,6074.1,4579.9,140.4,15858,10152,5707,1,2],
+      [60503,1,1,453.2,439.1,77,12718,1491,11230,1,1],
+      [60502,1,1,9558.2,7505.7,73.2,70293,31841,38452,1,1],
+      [60525,1,2,12720.2,11275.6,12810.6,24960,16398,8583,29,174],
+      [60535,1,2,12134.5,11717.6,12549.6,150348,58481,91863,26,172],
+      [60513,1,2,7994,8163.1,11991.1,209993,49403,160561,25,161],
+      [60518,1,2,9511.2,9921.3,11472.7,77187,54036,23175,27,156],
+      [60526,1,2,11076,10190.4,11010.8,30016,13433,16516,27,150],
+      [60529,1,2,10191.3,10430.2,10908.7,66944,51816,15163,26,146],
+      [60516,1,2,8428.4,8143.4,10758.9,66586,39916,26682,23,147],
+      [60547,1,2,11780.9,10861.4,10044.7,42606,37065,5525,26,137],
+      [60542,1,2,7251,6568.7,10024.3,42867,22254,20650,19,138],
+      [60517,1,2,7645.3,7531.3,10013.6,64092,42658,21429,25,136],
+      [60519,1,2,8258.6,8119.2,9904.3,58716,48828,9904,26,135],
+      [60552,1,2,13637.5,13212.1,8326.6,144078,72275,71775,28,113],
+      [60501,1,2,5384.9,5229.5,7202,47949,31545,16349,17,99],
+      [60527,1,2,10523.9,11157.1,6931.5,85621,58225,27379,25,94],
+      [60511,1,2,5347.9,4845.2,6894.2,66714,21372,45364,19,95],
+      [60507,1,2,8106.6,7141.4,6182.6,45713,39198,6554,17,82],
+      [60523,1,2,11654.1,11921,6166,60128,53706,6413,28,83],
+      [60531,1,2,9076.3,9076.2,5844.7,56700,49037,7657,24,79],
+      [60515,1,2,5533.4,5844.7,5703,43738,32051,11691,23,79],
+      [60548,1,2,14593.6,14039,5563.4,72787,65036,7733,27,75],
+      [60528,1,2,11697.5,11476,5379.2,90352,61377,28994,26,74],
+      [60550,1,2,11844.7,11572.2,5299.1,77635,56064,21567,27,71],
+      [60549,1,2,11673.3,12261.2,5046,102368,66759,35574,20,68],
+      [60536,1,2,11501.3,11591.1,4918.1,76340,68706,7623,25,68],
+      [60532,1,2,11222.2,11764.6,4913.8,73644,46190,27419,23,68],
+      [60544,1,2,12140.9,11886.1,4884.1,79480,59781,19683,24,66],
+      [60520,1,2,3256.3,3418.1,4834.9,30779,20693,10057,15,67],
+      [60546,1,2,9601.2,8916.6,4153.8,43382,38880,4486,17,56],
+      [60522,1,2,4148.4,3768.4,4090.6,167039,14399,152661,12,56],
+      [60551,1,2,10529.3,10309.6,4042.1,43336,32660,10671,23,54],
+      [60500,1,2,4397.3,4216.6,3631,45320,18554,26760,11,50],
+      [60503,1,2,4865.5,4156.8,3387.8,47944,20869,27069,13,46],
+      [60545,1,2,5146.1,5047.9,3049.3,65792,21315,44489,12,42],
+      [60533,1,2,3048,2840.1,2023.1,39846,11734,28121,7,27],
+      [60502,1,2,1512.9,1659.9,1614.5,14274,5392,8896,7,22],
+      [60509,1,2,8509.2,6446,712.9,42297,30049,12248,4,10],
+      [60508,1,2,6591.3,5438.9,379.6,23186,16114,7076,2,5],
+      [60514,1,2,908.7,2019,151.2,40794,12208,28592,2,2],
+      [60542,1,3,10274,9970.1,29949.5,106748,58102,48818,31,413],
+      [60526,1,3,14343.8,13103.2,14079.3,108700,76310,32382,31,192],
+      [60513,1,3,8304.8,8266.6,13439,62492,48246,14245,30,187],
+      [60535,1,3,14002.7,13100.3,13272.7,101558,76318,25218,31,184],
+      [60517,1,3,11597.3,11203.1,12686.9,73643,63815,9769,29,176],
+      [60529,1,3,13279.2,12896.6,11280.9,99762,75131,24592,29,156],
+      [60541,1,3,10211.4,10074.3,11010.2,143662,57693,85990,27,152],
+      [60547,1,3,16728.3,15489,10686.8,104626,87952,16671,31,144],
+      [60522,1,3,14941.8,13896.9,10632.1,130604,78997,51566,31,146],
+      [60525,1,3,10730.9,9628.1,10627.9,71734,52183,19555,30,145],
+      [60554,1,3,11389,10525.2,10549.6,63408,59816,3587,28,146],
+      [60519,1,3,9151.1,9607.1,10407.9,59172,55995,3226,31,144],
+      [60523,1,3,11936.7,11186.4,9795,86908,65137,21745,29,135],
+      [60518,1,3,6529.4,6645.8,9650.4,56048,38698,17274,20,133],
+      [60555,1,3,11783,11255.6,9620.1,67046,64358,2694,28,132],
+      [60553,1,3,11415.5,10750,9359.7,64968,62710,2340,28,129],
+      [60544,1,3,12417.8,12356.8,8482.3,84635,70912,13657,28,116],
+      [60520,1,3,6549,6761.1,8026.5,69608,39410,30180,23,111],
+      [60503,1,3,8449.2,7488.4,7614.5,120849,41956,78886,23,103],
+      [60549,1,3,14540,14978.3,7128.6,96780,87325,9481,29,96],
+      [60531,1,3,13850.7,14234.9,7002.6,124013,82911,41105,28,95],
+      [60533,1,3,13627.3,13999.2,6826.4,111467,80552,30924,29,92],
+      [60548,1,3,17306.7,17322,6496.7,116177,100959,15202,31,88],
+      [60536,1,3,13378.4,13699.9,6397.7,102708,79779,22904,28,88],
+      [60528,1,3,14041.3,14425.8,5584.6,155177,84104,71092,29,76],
+      [60550,1,3,14182.3,14039.9,5558,94301,80702,13617,27,75],
+      [60515,1,3,4614.1,4999.9,5539.5,41028,29138,11910,20,76],
+      [60516,1,3,4067.4,4351.2,5437.4,83862,25338,58506,14,74],
+      [60532,1,3,14286.1,14616.9,5277.5,94490,85179,9341,27,72],
+      [60551,1,3,11638.1,12391.8,5000,103650,72250,31400,25,68],
+      [60527,1,3,6302.3,6180.7,4798.8,80863,36039,44869,18,65],
+      [60545,1,3,10729.5,10588.8,4778.8,79886,61647,18207,25,65],
+      [60502,1,3,5032.3,5278.4,4303.4,34853,30726,4131,16,59],
+      [60534,1,3,3535.2,3676.2,3881.1,39808,21462,18358,14,54],
+      [60501,1,3,4649.3,4445.6,3557.5,38354,25899,12451,15,49],
+      [60552,1,3,7011.1,6869.3,3417.8,84445,40091,44363,17,47],
+      [60507,1,3,5910.8,5655.2,3309.2,42099,32960,9133,14,47],
+      [60508,1,3,6079.3,5067.7,1591.4,44560,27977,16582,9,22],
+      [60510,1,3,8458.3,7662.9,1491.8,56774,44650,12128,5,20],
+      [60511,1,3,1139.4,1087,1094.8,52729,6361,46365,5,16],
+      [60512,1,3,704.5,1718.6,1003.4,203858,10014,193847,7,14],
+      [60500,1,3,2743.3,2659.1,843.2,35462,15481,19975,3,11],
+      [60514,1,3,1038.4,2427.1,428.8,41483,14142,27340,3,6],
+      [60542,1,4,9615.5,9982.4,23606.7,78848,58781,20066,30,319],
+      [60525,1,4,16534.7,15372.8,16069.4,128422,90471,37924,31,224],
+      [60541,1,4,11320.1,11741.9,15344.1,101750,68895,32836,29,215],
+      [60529,1,4,10446.4,10767.2,15322.6,88500,63436,25129,29,213],
+      [60522,1,4,11050.8,10907.7,14475.6,86604,64272,22292,30,199],
+      [60535,1,4,13879,12828.7,13764.9,92195,75432,16793,30,193],
+      [60527,1,4,10821.9,11207.6,12901.5,105170,65927,39221,30,180],
+      [60526,1,4,13212,12614.2,12804.3,117475,74265,43150,28,178],
+      [60534,1,4,8739.2,9050.2,11592.4,72691,53209,19475,29,161],
+      [60513,1,4,7026.6,7722.5,10010.3,99344,45547,53755,27,138],
+      [60519,1,4,5952.2,6757.8,9795.6,74757,39672,35068,22,135],
+      [60547,1,4,15341.7,15215.3,9523.7,103883,89618,14286,31,132],
+      [60531,1,4,12112.3,12483.6,8263.9,86308,73383,12892,31,116],
+      [60511,1,4,6910.7,6325.2,8015.2,93971,37271,56667,21,111],
+      [60523,1,4,9873.9,10140.7,7844.3,104766,59774,44948,28,108],
+      [60533,1,4,12077,12913.7,7767.4,101022,75732,25322,26,106],
+      [60517,1,4,4496.1,4799.4,7548.8,76214,28233,48010,17,103],
+      [60552,1,4,13945.7,14063.6,7087.6,96262,82854,13466,31,98],
+      [60548,1,4,18350.2,17653.1,6763.2,112734,103883,8860,31,93],
+      [60544,1,4,12073.7,12344.6,6192.6,117170,72825,44339,27,87],
+      [60555,1,4,17081,16332,6191,102728,96084,6624,31,85],
+      [60553,1,4,17408.5,16335.4,6106,99864,96108,3725,31,84],
+      [60549,1,4,13138.5,13671.6,6032.7,123751,80597,43194,28,82],
+      [60554,1,4,17154,15622.3,5751.4,95483,91907,3566,30,79],
+      [60532,1,4,15043.7,15964.7,5419.5,125137,93703,31433,28,75],
+      [60551,1,4,12706,13677.2,5359.8,85660,80451,5199,28,74],
+      [60518,1,4,3904.7,4147.5,5194.2,36962,24257,12726,11,73],
+      [60536,1,4,11562.5,12206.6,5131.1,85025,71579,13443,26,71],
+      [60520,1,4,3177,3547.4,4384.8,50244,20784,29466,12,60],
+      [60545,1,4,8019.6,7620.7,3924.3,87643,45051,42579,17,54],
+      [60550,1,4,6468.2,6295.2,3500,90558,37345,53200,13,49],
+      [60507,1,4,6795.3,6598.7,3269.6,52182,39104,13078,13,46],
+      [60515,1,4,2542.9,2687.8,3251.5,41870,15770,26077,13,45],
+      [60508,1,4,6752.6,5287.9,1420.8,41250,31002,10258,6,19],
+      [60502,1,4,991,2447.4,360,28979,14443,14537,4,5],
+      [60510,1,4,577.7,1338,275.6,37892,7910,29980,3,4],
+      [60516,1,4,624.5,1124,226.8,18598,6638,11964,2,3],
+      [60528,1,4,395,470,201.3,43341,2838,40498,1,3],
+      [60538,1,4,9945.7,7844.6,149.5,60424,46034,14398,1,2],
+      [60503,1,4,7682.6,5491.9,75.1,69247,32151,37059,1,1],
+      [60514,1,4,1067.6,2080.1,70.4,38382,12202,26158,1,1],
+      [60539,1,4,5083.8,3700.6,68.4,38433,21796,16614,1,1],
+      [60542,1,5,6950.5,7043.7,32205.3,51146,42511,8695,29,469],
+      [60525,1,5,14548.7,13796.6,15115.8,93486,83288,10128,29,210],
+      [60529,1,5,12033.5,11732.5,15040.3,112410,70840,41511,29,211],
+      [60526,1,5,11736.2,11127.8,11824.8,91300,67165,24123,24,163],
+      [60547,1,5,12154.4,11609.2,11582.9,84621,70077,14479,27,163],
+      [60517,1,5,9237,8773.2,10519.7,84392,53019,31454,25,147],
+      [60550,1,5,12283,12398,9396.3,139856,74889,65022,29,133],
+      [60519,1,5,8399.5,8468.1,9017.5,101073,51129,49957,21,127],
+      [60531,1,5,12363.1,12324.9,8863.5,93411,74453,18968,26,126],
+      [60534,1,5,6790.8,6647.4,8612.5,70294,40134,30144,21,121],
+      [60513,1,5,7989,8150.3,8371.6,87588,49225,38342,26,117],
+      [60544,1,5,14314.1,14255.1,7923,109785,86123,23690,29,111],
+      [60515,1,5,6327.5,6265.8,6892.1,84684,37838,46866,21,96],
+      [60527,1,5,7000.9,7778.7,6851.1,68320,46999,21375,22,98],
+      [60553,1,5,16480,14893.2,6674,116322,89966,26362,28,94],
+      [60554,1,5,16614,14263.9,6570.6,99042,86141,12878,29,91],
+      [60523,1,5,12405.3,11715.9,6424.9,105635,70738,34887,27,89],
+      [60555,1,5,16338.5,15084.4,5799.4,116964,91109,25865,30,82],
+      [60545,1,5,12967.5,12265.5,5782.4,134837,74073,60773,24,83],
+      [60511,1,5,5239,5093,5730.2,42826,30771,12091,18,81],
+      [60549,1,5,15361.1,14878.4,5515,128152,89839,38274,28,77],
+      [60536,1,5,6725.3,6676.2,5509.2,70523,40327,30190,15,78],
+      [60548,1,5,15463.1,14347.8,5096.5,105850,86640,19214,28,71],
+      [60551,1,5,14088,14346,5066.4,132652,86635,46003,29,70],
+      [60535,1,5,4930.7,4506.5,5006.2,57989,27234,30788,15,70],
+      [60528,1,5,14764.7,13976.9,4978.1,110375,84429,25986,27,70],
+      [60552,1,5,8850.4,8235.3,4248,66405,49744,16652,19,60],
+      [60541,1,5,9159.2,7882.8,4180.2,63899,47612,16303,10,57],
+      [60533,1,5,10180.4,10155.7,3717.5,74713,61339,13383,20,52],
+      [60532,1,5,9272,9325,3089.7,73417,56325,17086,20,43],
+      [60500,1,5,2619.7,2278.5,2515.6,119582,13760,105831,9,36],
+      [60522,1,5,1283.7,1218,1216.6,19601,7360,12239,5,18],
+      [60516,1,5,2317.7,2216.6,964,60932,13390,47544,6,14],
+      [60508,1,5,2475.7,2668,619.1,34717,16115,18604,8,9],
+      [60503,1,5,7449.3,5793.6,440.6,39721,34992,4732,3,6],
+      [60514,1,5,511.3,1641.1,342.6,45332,9911,35421,4,5],
+      [60509,1,5,8080,6621.7,268.3,71986,39990,31995,2,4],
+      [60502,1,5,2371.4,3145.8,226.1,28992,19001,9996,2,3],
+      [60512,1,5,591,1629.7,202.4,39089,9845,29253,3,3],
+      [60501,1,5,2153.4,1785.1,131,43823,10777,33032,2,2],
+      [60510,1,5,644.8,1122,70.4,26729,6776,19953,1,1]
+    ]
+  },
+  transbordo: {
+    nome: "Transbordo", unidade: "CRV Minas Gerais",
+    campos: ["frota","ano","mes","horas","litros","ton","gasto","comb","manut","dias","viagens"],
+    maquinas: [
+      [62249,0,0,375.6,4082.5,11564.4,51495,22435,29142,22,480],
+      [62228,0,0,452.5,5697.1,11131.5,42932,31280,11577,23,473],
+      [62252,0,0,447.5,4934.6,9256.9,114766,27030,87755,23,437],
+      [62229,0,0,446.7,5419.1,8812.9,41966,29788,12162,20,394],
+      [62256,0,0,482.2,4322.2,8742.7,23985,23693,350,23,394],
+      [62217,0,0,358.9,3867.6,8086.1,34821,21266,13585,22,328],
+      [62253,0,0,453.3,4241.8,6940.6,26195,23251,2915,23,388],
+      [62230,0,0,384.8,3853.2,6666.5,34291,21133,13133,23,339],
+      [62254,0,0,455.3,4617.3,6239.8,34321,25271,9048,21,324],
+      [62242,0,0,381.8,4415.1,5701.6,38569,24232,14311,22,236],
+      [62260,0,0,438.5,3785.1,5410.6,23697,20723,2976,22,289],
+      [62222,0,0,377.2,3930.7,5213.5,25445,21532,3910,23,254],
+      [62204,0,0,264.7,2956.7,5207.3,81626,16247,65404,20,197],
+      [62236,0,0,344.3,3928.5,5109.1,42180,21560,20641,23,181],
+      [62247,0,0,320.8,3289.8,4613.2,36150,18038,18084,20,235],
+      [62215,0,0,390.3,3732.8,4472.1,24582,20482,4070,23,190],
+      [62250,0,0,374.7,3562.2,4324.3,22273,19546,2724,22,238],
+      [62233,0,0,268.1,2860.7,4004.2,57371,15576,41764,19,207],
+      [62238,0,0,292.8,3016.3,3962.2,34789,16522,18266,16,199],
+      [62241,0,0,285.5,3135.6,3779.8,44072,17160,26912,19,187],
+      [62220,0,0,376.1,3928.1,3304.5,25603,21578,4031,23,153],
+      [62271,0,0,302.1,3194.2,3282.1,19035,17428,1608,18,125],
+      [62246,0,0,384.8,4660.1,3058.6,44506,25631,18872,18,117],
+      [62244,0,0,230.4,2716.2,2701.9,24257,14969,9295,9,139],
+      [62248,0,0,318.5,3933.7,2448.3,49889,21545,28351,13,126],
+      [62259,0,0,325.5,3561.5,2282,22223,19511,2716,16,104],
+      [62237,0,0,292.9,3421.2,2109.8,28942,18756,10169,18,86],
+      [62245,0,0,297.5,4388,2039.5,42664,24066,18600,13,106],
+      [62239,0,0,226.9,2207.1,1812.3,48545,12034,36518,16,110],
+      [62235,0,0,216.7,2982.8,1732.4,26032,16492,9546,7,97],
+      [62203,0,0,117.5,1397.9,726.7,10770,7732,3038,3,26],
+      [62260,0,1,560.8,4719,13424.3,31502,24835,6712,31,652],
+      [62253,0,1,516.7,4646,12756.5,30966,24492,6506,31,658],
+      [62254,0,1,536.4,5385,12530.2,33360,28318,5012,31,622],
+      [62233,0,1,503.4,5175,11047.3,36003,27287,8727,31,611],
+      [62215,0,1,414.5,4162.3,11035.3,50404,21960,28471,29,466],
+      [62231,0,1,483.3,4591,11030.4,35270,24157,11141,28,576],
+      [62229,0,1,439.3,4281,10931.2,34774,22518,12243,30,524],
+      [62256,0,1,497.6,4285,10744.7,36164,22564,13646,31,593],
+      [62246,0,1,438,4690.8,10374.3,29907,24691,5187,31,286],
+      [62228,0,1,483.8,4864,10213,38621,25635,12971,31,547],
+      [62249,0,1,438.1,4390,10199,82309,23152,59154,23,443],
+      [62271,0,1,524.4,4967,10064.7,39157,26168,12983,31,422],
+      [62217,0,1,503.1,5155,8590.4,30276,27146,3093,31,455],
+      [62241,0,1,452.5,4850,8482.9,116532,25534,90937,31,432],
+      [62248,0,1,499.9,5132,8302.8,32566,27067,5480,30,412],
+      [62250,0,1,496.2,4618,8020.6,41407,24302,17084,31,429],
+      [62238,0,1,377.3,3667.6,7791.9,28103,19324,8727,26,398],
+      [62204,0,1,304.2,3832.2,7252.9,36442,20163,16246,26,226],
+      [62222,0,1,446.4,4634.1,7045.7,27627,24449,3171,31,268],
+      [62259,0,1,454.6,4407,6916.2,29133,23238,5948,29,348],
+      [62203,0,1,341,3182,6631,51153,16710,34415,21,356],
+      [62220,0,1,470.7,4278,4877.3,27127,22533,4633,31,240],
+      [62240,0,1,379,4737.4,4680.7,87216,24901,62300,28,219],
+      [62239,0,1,478.6,4430.4,4670.1,26362,23350,3036,31,205],
+      [62252,0,1,219.9,2404,4648.7,14859,12598,2278,14,251],
+      [62236,0,1,351.7,3810,4332.7,21699,20147,1560,26,212],
+      [62237,0,1,260.3,3047,3476.4,33921,15991,17903,19,169],
+      [62235,0,1,212.7,2432.8,2992.8,28291,12809,15473,24,163],
+      [62230,0,1,109.7,1176.9,2625.7,16312,6223,10083,9,105],
+      [62245,0,1,71.5,790,2138.7,8401,4170,4235,7,100],
+      [62244,0,1,249,2976,1994.1,21481,15733,5743,16,131],
+      [62257,0,1,187.5,1911.3,566.1,16660,10014,6646,8,35],
+      [62247,0,1,31.8,400,186.9,25442,2114,23323,2,14],
+      [62233,0,2,498.3,5058,11796.8,30198,26307,3893,29,622],
+      [62231,0,2,426.2,3885.2,10452.5,22644,20173,2509,28,574],
+      [62271,0,2,525.2,4898.4,10197.7,42411,25494,16928,28,466],
+      [62260,0,2,557.5,4657.7,10100.7,26556,24242,2323,29,569],
+      [62256,0,2,534.8,4402.5,9527.6,27136,22866,4287,29,585],
+      [62253,0,2,468.4,3801.8,9472.6,28073,19703,8336,30,491],
+      [62248,0,2,520.4,4803.4,9298.9,34386,25014,9392,29,617],
+      [62217,0,2,449.1,4321.8,9290.9,36454,22484,13936,27,468],
+      [62240,0,2,411.9,5008,8439.8,29196,25995,3207,30,356],
+      [62250,0,2,479.8,4002.2,8247.7,21292,20784,495,29,412],
+      [62229,0,2,448.7,4236.6,8121.7,38549,22010,16568,27,461],
+      [62252,0,2,424.8,4334.3,7781.1,31879,22487,9337,30,388],
+      [62249,0,2,458.9,4343.7,7710,29408,22590,6862,28,396],
+      [62238,0,2,410.6,3853.3,7525.8,31362,20019,11364,27,435],
+      [62203,0,2,331.5,2853.1,7291,56921,14801,42142,21,462],
+      [62241,0,2,405.5,4030.4,7221.3,41691,20942,20725,28,433],
+      [62215,0,2,351.5,3245.3,6935.3,31663,16853,14772,22,388],
+      [62204,0,2,414.4,4701.4,6807.5,30115,24439,5718,30,319],
+      [62228,0,2,400.8,4163.8,6435.2,35608,21622,13964,29,414],
+      [62234,0,2,350,3663.1,6399.2,104960,19070,85877,18,338],
+      [62222,0,2,417.8,4042.7,6385.9,23630,21010,2618,28,359],
+      [62259,0,2,453.2,4207.1,5935.9,26590,21844,4749,29,358],
+      [62239,0,2,402.7,3301.3,5424.4,31345,17141,14212,29,281],
+      [62220,0,2,238.3,2280.4,4963,56268,11862,44419,21,301],
+      [62235,0,2,308,3037.1,4156.8,37004,15796,21200,30,246],
+      [62257,0,2,477.4,4390.2,4005,67574,22828,44776,25,198],
+      [62246,0,2,227.4,2196.2,3590.5,23410,11382,12028,15,174],
+      [62244,0,2,201.6,2093.2,3010.3,27936,10897,17038,12,128],
+      [62237,0,2,254.5,2604,2204.3,23837,13512,10338,19,132],
+      [62254,0,2,212.6,2069.4,2075.8,18270,10773,7494,14,131],
+      [62242,0,2,141.6,1610,1623.8,51527,8379,43144,10,84],
+      [62247,0,2,69.9,761,896.7,20042,3990,16051,5,38],
+      [62230,0,2,35.7,348,605.9,23880,1824,22055,4,31],
+      [62217,0,3,464.3,4362.7,11389.3,26209,23006,3189,31,608],
+      [62234,0,3,475.7,4936.4,10743.9,43554,26000,17513,31,554],
+      [62256,0,3,539.4,4422.1,10685.2,26192,23294,2885,31,634],
+      [62229,0,3,457.7,4532.1,10601.9,30722,23854,6785,30,543],
+      [62231,0,3,431.8,3748.5,9831.4,29474,19761,9733,29,550],
+      [62260,0,3,544.3,4450.5,9591.6,41922,23499,18512,31,521],
+      [62222,0,3,422.4,4093.4,9095.4,44637,21556,23102,29,416],
+      [62233,0,3,425.1,4151.7,9069.6,27003,21858,5079,27,533],
+      [62240,0,3,477.9,5200,8862.6,39028,27385,11610,29,548],
+      [62215,0,3,474.3,3882.1,8760.4,27193,20499,6746,31,409],
+      [62257,0,3,438.4,4005.8,8206.7,24207,21091,3119,30,388],
+      [62238,0,3,427.1,4077.5,7925.1,26494,21398,5072,28,461],
+      [62249,0,3,408.1,4157.4,7684,32656,21899,10758,31,343],
+      [62244,0,3,389.5,3760.7,7492.9,33723,19856,13862,24,395],
+      [62254,0,3,462.5,3959,7127.2,26307,20811,5488,31,344],
+      [62239,0,3,457.1,3862,6977.1,27386,20373,7047,31,369],
+      [62230,0,3,441,3884.2,6621.7,24544,20461,4105,31,390],
+      [62252,0,3,424.3,4566,6524.8,29547,24077,5481,30,333],
+      [62204,0,3,444.9,5101.9,6445.3,31593,26877,4705,30,309],
+      [62242,0,3,424.7,4425.2,6347.1,28804,23294,5522,30,373],
+      [62247,0,3,273.7,2916.2,6050.7,169771,15308,154474,21,325],
+      [62241,0,3,339.6,3565.9,5863.4,26343,18763,7564,29,341],
+      [62250,0,3,398.2,3530.8,5747.9,23600,18623,5001,31,306],
+      [62259,0,3,443.2,4011.8,5300.3,25391,21148,4240,29,307],
+      [62253,0,3,383.5,3057.2,5263.6,21777,16107,5685,29,288],
+      [62232,0,3,176.5,1937,3624.2,350066,10184,339877,18,232],
+      [62227,0,3,201.9,2750,3540.1,32296,14444,17878,19,204],
+      [62228,0,3,269.2,2720.4,3509.3,33090,14353,18740,20,197],
+      [62218,0,3,297.5,2922.5,3298.4,51948,15404,36546,22,189],
+      [62245,0,3,197.7,1947.3,3150.6,58220,10302,47921,14,237],
+      [62248,0,3,153.6,1414.1,2150.8,20765,7506,13249,10,147],
+      [62235,0,3,120.9,1159.4,1685.6,15140,6085,9052,12,97],
+      [62271,0,3,97.1,824.9,1290.7,17101,4324,12778,6,71],
+      [62236,0,3,93.8,1074.9,974.2,23093,5699,17389,12,67],
+      [62220,0,3,64.9,537.6,522.6,5730,2822,2911,4,27],
+      [62243,0,3,61.3,1148.3,143.8,45594,6136,39443,3,12],
+      [62265,0,3,418.2,4515.5,10.6,32542,23735,8767,1,1],
+      [62266,0,3,485.3,5236.9,10.6,27557,27523,0,1,1],
+      [62248,0,4,505.1,4872.3,13184.6,30483,26106,4351,31,702],
+      [62215,0,4,455,4046.6,11553.1,31961,21604,10282,31,504],
+      [62245,0,4,483.5,4718.9,10120.2,27644,25300,2429,31,665],
+      [62230,0,4,497.1,4398.3,9671.9,27914,23503,4352,31,442],
+      [62240,0,4,492.1,4808.3,9547.4,27670,25683,1909,31,549],
+      [62252,0,4,459.1,4574.4,9521.2,28657,24469,4189,28,452],
+      [62272,0,4,496,4598.2,9320.3,26950,24606,2330,30,508],
+      [62260,0,4,496.8,4173.5,9191.5,27357,22335,5055,31,546],
+      [62234,0,4,384.4,4304,8685.1,58651,23016,35609,27,434],
+      [62256,0,4,477.4,3874.4,8226.2,26337,20730,5594,31,512],
+      [62217,0,4,333.2,3071.8,7886.3,47210,16482,30757,24,453],
+      [62203,0,4,359.9,3331.7,7403.9,20006,17843,2147,22,467],
+      [62233,0,4,389.9,3781.4,7077.2,22588,20241,2335,24,344],
+      [62237,0,4,391.9,3996.6,6934.1,130540,21357,109143,27,327],
+      [62218,0,4,393.1,4360.3,5913.5,62313,23358,38970,29,223],
+      [62236,0,4,409.8,3800.7,5725.2,109778,20324,89428,31,237],
+      [62249,0,4,358.2,3516.2,5699.9,32544,18810,13737,25,249],
+      [62253,0,4,400.2,3473.2,5474.3,23817,18558,5255,30,260],
+      [62250,0,4,425.6,3910.6,5428,22257,20952,1303,31,283],
+      [62244,0,4,326,3209.3,5244.3,25801,17149,8653,26,224],
+      [62257,0,4,381.1,3490.4,5061.2,38680,18676,19992,31,257],
+      [62247,0,4,498.8,5147.9,5044.7,39608,27544,12057,30,322],
+      [62239,0,4,336.4,2977,4853.4,18086,15968,2135,28,236],
+      [62254,0,4,272,2569,4470.8,27430,13770,13681,23,202],
+      [62232,0,4,250.4,2427.7,4204,22792,12990,9795,26,267],
+      [62243,0,4,321.7,3213.3,4103.6,26859,17194,9643,29,198],
+      [62229,0,4,148.6,1478.6,4017.7,13139,7915,5223,16,190],
+      [62259,0,4,378.3,3340.8,4012.6,20752,17896,2849,31,228],
+      [62227,0,4,215.3,2242.2,3491.4,21061,12010,9078,20,167],
+      [62204,0,4,148.9,1907.7,2750.9,24762,10206,14552,21,130],
+      [62238,0,4,403.8,3786.1,2705.9,22803,20267,2544,25,151],
+      [62222,0,4,115.4,1048.5,1876.6,40524,5592,34924,11,132],
+      [62220,0,4,102.5,897.8,1786.3,120256,4787,115484,6,121],
+      [62242,0,4,85.3,908,1494.4,14808,4872,9938,8,79],
+      [62228,0,4,41,406,316.1,4937,2175,2763,4,17],
+      [62231,0,4,10.6,96.5,196.9,16361,518,15843,2,12],
+      [62241,0,4,2.7,48,89.6,41826,257,41570,2,5],
+      [62246,0,4,13.5,261,11.4,14265,1391,12905,1,1],
+      [62248,0,5,404.7,3806.5,9648,30138,20261,9937,27,593],
+      [62234,0,5,446.2,4387.2,9074.2,44839,23321,21506,30,572],
+      [62245,0,5,463,4293.1,8680,25227,22828,2430,29,591],
+      [62215,0,5,424.3,3778.2,8426.8,23197,20056,3118,30,425],
+      [62272,0,5,451.2,4055.4,8263.4,22980,21567,1405,30,502],
+      [62240,0,5,428.1,4570.8,8212.4,31990,24309,7638,30,496],
+      [62260,0,5,466.2,3972.4,7854.4,22467,21128,1335,30,415],
+      [62220,0,5,409.1,3588.1,7407.8,34721,19112,15630,26,477],
+      [62252,0,5,363.1,4042.1,6989.8,27961,21529,6431,30,417],
+      [62236,0,5,359.8,3352,6893.7,44314,17855,26472,28,286],
+      [62253,0,5,389.1,3197,6104.1,19184,17030,2197,30,317],
+      [62256,0,5,422.5,3605.3,5889.9,25206,19201,6008,30,399],
+      [62257,0,5,392.9,3302,5761.9,27807,17574,10256,30,295],
+      [62259,0,5,408.9,3717,5557.5,22345,19785,2556,30,290],
+      [62232,0,5,380.3,3752.9,5554.4,69486,19940,49545,30,347],
+      [62271,0,5,319.7,2851.5,5316.3,17513,15151,2339,20,272],
+      [62250,0,5,401.4,3567,5056.8,21461,18963,2478,30,316],
+      [62227,0,5,328.8,3250.7,5046.6,30630,17310,13323,21,290],
+      [62237,0,5,304,2976,4751.8,55102,15823,39297,19,217],
+      [62249,0,5,425.5,4308,4656.9,29465,22912,6566,29,208],
+      [62244,0,5,361.8,3637,4401.4,22420,19322,3081,23,209],
+      [62243,0,5,390.8,3936,4138.5,57024,20941,36088,30,226],
+      [62242,0,5,282.6,2928.6,3914.6,36583,15580,21021,16,234],
+      [62230,0,5,221.9,1900,3465.6,70632,10120,60544,16,180],
+      [62238,0,5,278.2,3215,3335.5,28429,17111,11341,27,187],
+      [62222,0,5,166.8,1539.1,3329.6,16319,8191,8124,14,185],
+      [62218,0,5,285.6,3259,3287.5,27840,17325,10520,28,197],
+      [62229,0,5,267.6,2747.6,3014,24841,14618,10217,23,170],
+      [62239,0,5,159.9,1473.2,2168.3,13826,7828,5985,12,151],
+      [62204,0,5,102.8,1059.5,2049.6,15488,5636,9859,15,119],
+      [62247,0,5,127.5,1276,1471.8,17154,6785,10376,15,84],
+      [62233,0,5,236.4,2320,1315.6,17600,12340,5262,13,96],
+      [62231,0,5,30.7,488.9,188.4,17310,2600,14710,3,6],
+      [62266,1,0,433.7,3989.3,10575.3,28532,24958,3596,22,349],
+      [62242,1,0,374.9,3885.5,9664.1,26752,24257,2513,21,252],
+      [62271,1,0,326.9,2747,8562.8,43656,17126,26545,22,370],
+      [62230,1,0,416.4,3288.3,8265.5,29474,20581,8927,21,417],
+      [62272,1,0,415.8,3372.8,8069.5,41578,21061,20497,21,347],
+      [62263,1,0,397.7,3739.8,8011.7,29480,23394,6089,22,302],
+      [62241,1,0,352.2,3538.1,7878.3,45729,21980,23714,20,324],
+      [62229,1,0,323.3,2984.1,6402.2,32470,18694,13829,19,303],
+      [62240,1,0,324.5,3321.2,6288,25942,20813,5156,16,200],
+      [62250,1,0,327.7,3328,6131.7,21872,20786,1104,23,278],
+      [62252,1,0,383.8,3939.9,5849.4,31468,24567,6902,17,198],
+      [62257,1,0,216.4,1723.3,5562.8,20075,10736,9346,16,147],
+      [62283,1,0,376.4,3595.3,5407,26502,22439,4055,20,249],
+      [62239,1,0,317.8,3305.1,5094.5,32934,20633,12329,18,190],
+      [62265,1,0,297.9,2971,5051.6,25092,18640,6416,20,224],
+      [62237,1,0,161.7,1525.9,4734.4,26238,9516,16760,16,192],
+      [62243,1,0,362.9,3415,4709.3,36093,21286,14787,23,284],
+      [62264,1,0,356.6,3540.2,4691.7,32338,22098,10228,18,187],
+      [62260,1,0,237.4,2251,4603.2,15999,14132,1841,20,122],
+      [62277,1,0,331,3365.9,4451,25094,21053,4006,18,201],
+      [62220,1,0,380.1,3688.1,4409.3,28105,23061,5071,17,190],
+      [62280,1,0,387.1,3729.6,4200.6,24440,23313,1134,20,210],
+      [62281,1,0,405.8,4195.1,4072.8,27656,26270,1385,20,172],
+      [62282,1,0,350.9,3458.9,3936.6,28318,21612,6692,15,109],
+      [62232,1,0,244.1,2810.1,3665.9,25946,17523,8432,13,128],
+      [62234,1,0,186,2160.3,3144.1,46832,13394,33453,10,173],
+      [62203,1,0,237.4,2475.7,2772.5,18075,15415,2662,9,90],
+      [62246,1,0,339,3220.3,2690,26582,20148,6429,16,158],
+      [62228,1,0,190.8,2094.3,2233.7,30299,13045,17267,9,104],
+      [62244,1,0,67.3,630.2,1599.5,9670,3935,5726,11,55],
+      [62233,1,0,160.6,1451.4,1447.4,26128,9003,17123,5,68],
+      [62231,1,0,148.8,1196.2,1404.6,15234,7515,7711,7,72],
+      [62279,1,0,291.8,3645.5,1340.3,27260,22812,4436,9,80],
+      [62254,1,0,197.4,2395.9,832.3,18556,14965,3587,8,34],
+      [62245,1,0,230.8,3527.4,792.7,31349,21966,9386,5,30],
+      [62253,1,0,256.2,2217.9,762.8,20495,13807,6682,8,35],
+      [62215,1,0,237.2,1997.7,390.4,26558,12454,14109,5,26],
+      [62226,1,0,44.6,182.4,302.7,4882,1108,3775,12,22],
+      [62259,1,0,29.6,245.8,184,39863,1507,38355,5,10],
+      [62276,1,0,301.9,4605.9,158.9,29086,28880,215,2,7],
+      [62222,1,0,262.9,2164.7,151.3,16836,13540,3298,3,10],
+      [62204,1,0,367.6,6574,139.5,51156,41224,9923,2,5],
+      [62273,1,0,251.3,2329.1,83.4,14938,14532,414,4,5],
+      [62256,1,0,213,1768,82.4,14341,11109,3224,5,5],
+      [62227,1,0,175.5,2360,35.6,23385,14800,8591,3,3],
+      [62247,1,0,230.7,4026.2,31,27677,25275,2445,1,1],
+      [62263,1,1,497,4274.2,15906,30458,25927,4454,31,553],
+      [62280,1,1,386.3,3255,15654.5,20947,19725,1252,31,354],
+      [62266,1,1,518.9,4425.7,14038,32989,26953,6036,31,512],
+      [62272,1,1,504.4,4284.1,13715.7,35514,26060,9464,31,459],
+      [62237,1,1,415.9,3897,11553.7,38463,23685,14789,30,466],
+      [62243,1,1,422.4,4290.8,10753.9,33079,26024,6990,29,449],
+      [62276,1,1,472.7,4160.2,10546.3,27665,25311,2426,30,400],
+      [62228,1,1,375.1,3724.6,10459.9,41289,22593,18619,28,388],
+      [62234,1,1,449.4,4505.5,10211.6,62774,27367,35434,30,410],
+      [62282,1,1,424.1,3384,8427.6,21630,20563,1096,29,272],
+      [62230,1,1,232.7,2016,7267.7,14813,12210,2544,16,271],
+      [62257,1,1,238.5,2025.4,7231.8,18982,12294,6653,29,215],
+      [62215,1,1,362.1,2965,7210,34352,18025,16295,28,265],
+      [62265,1,1,438.3,4103.2,7208.2,28950,24940,4037,27,282],
+      [62279,1,1,500.6,4572.1,7033.2,30952,27781,3165,30,228],
+      [62242,1,1,354,3542.4,6789.2,25612,21522,4074,30,279],
+      [62249,1,1,384.5,3326.5,6645.9,48477,20204,28245,29,291],
+      [62277,1,1,388,3389,6520.3,32466,20604,11867,24,235],
+      [62233,1,1,271.1,2657.6,6155.9,36340,16128,20191,24,244],
+      [62253,1,1,444.6,3727.1,6086.7,25503,22643,2861,31,238],
+      [62246,1,1,373.8,3566.7,5969.1,27135,21668,5492,28,243],
+      [62231,1,1,243.1,1900,5946.1,21085,11535,9514,16,241],
+      [62254,1,1,369.7,2977.1,5855.2,32096,18093,13994,23,190],
+      [62232,1,1,362.4,3665.7,5730.4,35117,22291,12836,24,241],
+      [62281,1,1,439.3,3700.5,5662.7,34881,22481,12401,21,233],
+      [62240,1,1,323.8,3551.8,5630.2,37238,21564,15652,25,254],
+      [62247,1,1,312.4,2793,5570.2,23658,16989,6684,18,202],
+      [62203,1,1,170.7,1577,5264.1,18045,9581,8475,14,151],
+      [62252,1,1,379.6,3562.4,5069.6,27502,21647,5881,30,238],
+      [62283,1,1,423.9,3569.1,5004.9,26121,21671,4454,24,195],
+      [62260,1,1,232.7,1719.6,4710.5,73106,10457,62650,18,180],
+      [62241,1,1,445.8,4232.1,4344.7,27878,25721,2172,24,198],
+      [62220,1,1,337.4,2840.3,3939.9,27071,17257,9810,22,163],
+      [62222,1,1,356.3,2920.9,3659.4,27898,17748,10173,23,157],
+      [62271,1,1,355.9,3036,3333.5,30561,18434,12101,13,179],
+      [62236,1,1,160,1532.9,3173.8,72874,9331,63539,8,133],
+      [62264,1,1,154.9,1474.1,2951.9,37002,8944,28043,12,114],
+      [62259,1,1,197.8,1546.2,2365.9,7447,9393,-1940,13,92],
+      [62227,1,1,188.2,1844,2011,20530,11201,9331,14,91],
+      [62256,1,1,210.5,1650,1514.2,20344,10024,10312,13,54],
+      [62250,1,1,260,2382.6,1401.2,23694,14474,9220,21,55],
+      [62239,1,1,366.8,3413.4,1393.8,25434,20740,4697,19,71],
+      [62248,1,1,99.1,1004.9,1054.9,24187,6108,18081,4,48],
+      [62245,1,1,29.4,382,687.4,18897,2317,16573,5,26],
+      [62229,1,1,72.2,671.7,268.8,7726,4080,3645,6,15],
+      [62204,1,1,72.1,569.2,89.9,16288,3455,12826,3,5],
+      [62226,1,1,560.6,2022.1,37.9,14201,12277,1915,1,1],
+      [62278,1,1,179.6,1987.4,36.1,20175,12090,8094,1,1],
+      [62244,1,1,20.3,253,12.7,5737,1538,4192,1,1],
+      [62272,1,2,314.9,2660.3,12839.7,20441,16050,4365,28,406],
+      [62266,1,2,368.3,3272.7,9419.1,23872,19780,4050,25,302],
+      [62263,1,2,356,3196.2,9109.4,20650,19312,1366,29,323],
+      [62231,1,2,238.4,1871.4,8164.3,12638,11430,1225,20,309],
+      [62281,1,2,381.5,3260.7,7661.2,27278,19613,7661,27,339],
+      [62228,1,2,401.2,3871.3,7635.8,35404,23366,12065,27,362],
+      [62249,1,2,374.1,3611.3,7495.7,32253,21812,10419,27,248],
+      [62276,1,2,334.4,3264,7284.3,25169,19740,5463,27,236],
+      [62215,1,2,305.5,3108.3,7126.1,24639,18742,5915,21,249],
+      [62222,1,2,272.2,2295.8,7097.7,19238,13841,5394,26,237],
+      [62265,1,2,348.1,3181.9,6992.7,23374,19230,4196,29,262],
+      [62236,1,2,347.8,3157.3,6919.3,47361,19097,28300,28,317],
+      [62237,1,2,223.4,2139.6,6880.9,28004,12867,15138,21,246],
+      [62247,1,2,335.7,2990.8,6800.4,20523,18021,2516,26,296],
+      [62234,1,2,314.6,3383,6795.1,24774,20317,4417,26,253],
+      [62242,1,2,306.6,3232.3,6685.7,31031,19455,11566,23,251],
+      [62279,1,2,367.2,3494.3,6246.9,29805,21115,8683,27,199],
+      [62217,1,2,343.5,3110.8,6026.5,64638,18803,45862,26,275],
+      [62283,1,2,376.7,3230.6,5968.3,20910,19457,1432,25,265],
+      [62253,1,2,354.6,2911.2,5790.6,23734,17546,6138,22,186],
+      [62233,1,2,234.8,2588.8,5569.3,17802,15594,2172,25,186],
+      [62282,1,2,385.1,3149.4,5513.4,22454,19021,3473,27,206],
+      [62260,1,2,345.4,2718.9,5342.8,23623,16402,7213,24,215],
+      [62241,1,2,401.6,4215.7,5281.9,40968,25459,15529,22,236],
+      [62230,1,2,221.5,1873.3,4896.4,17394,11262,6169,16,221],
+      [62240,1,2,250.9,3052,4858.4,29575,18413,11174,23,214],
+      [62259,1,2,356.3,3069,4803.9,26221,18543,7686,24,214],
+      [62280,1,2,412.1,3558.8,4611.9,34445,21491,12959,26,206],
+      [62220,1,2,278,2559.1,4603.4,17033,15375,1657,22,215],
+      [62252,1,2,342.7,3526.4,4477.6,28174,21358,6851,25,145],
+      [62248,1,2,154.3,1640.3,4255.8,55976,9916,46048,18,186],
+      [62256,1,2,260.9,2380.6,4147,20906,14432,6469,19,142],
+      [62239,1,2,324.9,3161,3957.4,22782,19193,3601,23,166],
+      [62250,1,2,363.1,2905.3,3715.8,21740,17501,4236,17,105],
+      [62246,1,2,267.3,2776.5,2805,25426,16718,8696,17,90],
+      [62277,1,2,375.4,3613.2,2789.5,31134,21814,9317,21,108],
+      [62271,1,2,329.2,2905.7,2376.3,22468,17513,4966,22,92],
+      [62254,1,2,107.9,748.1,1769.3,21603,4512,17091,6,63],
+      [62238,1,2,292,2233.6,1569.4,51630,13465,38168,8,54],
+      [62232,1,2,76.2,691.4,1516.3,6902,4215,2699,5,37],
+      [62243,1,2,128.3,1426.3,1198.1,23857,8554,15300,8,38],
+      [62257,1,2,94.8,829.7,252.4,15298,4866,10434,8,12],
+      [62273,1,2,320.6,3917.9,67.2,24967,23532,1425,2,2],
+      [62278,1,2,156.4,1550.1,13.3,10383,9384,996,1,1],
+      [62226,1,2,383.7,1423.5,12.5,10635,8610,2064,1,1],
+      [62271,1,3,514.7,4225.6,15354.9,26346,24568,1689,31,491],
+      [62237,1,3,434.5,4233,13540.5,36379,24644,11780,27,438],
+      [62281,1,3,536.8,4605.1,12522.2,33027,26798,6136,31,541],
+      [62276,1,3,369.1,3339.2,12194.6,22228,19389,2805,29,418],
+      [62265,1,3,395.8,3582.1,12096.5,28630,20927,7742,30,387],
+      [62217,1,3,439.8,3881.6,11632.5,29928,22567,7328,31,495],
+      [62215,1,3,398.4,3547.2,10880.7,24197,20673,3482,28,332],
+      [62257,1,3,484.9,4492.1,10160.9,31535,26215,5385,31,457],
+      [62240,1,3,445.5,4933,10053.4,31450,28753,2714,28,350],
+      [62230,1,3,486.4,3905.5,9360.9,26275,22747,3557,30,373],
+      [62245,1,3,461.1,4391,9285.2,137164,25627,111608,31,424],
+      [62283,1,3,525.4,4584.8,9099.8,29683,26753,3003,30,413],
+      [62243,1,3,392.8,3753,8535.6,37364,21851,15535,29,373],
+      [62282,1,3,397.5,3437.5,8356.5,26032,20056,6017,30,405],
+      [62252,1,3,416,4228,8029.8,31986,24651,7387,29,342],
+      [62263,1,3,468.9,4129.2,7932.8,38428,24036,14358,30,306],
+      [62242,1,3,332.4,3531.6,7617,25445,20566,4875,25,306],
+      [62259,1,3,297.1,2678,7282.9,23646,15585,8084,30,331],
+      [62266,1,3,415.6,3571.3,7026.8,26138,20799,5340,23,282],
+      [62241,1,3,432.2,4175.9,6538.2,39702,24322,15365,26,309],
+      [62229,1,3,250.6,2854.6,6471.7,62472,16632,45820,19,196],
+      [62277,1,3,464.6,4206.7,6212.7,41827,24540,17333,28,290],
+      [62256,1,3,319.6,2854.1,5960.3,19025,16629,2384,25,270],
+      [62234,1,3,435.6,4312.8,5926.7,51309,25129,26196,29,273],
+      [62222,1,3,357.2,3021.5,5546.1,23898,17637,6267,26,265],
+      [62264,1,3,433.8,3883.1,5468.5,29485,22640,6836,28,236],
+      [62238,1,3,310.3,3005.6,5464.5,65894,17541,48361,24,193],
+      [62233,1,3,268.7,2537.4,5346,28933,14808,14113,26,156],
+      [62249,1,3,289.3,2692.2,5215.8,59688,15700,44021,25,216],
+      [62228,1,3,234,2533.7,4739.1,34422,14786,19667,16,177],
+      [62280,1,3,424,3909.1,4593.2,25685,22782,2940,27,200],
+      [62250,1,3,427.9,3760.2,4472.7,27059,21916,5144,25,197],
+      [62247,1,3,292.9,2854.5,4137.5,26396,16633,9764,30,191],
+      [62279,1,3,506.5,4537.3,3953.4,29082,26448,2649,30,149],
+      [62260,1,3,338.1,2955.5,3807.4,27903,17209,10661,20,184],
+      [62253,1,3,339.9,2885.4,3795.7,28277,16815,11463,22,181],
+      [62246,1,3,201.4,2198.4,3420.7,22184,12793,9373,13,124],
+      [62272,1,3,231,1961.8,3253.2,14048,11419,2635,13,131],
+      [62236,1,3,202.6,1934.7,3229,17596,11269,6329,19,149],
+      [62254,1,3,173.3,1644.2,1877.7,14041,9595,4450,8,78],
+      [62220,1,3,434,4273.7,1195.6,29296,24904,4388,6,47],
+      [62239,1,3,139,1249.9,961,11569,7294,4276,9,59],
+      [62216,1,3,553.5,2083.1,562.5,14384,12139,2244,3,37],
+      [62275,1,3,6.5,79,367.2,537,459,77,3,14],
+      [62273,1,3,397,5107.1,36.2,31573,29739,1806,2,2],
+      [62226,1,3,557,2099.9,34,17104,12225,4862,2,3],
+      [62232,1,3,54.4,547.6,18.1,17084,3203,13897,1,1],
+      [62276,1,4,462.1,4318.4,11657.3,27864,25413,2448,27,374],
+      [62263,1,4,489.6,4575,11173.1,29683,26927,2793,31,424],
+      [62265,1,4,449.9,4187.7,10940.8,27136,24617,2516,30,414],
+      [62266,1,4,435.1,3884.5,10800.9,25851,22898,3024,31,432],
+      [62260,1,4,416.5,3529.5,10491.2,24250,20773,3462,31,436],
+      [62230,1,4,427,3641.8,9921.6,26193,21431,4762,30,431],
+      [62240,1,4,364.6,4132.1,9775.9,32777,24342,8505,31,361],
+      [62277,1,4,471.2,4549,9163.3,36385,26757,9621,31,349],
+      [62281,1,4,435,3781.9,8814.8,24608,22213,2380,29,358],
+      [62245,1,4,328.8,3857.6,8600.3,33848,22705,11094,27,342],
+      [62282,1,4,382,3069.7,8471.2,20843,18044,2795,27,365],
+      [62239,1,4,413.2,3763.1,8069.4,25548,22110,3389,31,354],
+      [62233,1,4,428.9,4073.9,7977,29032,24011,5026,30,294],
+      [62215,1,4,365.8,2997.6,7716.6,22558,17594,4939,29,307],
+      [62254,1,4,375,3666,7652.3,24728,21503,3214,29,300],
+      [62252,1,4,399.5,4103.9,7203.4,37741,24131,13614,31,302],
+      [62283,1,4,464,4102.8,7017.4,27126,24140,3017,31,317],
+      [62232,1,4,323.1,3784.9,6776.4,36738,22294,14501,28,279],
+      [62279,1,4,457.2,4216.7,6723,26460,24808,1681,30,267],
+      [62247,1,4,338.9,3564.9,6479.9,33880,20995,12895,31,285],
+      [62222,1,4,366.7,3191.2,6230.7,22529,18754,3738,30,244],
+      [62229,1,4,340.1,3669.9,6108.9,57157,21564,35615,30,286],
+      [62271,1,4,292.7,2362.3,6067.4,18234,13834,4369,30,239],
+      [62237,1,4,343.2,3379.7,5960.5,22821,19789,3040,25,287],
+      [62217,1,4,331.1,3168.8,5957.1,23073,18646,4408,30,281],
+      [62242,1,4,403.7,4480.9,5936.4,37666,26298,11339,30,358],
+      [62238,1,4,302.1,2881.8,5917.2,57800,16923,40829,29,276],
+      [62241,1,4,277.9,2587.2,5440.6,25338,15288,10065,23,237],
+      [62253,1,4,351.9,2852.4,5416.1,19873,16790,3087,30,261],
+      [62234,1,4,365.9,3819.2,5381,34872,22493,12376,29,263],
+      [62257,1,4,353.1,3119.2,4456.5,22189,18361,3833,29,211],
+      [62250,1,4,324.3,2765.5,4417.2,26426,16255,10160,26,246],
+      [62243,1,4,150.4,1484.7,4362.9,10815,8682,2138,13,173],
+      [62280,1,4,403,3861,3897.6,29122,22723,6431,24,172],
+      [62249,1,4,416.3,3790.9,3841,50349,22316,28039,28,263],
+      [62256,1,4,259.5,2309.7,3582.3,18065,13613,4478,27,193],
+      [62228,1,4,218.7,2869.1,3338,33991,16924,17057,17,133],
+      [62264,1,4,65.1,597.5,2273.9,11750,3502,8254,7,99],
+      [62218,1,4,220.6,2277.4,1595.9,91171,13422,77752,10,75],
+      [62220,1,4,64.4,591.9,584.5,16134,3460,12672,6,27],
+      [62248,1,4,17.5,225,226.3,40421,1358,39055,3,8],
+      [62276,1,5,450.8,4310.4,12328.5,28299,26013,2219,30,441],
+      [62266,1,5,439.4,4086.2,11508.5,31150,24628,6445,29,400],
+      [62240,1,5,399.4,4811.4,11157,32703,29008,3682,29,410],
+      [62265,1,5,426.7,4307.3,9766.2,29844,25978,3809,30,378],
+      [62271,1,5,424.5,3444.3,9102.3,22734,20844,1911,29,406],
+      [62282,1,5,396.8,3224.3,8966.4,20625,19457,1166,29,377],
+      [62245,1,5,362.6,4559.3,8779.5,36350,27568,8780,27,390],
+      [62254,1,5,364.7,3537.5,8144.6,36463,21339,15068,28,357],
+      [62277,1,5,429.7,4269.4,8100.5,28051,25760,2268,29,309],
+      [62233,1,5,286.6,2848.5,7320.6,34341,17203,17130,25,270],
+      [62252,1,5,378.8,3674,7311,34675,22152,12502,28,299],
+      [62283,1,5,400.7,3497.5,7113.5,23648,21127,2561,28,346],
+      [62263,1,5,341.9,3293.8,7017.4,22104,19859,2246,28,289],
+      [62230,1,5,377.5,3186.3,6951.5,20803,19256,1529,29,338],
+      [62260,1,5,326.1,2662.8,6758.7,21064,16086,5001,29,284],
+      [62241,1,5,376.4,3780.3,6737.9,29821,22841,7007,29,365],
+      [62232,1,5,403.2,4246.3,6719.9,34457,25670,8803,30,358],
+      [62281,1,5,409.3,3534.2,6643.8,24811,21327,3455,30,329],
+      [62250,1,5,385.3,3344,6345.6,23794,20179,3617,30,293],
+      [62229,1,5,364.7,4167.4,6296.2,33428,25185,8248,30,385],
+      [62238,1,5,329.2,3082.6,6219.4,25888,18596,7277,29,299],
+      [62234,1,5,370.3,3908.1,6110.4,27526,23586,3911,29,295],
+      [62264,1,5,297.7,2911.8,5875.3,29372,17567,11809,18,209],
+      [62279,1,5,449.4,4486.2,5541.7,32213,27099,5098,30,215],
+      [62280,1,5,355.5,3345.9,5329.3,23859,20198,3677,30,277],
+      [62237,1,5,184.9,1939.1,5289.8,20315,11690,8622,16,198],
+      [62253,1,5,386.3,3259.1,5270.2,22617,19658,2951,30,226],
+      [62256,1,5,360.5,3174.4,5105.9,30186,19147,11029,27,267],
+      [62249,1,5,407.2,3821.8,4333.2,34887,23096,11786,30,362],
+      [62228,1,5,309,3128.3,4321.1,36097,18883,17198,27,221],
+      [62242,1,5,424.7,4727.7,4295.1,29869,28562,1331,30,342],
+      [62217,1,5,248.8,2229.7,4045.2,20793,13471,7322,27,187],
+      [62220,1,5,322.8,2928.1,4011.8,23906,17692,6218,22,209],
+      [62257,1,5,255.1,2232.9,3953.8,26922,13482,13443,26,195],
+      [62247,1,5,225.9,2298.4,3691.2,25174,13879,11295,23,180],
+      [62218,1,5,132,1613.5,2961.8,16754,9744,7019,11,136],
+      [62236,1,5,141.2,1478.1,2464.8,42129,8923,33201,15,112],
+      [62239,1,5,141.2,1178.6,1800.2,28660,7111,21548,12,105],
+      [62215,1,5,94.6,785.4,1663.3,10206,4740,5456,13,78],
+      [62222,1,5,117.7,912.2,1632.5,10361,5502,4849,11,78],
+      [62203,1,5,119.5,1086.5,1395.1,26947,6557,20382,7,58],
+      [62275,1,5,706.2,4791.9,46.8,34849,28955,5913,1,1],
+      [62226,1,5,526.3,1979.5,11.4,13634,11968,1680,1,1]
+    ]
+  }
+};
+</script>
+
+<!-- ============================================================
+     MOTOR — formatação, agregação e primitivas de gráfico SVG
+     ============================================================ -->
+<script>(function(){
+"use strict";
+var M = window.MOAGEM;
+var NAVY = "#12224A", GOLD = "#C9A227", RED = "#C0392B", GREEN = "#2E7D46";
+var GRAY = "#9AA1AE", GRID = "#E7EAF0", MUT = "#5A6072";
+var C25 = "#B8C0D0";  // safra anterior: cinza-azulado, fica atrás no olhar
+var MESES = M.meses, MC = M.mesesCurto, UN = M.unidades;
+
+/* ---------- formatação ---------- */
+function fmtInt(n){ if(!isFinite(n)) return "–"; return Math.round(n).toLocaleString("pt-BR"); }
+function fmtDec(n,c){ if(!isFinite(n)) return "–"; return n.toLocaleString("pt-BR",{minimumFractionDigits:c,maximumFractionDigits:c}); }
+function fmtMil(n){ return fmtInt(n/1000)+" mil"; }
+function fmtMt(n){ return fmtDec(n/1e6,2)+" Mt"; }
+function fmtMilT(n){ return fmtInt(n/1000)+" mil t"; }
+function pct(n,c){ if(!isFinite(n)) return "–"; return (n>=0?"+":"")+fmtDec(n*100,c==null?1:c)+"%"; }
+function pctAbs(n,c){ return fmtDec(n*100,c==null?1:c)+"%"; }
+function sinalMil(n){ return (n>=0?"+":"−")+fmtInt(Math.abs(n)/1000)+" mil t"; }
+function esc(s){ var d=document.createElement("div"); d.textContent=String(s==null?"":s); return d.innerHTML; }
+
+/* ---------- agregação ---------- */
+function somaMes(ano){ // total do grupo em cada mês
+  return MESES.map(function(_,i){ return UN.reduce(function(a,u){ return a+u[ano][i]; },0); });
+}
+function total(arr){ return arr.reduce(function(a,b){return a+b;},0); }
+function acum(arr){ var s=0; return arr.map(function(v){ s+=v; return s; }); }
+
+var G25 = somaMes("a2025"), G26 = somaMes("a2026");
+var T25 = total(G25), T26 = total(G26);
+var MG = UN.filter(function(u){return u.cod==="CRV-MG";})[0];
+var MG25 = total(MG.a2025), MG26 = total(MG.a2026);
+var SEM25 = T25-MG25, SEM26 = T26-MG26;
+
+// dias de abril efetivamente moídos: da data de abertura até 30/04
+function diasAbril(iso){ var d=parseInt(iso.slice(8,10),10); return 30-d+1; }
+function dataBR(iso){ return iso.slice(8,10)+"/"+iso.slice(5,7); }
+
+UN.forEach(function(u){
+  u.t25 = total(u.a2025); u.t26 = total(u.a2026);
+  u.delta = u.t26-u.t25; u.var = u.t26/u.t25-1;
+  u.d25 = diasAbril(u.ini2025); u.d26 = diasAbril(u.ini2026);
+  u.dia25 = u.a2025[0]/u.d25; u.dia26 = u.a2026[0]/u.d26;
+  u.varAbril = u.a2026[0]/u.a2025[0]-1;
+  u.varDia = u.dia26/u.dia25-1;
+  u.pico25 = Math.max.apply(null,u.a2025); u.pico26 = Math.max.apply(null,u.a2026);
+  u.setPico25 = u.a2025[5]/u.pico25; u.setPico26 = u.a2026[5]/u.pico26;
+});
+
+/* ---------- SVG ---------- */
+function ns(t){ return document.createElementNS("http://www.w3.org/2000/svg",t); }
+function add(p,tag,attrs,text){
+  var e=ns(tag);
+  if(attrs) for(var k in attrs) e.setAttribute(k,attrs[k]);
+  if(text!=null) e.textContent=text;
+  p.appendChild(e); return e;
+}
+function txt(p,x,y,s,a){
+  a=a||{}; a.x=x; a.y=y;
+  if(!a["font-size"]) a["font-size"]="12";
+  if(!a.fill) a.fill="#2B2B2B";
+  return add(p,"text",a,s);
+}
+// passo "redondo" mais próximo de um valor qualquer
+function passoNice(v){
+  if(!(v>0)) return 1;
+  var mag=Math.pow(10,Math.floor(Math.log10(v))), n=v/mag;
+  return (n<=1?1:n<=1.5?1.5:n<=2?2:n<=2.5?2.5:n<=3?3:n<=4?4:n<=5?5:n<=6?6:n<=8?8:10)*mag;
+}
+// escala com passo redondo para o nº de divisões pedido
+function niceAxis(v,ticks){
+  if(!(v>0)) return 1;
+  return passoNice(v/ticks)*ticks;
+}
+// escala que cruza o zero: min e max são múltiplos do MESMO passo redondo,
+// senão o eixo sai com rótulos quebrados (410, 220, 33, -160…)
+function escalaZero(vals,ticks){
+  ticks = ticks||4;
+  var hi=Math.max.apply(null,vals.concat([0])), lo=Math.min.apply(null,vals.concat([0]));
+  var amp=hi-lo; if(!(amp>0)) amp=Math.abs(hi)||1;
+  var step=passoNice(amp/ticks);
+  var max=Math.ceil(hi/step)*step, min=Math.floor(lo/step)*step;
+  if(max===min) max=min+step;
+  return {min:min,max:max,step:step};
+}
+// mede o cartão para o viewBox casar com os pixels reais: texto sai no tamanho pedido
+function medir(card,minW,minH){
+  var r=card.getBoundingClientRect();
+  return { W:Math.max(minW||680,Math.round(r.width)), H:Math.max(minH||260,Math.round(r.height)) };
+}
+function limpa(svg){ while(svg.firstChild) svg.removeChild(svg.firstChild); }
+
+// eixo Y com rótulos; devolve a função de posição.
+// com o.step, as linhas saem de min até max de passo em passo (escala que cruza
+// o zero); sem ele, divide o intervalo em o.ticks partes iguais.
+function eixoY(svg,o){
+  var max=o.max, min=o.min||0, x0=o.x0, x1=o.x1, yTop=o.yTop, yBot=o.yBot;
+  function y(v){ return yBot-((v-min)/(max-min))*(yBot-yTop); }
+  var vals=[];
+  if(o.step>0){ for(var v=min; v<=max+o.step*0.001; v+=o.step) vals.push(Math.abs(v)<o.step*1e-6?0:v); }
+  else { var t=o.ticks||4; for(var i=0;i<=t;i++) vals.push(min+(max-min)*i/t); }
+  vals.forEach(function(v){
+    var yy=y(v), zero=(v===0&&min<0);
+    add(svg,"line",{x1:x0,x2:x1,y1:yy,y2:yy,stroke:zero?"#C3C9D6":GRID,"stroke-width":zero?1.4:1});
+    if(!o.semRotulo) txt(svg,x0-8,yy+4,o.fmt(v),{"text-anchor":"end","font-size":o.fs||11,fill:MUT});
+  });
+  return y;
+}
+// maxW: largura disponível até a borda do painel. Em telas estreitas o título
+// de um painel invadia o do painel vizinho — SVG não quebra nem corta texto
+// sozinho, então a fonte encolhe até caber.
+function tituloSVG(svg,x,y,s,fs,maxW){
+  fs = fs||15;
+  if(maxW>0){
+    var est = s.length*fs*0.52;
+    if(est>maxW) fs = Math.max(10.5, fs*maxW/est);
+  }
+  return txt(svg,x,y,s,{"font-size":fs,"font-weight":"700",fill:NAVY});
+}
+function pilula(svg,cx,cy,texto,cor,fundo){
+  var w=texto.length*6.6+16;
+  add(svg,"rect",{x:cx-w/2,y:cy-10,width:w,height:19,rx:9.5,fill:fundo||"#F1F3F8",stroke:cor,"stroke-width":"1"});
+  txt(svg,cx,cy+4,texto,{"text-anchor":"middle","font-size":11.5,"font-weight":"700",fill:cor});
+}
+function barraTopo(x,y,w,h,r){
+  r=Math.min(r,w/2,Math.max(0,h));
+  return "M"+x+","+(y+h)+" L"+x+","+(y+r)+" Q"+x+","+y+" "+(x+r)+","+y+
+         " L"+(x+w-r)+","+y+" Q"+(x+w)+","+y+" "+(x+w)+","+(y+r)+" L"+(x+w)+","+(y+h)+" Z";
+}
+function corVar(v){ return v>=0?GREEN:RED; }
+
+/* ---------- legendas HTML ---------- */
+function legenda(box,itens){
+  box.innerHTML = itens.map(function(it){
+    var marca;
+    if(it.tipo==="linha"){
+      marca = '<svg width="20" height="10"><line x1="0" y1="5" x2="20" y2="5" stroke="'+it.cor+'" stroke-width="2.6"'+
+              (it.tracejada?' stroke-dasharray="5,3"':'')+'/><circle cx="10" cy="5" r="3.6" fill="'+it.cor+'"/></svg>';
+    } else {
+      marca = '<svg width="13" height="13"><rect width="13" height="13" rx="2.5" fill="'+it.cor+'"'+
+              (it.borda?' stroke="'+it.borda+'"':'')+'/></svg>';
+    }
+    return '<span class="lg">'+marca+'<b>'+esc(it.nome)+'</b>'+(it.obs?' '+esc(it.obs):'')+'</span>';
+  }).join("");
+}
+
+window.MoagemEngine = {
+  NAVY:NAVY, GOLD:GOLD, RED:RED, GREEN:GREEN, GRAY:GRAY, GRID:GRID, MUT:MUT, C25:C25,
+  MESES:MESES, MC:MC, UN:UN, G25:G25, G26:G26, T25:T25, T26:T26,
+  MG:MG, MG25:MG25, MG26:MG26, SEM25:SEM25, SEM26:SEM26,
+  fmtInt:fmtInt, fmtDec:fmtDec, fmtMil:fmtMil, fmtMt:fmtMt, fmtMilT:fmtMilT,
+  pct:pct, pctAbs:pctAbs, sinalMil:sinalMil, esc:esc,
+  total:total, acum:acum, diasAbril:diasAbril, dataBR:dataBR,
+  ns:ns, add:add, txt:txt, passoNice:passoNice, niceAxis:niceAxis, escalaZero:escalaZero,
+  medir:medir, limpa:limpa,
+  eixoY:eixoY, tituloSVG:tituloSVG, pilula:pilula, barraTopo:barraTopo,
+  corVar:corVar, legenda:legenda
+};
+})();
+</script>
+
+<!-- ============================================================
+     PÁGINAS
+     ============================================================ -->
+<script>(function(){
+"use strict";
+var E = window.MoagemEngine;
+var UN=E.UN, MESES=E.MESES, MC=E.MC;
+
+// escreve um número num KPI/chip marcando o negativo: o dourado sozinho faria
+// "-4,4%" parecer um resultado positivo de relance
+function poe(id,texto){
+  var e=document.getElementById(id);
+  e.textContent=texto;
+  e.classList.toggle("neg", /^[-−]/.test(texto.trim()));
+}
+
+/* ============================================================
+   CAPA
+   ============================================================ */
+function pintaCapa(){
+  var varG = E.T26/E.T25-1, dG = E.T26-E.T25;
+  var varSem = E.SEM26/E.SEM25-1, dSem = E.SEM26-E.SEM25;
+  var dMG = E.MG26-E.MG25;
+  document.getElementById("kpi-grupo26").textContent = E.fmtMt(E.T26);
+  poe("kpi-var", E.pct(varG));
+  document.getElementById("kpi-var-sub").textContent = E.sinalMil(dG)+" sobre 2025";
+  poe("kpi-mg", E.sinalMil(dMG));
+  poe("kpi-sem-mg", E.pct(varSem));
+  document.getElementById("kpi-sem-mg-sub").textContent = E.sinalMil(dSem)+" nas outras três";
+  document.getElementById("decisao-band").textContent =
+    "DECISÃO EM FOCO: o grupo moeu "+E.pct(varG)+" a mais que em 2025, mas o ganho é todo da CRV-MG ("+
+    E.sinalMil(dMG)+"). Tirando a CRV-MG, as outras três unidades somam "+E.sinalMil(dSem)+
+    " ("+E.pct(varSem)+") — e setembro já veio praticamente de lado ("+
+    E.pct(E.G26[5]/E.G25[5]-1)+").";
+
+  // fundo da capa: área da moagem mensal do grupo nas duas safras
+  var svg = document.getElementById("capa-fundo");
+  E.limpa(svg);
+  var W=1200,H=360; svg.setAttribute("viewBox","0 0 "+W+" "+H);
+  var max = Math.max.apply(null,E.G26.concat(E.G25))*1.12;
+  function xp(i){ return (i/(MESES.length-1))*W; }
+  function yp(v){ return H-(v/max)*H*0.92; }
+  function area(vals){
+    return vals.map(function(v,i){ return (i?"L":"M")+xp(i).toFixed(1)+","+yp(v).toFixed(1); }).join(" ")+
+           " L"+W+","+H+" L0,"+H+" Z";
+  }
+  function linha(vals){
+    return vals.map(function(v,i){ return (i?"L":"M")+xp(i).toFixed(1)+","+yp(v).toFixed(1); }).join(" ");
+  }
+  var grad = E.add(svg,"linearGradient",{id:"capaGrad",x1:"0",y1:"0",x2:"0",y2:"1"});
+  E.add(grad,"stop",{offset:"0%","stop-color":E.GOLD,"stop-opacity":".40"});
+  E.add(grad,"stop",{offset:"100%","stop-color":E.GOLD,"stop-opacity":"0"});
+  E.add(svg,"path",{d:area(E.G26),fill:"url(#capaGrad)"});
+  E.add(svg,"path",{d:linha(E.G25),fill:"none",stroke:"#8FA2CC","stroke-width":"2","stroke-dasharray":"7,5","opacity":".75"});
+  E.add(svg,"path",{d:linha(E.G26),fill:"none",stroke:E.GOLD,"stroke-width":"3"});
+  E.G26.forEach(function(v,i){ E.add(svg,"circle",{cx:xp(i),cy:yp(v),r:4.5,fill:E.GOLD}); });
+}
+
+/* ============================================================
+   1 · PANORAMA — pares 2025/2026 por mês + linha de variação
+   ============================================================ */
+var panModo = "unidade";
+
+function graficoPanorama(){
+  var card = document.getElementById("panorama-card");
+  var svg = card.querySelector("svg") || E.add(card,"svg",{});
+  E.limpa(svg);
+  var d = E.medir(card,780,300), W=d.W, H=d.H;
+  svg.setAttribute("viewBox","0 0 "+W+" "+H);
+  svg.setAttribute("preserveAspectRatio","xMidYMid meet");
+
+  var padL=78, padR=74, padT=26, padB=76;
+  if(H<360){ padT=18; padB=64; }
+  var plotW=W-padL-padR, plotH=H-padT-padB, base=padT+plotH;
+  var n=MESES.length, slot=plotW/n;
+
+  var maxL = E.niceAxis(Math.max.apply(null,E.G26.concat(E.G25))*1.16,4);
+  var vars = MESES.map(function(_,i){ return E.G26[i]/E.G25[i]-1; });
+  var maxR = E.niceAxis(Math.max.apply(null,vars.concat([0.02]))*1.55,4);
+
+  var y = E.eixoY(svg,{max:maxL,min:0,x0:padL,x1:W-padR,yTop:padT,yBot:base,
+                       fmt:function(v){ return v?E.fmtInt(v/1000)+" mil":"0"; }});
+  // eixo direito: variação
+  for(var i=0;i<=4;i++){
+    var vv=maxR*i/4, yy=base-(vv/maxR)*plotH;
+    E.txt(svg,W-padR+10,yy+4,E.pctAbs(vv,0),{"font-size":11,fill:E.GOLD,"font-weight":"600"});
+  }
+  E.txt(svg,padL-8,padT-10,"toneladas",{"text-anchor":"end","font-size":10.5,fill:E.MUT});
+  E.txt(svg,W-padR+10,padT-10,"variação",{"font-size":10.5,fill:E.GOLD});
+
+  var barW = Math.min(slot*0.30, 58), gap = Math.min(slot*0.05, 9);
+  MESES.forEach(function(mes,i){
+    var cx = padL+i*slot+slot/2;
+    var x25 = cx-gap/2-barW, x26 = cx+gap/2;
+
+    function pilha(x, ano, total){
+      if(panModo==="grupo"){
+        var cor = ano==="a2025"?E.C25:E.GOLD;
+        var h = base-y(total);
+        E.add(svg,"path",{d:E.barraTopo(x,y(total),barW,h,4),fill:cor});
+      } else {
+        var acc = 0;
+        UN.forEach(function(u){
+          var v=u[ano][i], y0=y(acc+v), y1=y(acc), h=y1-y0;
+          var topo = (u===UN[UN.length-1]);
+          var p = E.add(svg,"path",{d: topo?E.barraTopo(x,y0,barW,h,4):("M"+x+","+y1+" L"+x+","+y0+" L"+(x+barW)+","+y0+" L"+(x+barW)+","+y1+" Z"),
+                                    fill:u.cor});
+          if(ano==="a2025") p.setAttribute("opacity",".42");
+          acc += v;
+        });
+      }
+      E.txt(svg,x+barW/2,y(total)-6,E.fmtInt(total/1000),
+            {"text-anchor":"middle","font-size":10.5,"font-weight":"700",fill:ano==="a2025"?E.MUT:E.NAVY});
+    }
+    pilha(x25,"a2025",E.G25[i]);
+    pilha(x26,"a2026",E.G26[i]);
+
+    E.txt(svg,cx,base+20,mes,{"text-anchor":"middle","font-size":12.5,"font-weight":"600",fill:"#2B2B2B"});
+    E.pilula(svg,cx,base+40,E.pct(vars[i]),E.corVar(vars[i]),vars[i]>=0?"#EAF5EE":"#FBEDEB");
+    if(H>=360) E.txt(svg,cx,base+60,E.sinalMil(E.G26[i]-E.G25[i]),{"text-anchor":"middle","font-size":10.5,fill:E.MUT});
+  });
+
+  // linha de variação sobre o eixo direito
+  var pts = vars.map(function(v,i){ return [padL+i*slot+slot/2, base-(v/maxR)*plotH]; });
+  E.add(svg,"path",{d:pts.map(function(p,i){ return (i?"L":"M")+p[0].toFixed(1)+","+p[1].toFixed(1); }).join(" "),
+                    fill:"none",stroke:E.GOLD,"stroke-width":"2.8"});
+  pts.forEach(function(p,i){
+    E.add(svg,"circle",{cx:p[0],cy:p[1],r:5,fill:"#fff",stroke:E.GOLD,"stroke-width":"2.6"});
+  });
+
+  var varG = E.T26/E.T25-1;
+  document.getElementById("pan-chip-26").textContent = E.fmtMt(E.T26);
+  poe("pan-chip-var", E.pct(varG));
+  poe("pan-chip-set", E.pct(vars[5]));
+
+  E.legenda(document.getElementById("pan-legend"),
+    panModo==="grupo"
+      ? [{cor:E.C25,nome:"Safra 2025"},{cor:E.GOLD,nome:"Safra 2026"},
+         {tipo:"linha",cor:E.GOLD,nome:"Variação do mês",obs:"(eixo da direita)"}]
+      : UN.map(function(u){ return {cor:u.cor,nome:u.nome}; })
+          .concat([{tipo:"linha",cor:E.GOLD,nome:"Variação do mês",obs:"(eixo da direita)"}]));
+
+  document.getElementById("panorama-insight").innerHTML =
+    "O grupo abriu a safra moendo <strong>"+E.pct(vars[0])+"</strong> acima de 2025 e fechou setembro com <strong>"+
+    E.pct(vars[5])+"</strong>. <span class='sep'>|</span> A barra de 2026 é maior em todos os seis meses, mas a vantagem encolhe mês a mês: de <strong>"+
+    E.sinalMil(E.G26[0]-E.G25[0])+"</strong> em abril para <strong>"+E.sinalMil(E.G26[5]-E.G25[5])+
+    "</strong> em setembro. <span class='sep'>|</span> No consolidado, <strong>"+E.fmtMt(E.T26)+"</strong> contra "+
+    E.fmtMt(E.T25)+" — "+E.pct(varG)+".";
+}
+
+document.getElementById("pan-modo").addEventListener("click",function(e){
+  var b=e.target.closest("button"); if(!b) return;
+  panModo=b.dataset.modo;
+  Array.prototype.forEach.call(this.children,function(x){ x.classList.toggle("on",x===b); });
+  graficoPanorama();
+});
+
+/* ============================================================
+   2 · CONTRIBUIÇÃO — quem somou, quem subtraiu + grupo sem MG
+   ============================================================ */
+function graficoContribuicao(){
+  var card = document.getElementById("contrib-card");
+  card.innerHTML = "";
+  var svgA = E.add(card,"svg",{}), svgB = E.add(card,"svg",{});
+  var d = E.medir(card,600,260);
+  var W = Math.max(380,Math.round((d.W-9)/2)), H = d.H;
+
+  /* --- painel A: contribuição em mil t --- */
+  (function(){
+    var svg=svgA; svg.setAttribute("viewBox","0 0 "+W+" "+H);
+    svg.setAttribute("preserveAspectRatio","xMidYMid meet");
+    var padL=66,padR=18,padT=52,padB=64;
+    if(H<340){ padT=44; padB=56; }
+    var plotW=W-padL-padR, plotH=H-padT-padB;
+    E.tituloSVG(svg,padL-50,22,"Contribuição de cada unidade",null,W-(padL-50)-12);
+    E.txt(svg,padL-50,36,"quanto somou ou subtraiu da moagem do grupo, em mil t",{"font-size":10.5,fill:E.MUT});
+
+    var itens = UN.slice().sort(function(a,b){ return b.delta-a.delta; })
+                   .map(function(u){ return {rot:u.curto, v:u.delta/1000, cor:u.delta>=0?E.GREEN:E.RED, sub:E.pct(u.var)}; });
+    itens.push({rot:"GRUPO", v:(E.T26-E.T25)/1000, cor:E.GOLD, sub:E.pct(E.T26/E.T25-1), destaque:true});
+
+    // folga em cima e embaixo para os rótulos dos valores caberem fora da barra
+    var vals = itens.map(function(x){ return x.v; });
+    var esc = E.escalaZero(vals.map(function(v){ return v>=0?v*1.22:v*1.5; }),4);
+    var y = E.eixoY(svg,{max:esc.max,min:esc.min,step:esc.step,x0:padL,x1:W-padR,yTop:padT,yBot:padT+plotH,
+                         fmt:function(v){ return E.fmtInt(v); }});
+    var y0 = y(0);
+    var n=itens.length, slot=plotW/n, barW=Math.min(slot*0.52,58);
+
+    itens.forEach(function(it,i){
+      var cx=padL+i*slot+slot/2, x=cx-barW/2;
+      var yv=y(it.v), h=Math.abs(yv-y0);
+      var top=Math.min(yv,y0);
+      E.add(svg,"path",{d:E.barraTopo(x,top,barW,h,4),fill:it.cor,opacity:it.destaque?1:.9});
+      if(it.destaque) E.add(svg,"rect",{x:x-4,y:Math.min(yv,y0)-4,width:barW+8,height:h+8,fill:"none",
+                                        stroke:E.NAVY,"stroke-width":"1.4","stroke-dasharray":"4,3",rx:5});
+      var acima = it.v>=0;
+      E.txt(svg,cx,acima?yv-9:yv+16,(it.v>=0?"+":"−")+E.fmtInt(Math.abs(it.v)),
+            {"text-anchor":"middle","font-size":13.5,"font-weight":"700",fill:it.cor});
+      E.txt(svg,cx,padT+plotH+20,it.rot,{"text-anchor":"middle","font-size":11.5,"font-weight":"700",fill:E.NAVY});
+      E.txt(svg,cx,padT+plotH+36,it.sub,{"text-anchor":"middle","font-size":11,"font-weight":"600",fill:it.cor});
+    });
+  })();
+
+  /* --- painel B: grupo com e sem CRV-MG --- */
+  (function(){
+    var svg=svgB; svg.setAttribute("viewBox","0 0 "+W+" "+H);
+    svg.setAttribute("preserveAspectRatio","xMidYMid meet");
+    var padL=66,padR=18,padT=52,padB=64;
+    if(H<340){ padT=44; padB=56; }
+    var plotW=W-padL-padR, plotH=H-padT-padB, base=padT+plotH;
+    E.tituloSVG(svg,padL-50,22,"A mesma safra, com e sem a CRV-MG",null,W-(padL-50)-12);
+    E.txt(svg,padL-50,36,"moagem de abril a setembro, em milhões de toneladas",{"font-size":10.5,fill:E.MUT});
+
+    var grupos = [
+      {rot:"Grupo completo",  v25:E.T25,   v26:E.T26},
+      {rot:"Sem a CRV-MG",    v25:E.SEM25, v26:E.SEM26},
+      {rot:"Só a CRV-MG",     v25:E.MG25,  v26:E.MG26}
+    ];
+    var max = E.niceAxis(E.T26*1.2,4);
+    var y = E.eixoY(svg,{max:max,min:0,x0:padL,x1:W-padR,yTop:padT,yBot:base,
+                         fmt:function(v){ return v?E.fmtDec(v/1e6,1):"0"; }});
+    var n=grupos.length, slot=plotW/n, barW=Math.min(slot*0.28,60), gap=9;
+
+    grupos.forEach(function(g,i){
+      var cx=padL+i*slot+slot/2;
+      [[cx-gap/2-barW,g.v25,E.C25,"2025"],[cx+gap/2,g.v26,i===1?E.RED:(i===2?"#2E86C1":E.GOLD),"2026"]]
+      .forEach(function(b){
+        var h=base-y(b[1]);
+        E.add(svg,"path",{d:E.barraTopo(b[0],y(b[1]),barW,h,4),fill:b[2]});
+        E.txt(svg,b[0]+barW/2,y(b[1])-7,E.fmtDec(b[1]/1e6,2),
+              {"text-anchor":"middle","font-size":12,"font-weight":"700",fill:b[2]===E.C25?E.MUT:E.NAVY});
+      });
+      var v=g.v26/g.v25-1;
+      E.txt(svg,cx,base+20,g.rot,{"text-anchor":"middle","font-size":11.5,"font-weight":"700",fill:E.NAVY});
+      E.pilula(svg,cx,base+40,E.pct(v),E.corVar(v),v>=0?"#EAF5EE":"#FBEDEB");
+    });
+  })();
+
+  var dMG=E.MG26-E.MG25, dSem=E.SEM26-E.SEM25;
+  poe("con-chip-mg", E.sinalMil(dMG));
+  poe("con-chip-outras", E.sinalMil(dSem));
+  document.getElementById("con-chip-part").textContent =
+    E.pctAbs(E.MG25/E.T25,0)+" → "+E.pctAbs(E.MG26/E.T26,0);
+
+  E.legenda(document.getElementById("con-legend"),[
+    {cor:E.GREEN,nome:"Somou moagem ao grupo"},
+    {cor:E.RED,nome:"Subtraiu moagem do grupo"},
+    {cor:E.GOLD,nome:"Resultado do grupo"},
+    {cor:E.C25,nome:"Safra 2025",obs:"(referência nos dois painéis)"}
+  ]);
+
+  var pior = UN.slice().sort(function(a,b){ return a.delta-b.delta; })[0];
+  document.getElementById("contrib-insight").innerHTML =
+    "A CRV-MG somou <strong>"+E.sinalMil(dMG)+"</strong> ("+E.pct(E.MG26/E.MG25-1)+
+    ") e as outras três, juntas, devolveram <strong>"+E.sinalMil(dSem)+"</strong> ("+E.pct(E.SEM26/E.SEM25-1)+
+    "). <span class='sep'>|</span> O saldo do grupo, "+E.sinalMil(E.T26-E.T25)+", é o que sobrou dessa conta. <span class='sep'>|</span> A maior perda isolada é a "+
+    pior.nome+", com <strong>"+E.sinalMil(pior.delta)+"</strong> ("+E.pct(pior.var)+
+    "). <span class='sep'>|</span> O peso da CRV-MG no grupo saiu de "+E.pctAbs(E.MG25/E.T25,0)+" para <strong>"+
+    E.pctAbs(E.MG26/E.T26,0)+"</strong>: o resultado do grupo ficou mais dependente de uma unidade.";
+}
+
+/* ============================================================
+   3 · UNIDADE A UNIDADE — quatro painéis
+   ============================================================ */
+var uniEscala = "comum";
+
+function graficoUnidades(){
+  var card = document.getElementById("unidades-card");
+  card.innerHTML = "";
+  var d = E.medir(card,760,240);
+  var W = Math.max(250,Math.round((d.W-27)/4)), H = d.H;
+  var maxComum = E.niceAxis(Math.max.apply(null,UN.reduce(function(a,u){
+                   return a.concat(u.a2025,u.a2026); },[]))*1.20,4);
+
+  UN.forEach(function(u){
+    var svg = E.add(card,"svg",{});
+    svg.setAttribute("viewBox","0 0 "+W+" "+H);
+    svg.setAttribute("preserveAspectRatio","xMidYMid meet");
+    var padL=50,padR=12,padT=50,padB=48;
+    if(H<300){ padT=42; padB=42; }
+    var plotW=W-padL-padR, plotH=H-padT-padB, base=padT+plotH;
+
+    E.txt(svg,padL-40,18,u.nome,{"font-size":13.5,"font-weight":"700",fill:u.cor});
+    E.txt(svg,padL-40,33,E.fmtMilT(u.t26)+" · "+E.pct(u.var)+" vs 2025",
+          {"font-size":11,"font-weight":"700",fill:E.corVar(u.var)});
+
+    var max = uniEscala==="comum" ? maxComum
+            : E.niceAxis(Math.max.apply(null,u.a2025.concat(u.a2026))*1.20,4);
+    var y = E.eixoY(svg,{max:max,min:0,x0:padL,x1:W-padR,yTop:padT,yBot:base,ticks:4,fs:10,
+                         fmt:function(v){ return v?E.fmtInt(v/1000):"0"; }});
+    var n=MESES.length, slot=plotW/n, barW=Math.min(slot*0.33,17), gap=3;
+
+    MESES.forEach(function(_,i){
+      var cx=padL+i*slot+slot/2;
+      var x25=cx-gap/2-barW, x26=cx+gap/2;
+      var h25=base-y(u.a2025[i]), h26=base-y(u.a2026[i]);
+      E.add(svg,"path",{d:E.barraTopo(x25,y(u.a2025[i]),barW,h25,2.5),fill:u.cor,opacity:".32"});
+      E.add(svg,"path",{d:E.barraTopo(x26,y(u.a2026[i]),barW,h26,2.5),fill:u.cor});
+      E.txt(svg,cx,base+16,MC[i],{"text-anchor":"middle","font-size":10.5,fill:"#2B2B2B"});
+      var v=u.a2026[i]/u.a2025[i]-1;
+      E.txt(svg,cx,base+31,E.pct(v,0),{"text-anchor":"middle","font-size":10,"font-weight":"700",fill:E.corVar(v)});
+    });
+  });
+
+  var ord = UN.slice().sort(function(a,b){ return b.var-a.var; });
+  document.getElementById("uni-chip-melhor").innerHTML = E.esc(ord[0].curto)+" <span style='color:#7FD79B'>"+E.pct(ord[0].var)+"</span>";
+  document.getElementById("uni-chip-pior").innerHTML = E.esc(ord[ord.length-1].curto)+" <span style='color:#F0897A'>"+E.pct(ord[ord.length-1].var)+"</span>";
+
+  E.legenda(document.getElementById("uni-legend"),
+    [{cor:"#8E9AB4",nome:"Safra 2025"},{cor:E.NAVY,nome:"Safra 2026"},
+     {cor:"#fff",borda:"#8E9AB4",nome:"Sob cada mês",obs:"a variação de 2026 sobre 2025"}]);
+
+  var mg = UN.filter(function(u){return u.cod==="CRV-MG";})[0];
+  var q1 = mg.a2026.slice(0,3).reduce(function(a,b){return a+b;},0)/mg.a2025.slice(0,3).reduce(function(a,b){return a+b;},0)-1;
+  var q2 = mg.a2026.slice(3).reduce(function(a,b){return a+b;},0)/mg.a2025.slice(3).reduce(function(a,b){return a+b;},0)-1;
+  document.getElementById("unidades-insight").innerHTML =
+    "A CRV-MG acelera quando as outras desaceleram: <strong>"+E.pct(q1)+"</strong> no trimestre abril&ndash;junho e <strong>"+
+    E.pct(q2)+"</strong> em julho&ndash;setembro. <span class='sep'>|</span> Nas outras três, abril é o único mês com variação forte — e é o mês da abertura de safra, não de desempenho. <span class='sep'>|</span> De maio em diante, Rubiataba ("+
+    E.pct(somaJanela(UN[0],1,6))+"), CRV-GO ("+E.pct(somaJanela(UN[1],1,6))+") e Uruaçu ("+
+    E.pct(somaJanela(UN[3],1,6))+") moem menos que em 2025.";
+}
+function somaJanela(u,de,ate){
+  var a=u.a2025.slice(de,ate).reduce(function(a,b){return a+b;},0);
+  var b=u.a2026.slice(de,ate).reduce(function(a,b){return a+b;},0);
+  return b/a-1;
+}
+
+document.getElementById("uni-escala").addEventListener("click",function(e){
+  var b=e.target.closest("button"); if(!b) return;
+  uniEscala=b.dataset.escala;
+  Array.prototype.forEach.call(this.children,function(x){ x.classList.toggle("on",x===b); });
+  graficoUnidades();
+});
+
+/* ============================================================
+   4 · MÊS A MÊS POR EMPRESA — total do mês + ritmo diário
+   ============================================================ */
+// Dias de cada mês da janela. Abril conta da abertura da safra até 30/04; nos
+// demais meses, dias corridos. A base não traz apontamento de parada, então o
+// ritmo é "por dia de safra", não por dia efetivamente moído — e é assim que
+// ele aparece no rodapé da página.
+var DIAS_MES = [30,31,30,31,31,30];
+var mesSel = "grupo";
+
+function selecao(cod){
+  if(cod==="grupo"){
+    // abril do grupo conta da PRIMEIRA abertura entre as quatro unidades até
+    // 30/04 — o maior nº de dias é justamente o da unidade que abriu antes
+    return {nome:"Grupo CRV", cor:E.NAVY, a:E.G25, b:E.G26,
+            d25:Math.max.apply(null,UN.map(function(u){ return u.d25; })),
+            d26:Math.max.apply(null,UN.map(function(u){ return u.d26; }))};
+  }
+  var u = UN.filter(function(x){ return x.cod===cod; })[0];
+  // a CRV-GO é dourada e a linha de t/dia também: escurece a barra para as duas
+  // leituras não se confundirem no projetor
+  return {nome:u.nome, cor:(u.cor===E.GOLD?"#8A6D14":u.cor), a:u.a2025, b:u.a2026,
+          d25:u.d25, d26:u.d26};
+}
+function diasDe(s,i,ano){ return i===0 ? (ano==="a"?s.d25:s.d26) : DIAS_MES[i]; }
+
+function graficoMesAMes(){
+  var card = document.getElementById("mes-card");
+  var svg = card.querySelector("svg") || E.add(card,"svg",{});
+  E.limpa(svg);
+  var d = E.medir(card,780,300), W=d.W, H=d.H;
+  svg.setAttribute("viewBox","0 0 "+W+" "+H);
+  svg.setAttribute("preserveAspectRatio","xMidYMid meet");
+
+  var s = selecao(mesSel);
+  var dia25 = MESES.map(function(_,i){ return s.a[i]/diasDe(s,i,"a"); });
+  var dia26 = MESES.map(function(_,i){ return s.b[i]/diasDe(s,i,"b"); });
+
+  // padB sempre comporta mês + pílula + variação do t/dia: a comparação por dia
+  // é o ponto da página e não pode sumir na tela baixa
+  var padL=80, padR=86, padT=28, padB=78;
+  if(H<360){ padT=20; padB=74; }
+  var plotW=W-padL-padR, plotH=H-padT-padB, base=padT+plotH;
+  var n=MESES.length, slot=plotW/n;
+
+  // DUAS FAIXAS NO MESMO QUADRO: as barras ocupam a parte de baixo e as linhas
+  // de t/dia a parte de cima, cada uma com seu eixo. Com um único quadro, numa
+  // unidade que cresceu muito (a CRV-MG) a linha de 2025 passava por dentro das
+  // barras e os rótulos caíam uns sobre os outros.
+  var topoBarras = padT + plotH*0.48;   // teto da faixa das barras
+  var baseLinhas = padT + plotH*0.38;   // piso da faixa das linhas
+  var hBarras = base - topoBarras;
+
+  // --- faixa de baixo: toneladas do mês, sempre a partir do zero ---
+  var maxL = E.niceAxis(Math.max.apply(null,s.a.concat(s.b))*1.06,4);
+  function y(v){ return base-(v/maxL)*hBarras; }
+  for(var k=0;k<=4;k++){
+    var vL=maxL*k/4, yL=y(vL);
+    E.add(svg,"line",{x1:padL,x2:W-padR,y1:yL,y2:yL,stroke:E.GRID});
+    E.txt(svg,padL-8,yL+4,vL?E.fmtInt(vL/1000)+" mil":"0",{"text-anchor":"end","font-size":11,fill:E.MUT});
+  }
+  E.txt(svg,padL-8,topoBarras-9,"toneladas no mês",{"text-anchor":"end","font-size":10.5,fill:E.MUT});
+
+  // --- faixa de cima: t/dia, com escala própria para a variação aparecer ---
+  var todos = dia25.concat(dia26);
+  var dMin=Math.min.apply(null,todos), dMax=Math.max.apply(null,todos);
+  var amp = (dMax-dMin) || dMax*0.2;
+  var passo = E.passoNice(amp/2);
+  var maxR = Math.ceil((dMax+amp*0.20)/passo)*passo;
+  var minR = Math.max(0, Math.floor((dMin-amp*0.20)/passo)*passo);
+  if(maxR<=minR) maxR = minR+passo;
+  function yR(v){ return baseLinhas-((v-minR)/(maxR-minR))*(baseLinhas-(padT+15)); }
+  for(var vR=minR; vR<=maxR+passo*0.001; vR+=passo){
+    var yy=yR(vR);
+    E.add(svg,"line",{x1:padL,x2:W-padR,y1:yy,y2:yy,stroke:"#F3EBD9"});
+    E.txt(svg,W-padR+10,yy+4,E.fmtInt(vR),{"font-size":11,fill:E.GOLD,"font-weight":"600"});
+  }
+  E.txt(svg,W-padR+10,padT+2,"t/dia",{"font-size":10.5,fill:E.GOLD});
+
+  var barW = Math.min(slot*0.26,46), gap = Math.min(slot*0.045,8);
+  MESES.forEach(function(mes,i){
+    var cx = padL+i*slot+slot/2;
+    [[cx-gap/2-barW, s.a[i], E.C25, E.MUT],[cx+gap/2, s.b[i], s.cor, E.NAVY]].forEach(function(b){
+      var h=base-y(b[1]);
+      E.add(svg,"path",{d:E.barraTopo(b[0],y(b[1]),barW,h,4),fill:b[2]});
+      E.txt(svg,b[0]+barW/2,y(b[1])-6,E.fmtInt(b[1]/1000),
+            {"text-anchor":"middle","font-size":10.5,"font-weight":"700",fill:b[3]});
+    });
+    E.txt(svg,cx,base+20,mes,{"text-anchor":"middle","font-size":12.5,"font-weight":"600",fill:"#2B2B2B"});
+    var vT=s.b[i]/s.a[i]-1, vD=dia26[i]/dia25[i]-1;
+    E.pilula(svg,cx,base+40,E.pct(vT),E.corVar(vT),vT>=0?"#EAF5EE":"#FBEDEB");
+    E.txt(svg,cx,base+60,"t/dia "+E.pct(vD),
+          {"text-anchor":"middle","font-size":10.5,"font-weight":"700",fill:E.corVar(vD)});
+  });
+
+  function xC(i){ return padL+i*slot+slot/2; }
+  [[dia25,E.GRAY,true],[dia26,E.GOLD,false]].forEach(function(cfg){
+    var vals=cfg[0], cor=cfg[1], velha=cfg[2];
+    var pts = vals.map(function(v,i){ return [xC(i), yR(v)]; });
+    var at = {d:pts.map(function(p,i){ return (i?"L":"M")+p[0].toFixed(1)+","+p[1].toFixed(1); }).join(" "),
+              fill:"none", stroke:cor, "stroke-width":velha?"2.2":"3"};
+    if(velha) at["stroke-dasharray"]="6,4";
+    E.add(svg,"path",at);
+    pts.forEach(function(p){
+      E.add(svg,"circle",{cx:p[0],cy:p[1],r:velha?3.6:5,fill:velha?"#fff":cor,
+                          stroke:cor,"stroke-width":velha?2:2.4});
+    });
+  });
+  // os rótulos vão depois das duas curvas, cada ano para o lado oposto ao do
+  // outro: nos meses em que as curvas se cruzam os dois números cairiam juntos
+  MESES.forEach(function(_,i){
+    var y26=yR(dia26[i]), y25=yR(dia25[i]), acima=(dia26[i]>=dia25[i]);
+    E.txt(svg,xC(i), acima? y26-11 : y26+19, E.fmtInt(dia26[i]),
+          {"text-anchor":"middle","font-size":11.5,"font-weight":"700",fill:E.GOLD});
+    E.txt(svg,xC(i), acima? y25+17 : y25-10, E.fmtInt(dia25[i]),
+          {"text-anchor":"middle","font-size":9.5,"font-weight":"700",fill:E.GRAY});
+  });
+
+  var t25=E.total(s.a), t26=E.total(s.b);
+  var dias25=0, dias26=0;
+  MESES.forEach(function(_,i){ dias25+=diasDe(s,i,"a"); dias26+=diasDe(s,i,"b"); });
+  var md25=t25/dias25, md26=t26/dias26;
+  var iMelhor=dia26.indexOf(Math.max.apply(null,dia26));
+  var vT=t26/t25-1, vD=md26/md25-1;
+
+  document.getElementById("mes-chip-total").textContent = E.fmtMilT(t26);
+  document.getElementById("mes-chip-total-k").innerHTML =
+    "Moagem abr–set 2026 <b style='color:"+(vT>=0?"#7FD79B":"#F0897A")+"'>"+E.pct(vT)+"</b>";
+  document.getElementById("mes-chip-dia").textContent = E.fmtInt(md26)+" t/dia";
+  document.getElementById("mes-chip-dia-k").innerHTML =
+    "Ritmo médio da safra <b style='color:"+(vD>=0?"#7FD79B":"#F0897A")+"'>"+E.pct(vD)+"</b>";
+  document.getElementById("mes-chip-melhor").textContent = E.fmtInt(dia26[iMelhor])+" t/dia";
+  document.getElementById("mes-chip-melhor-k").textContent = "Melhor ritmo de 2026: "+MESES[iMelhor];
+
+  E.legenda(document.getElementById("mes-legend"),[
+    {cor:E.C25,nome:"Moagem do mês 2025"},
+    {cor:s.cor,nome:"Moagem do mês 2026"},
+    {tipo:"linha",cor:E.GRAY,tracejada:true,nome:"t/dia 2025",obs:"(eixo da direita)"},
+    {tipo:"linha",cor:E.GOLD,nome:"t/dia 2026",obs:"(eixo da direita)"}
+  ]);
+
+  document.getElementById("mes-insight").innerHTML =
+    "<strong>"+E.esc(s.nome)+"</strong>: "+E.fmtMilT(t26)+" de abril a setembro ("+E.pct(vT)+
+    "), a um ritmo médio de <strong>"+E.fmtInt(md26)+" t/dia</strong> contra "+E.fmtInt(md25)+
+    " t/dia em 2025 ("+E.pct(vD)+"). <span class='sep'>|</span> O melhor mês de 2026 foi "+MESES[iMelhor]+
+    ", com "+E.fmtMilT(s.b[iMelhor])+" e <strong>"+E.fmtInt(dia26[iMelhor])+" t/dia</strong>. "+
+    "<span class='sep'>|</span> Abril conta os dias a partir da abertura da safra ("+s.d26+" dias em 2026, "+
+    s.d25+" em 2025); nos demais meses, dias corridos do mês.";
+}
+
+(function(){
+  var sel = document.getElementById("mes-unidade");
+  sel.innerHTML = '<option value="grupo">Grupo CRV (consolidado)</option>' +
+    UN.map(function(u){ return '<option value="'+u.cod+'">'+E.esc(u.nome)+'</option>'; }).join("");
+  sel.addEventListener("change",function(){ mesSel=sel.value; graficoMesAMes(); });
+})();
+
+/* ============================================================
+   PÁGINAS DE FROTA — colhedora, caminhão canavieiro e transbordo
+   É a mesma página montada três vezes: muda o conjunto de indicadores
+   e a chave de window.FROTA. Para somar um equipamento novo, basta
+   acrescentar os dados e uma entrada em PAGINAS.
+   ============================================================ */
+
+// O indicador é sempre uma razão entre somas do mês (nunca média de médias):
+// assim uma máquina que rodou três dias não pesa igual a uma que rodou o mês
+// inteiro. "bomSobe" diz para que lado a variação é boa — sem isso, uma queda
+// de litros por tonelada apareceria em vermelho; null = indicador de contexto,
+// que não é bom nem ruim subir.
+function calcDe(ind){
+  return function(a){ return (a[ind.num.k]/a[ind.den.k])*(ind.fator||1); };
+}
+var C_TON   = {k:"ton",    rot:"Tonelada",     dec:0, un:"t"};
+var C_DIAS  = {k:"dias",   rot:"Dias-máquina", dec:0, un:"dias"};
+var C_LIT   = {k:"litros", rot:"Litros",       dec:0, un:"l"};
+var C_HORAS = {k:"horas",  rot:"Horas",        dec:1, un:"h"};
+var C_KM    = {k:"km",     rot:"Km rodado",    dec:1, un:"km"};
+var C_VIAG  = {k:"viagens",rot:"Viagens",      dec:0, un:"viagens"};
+var C_GASTO = {k:"gasto",  rot:"Gasto total",  dec:0, un:"R$"};
+
+var I_TDIA = {id:"tdia", rot:"Tonelada por máquina/dia", un:"t/dia", dec:0, bomSobe:true,
+  num:C_TON, den:C_DIAS, desc:"quanto cada máquina entrega num dia de operação"};
+var I_LT = {id:"lt", rot:"Litros por tonelada", un:"l/t", dec:3, bomSobe:false,
+  num:C_LIT, den:C_TON, desc:"diesel gasto por tonelada movimentada"};
+var I_CUSTO = {id:"custo", rot:"Custo por tonelada", un:"R$/t", dec:2, bomSobe:false, empilha:true,
+  num:C_GASTO, den:C_TON, desc:"combustível mais manutenção por tonelada"};
+var I_TVIAG = {id:"tviagem", rot:"Tonelada por viagem", un:"t/viagem", dec:2, bomSobe:true,
+  num:C_TON, den:C_VIAG, desc:"carga média de cada viagem"};
+
+// máquina medida em HORAS (colhedora e transbordo)
+function indsHora(extra){
+  var a = [I_TDIA,
+    {id:"hdia", rot:"Horas por dia", un:"h/dia", dec:2, bomSobe:true,
+     num:C_HORAS, den:C_DIAS, desc:"horas de máquina por dia de operação"},
+    I_LT,
+    {id:"lh", rot:"Litros por hora", un:"l/h", dec:2, bomSobe:false,
+     num:C_LIT, den:C_HORAS, desc:"consumo da máquina ligada"},
+    {id:"th", rot:"Tonelada por hora", un:"t/h", dec:2, bomSobe:true,
+     num:C_TON, den:C_HORAS, desc:"ritmo da máquina em operação"}];
+  if(extra) a = a.concat(extra);
+  return a.concat([I_CUSTO]);
+}
+// máquina medida em QUILÔMETROS (caminhão canavieiro)
+function indsKm(){
+  return [I_TDIA,
+    {id:"kmdia", rot:"Km por dia", un:"km/dia", dec:1, bomSobe:true,
+     num:C_KM, den:C_DIAS, desc:"quilômetros rodados por dia de operação"},
+    I_LT,
+    {id:"lkm", rot:"Litros por km", un:"l/km", dec:2, bomSobe:false,
+     num:C_LIT, den:C_KM, desc:"consumo do caminhão por quilômetro"},
+    {id:"tkm", rot:"Tonelada por km", un:"t/km", dec:2, bomSobe:true,
+     num:C_TON, den:C_KM, desc:"cana transportada por quilômetro rodado"},
+    // raio é contexto, não desempenho: a viagem é ida e volta, por isso o ÷ 2
+    {id:"raio", rot:"Raio médio", un:"km", dec:1, bomSobe:null, fator:0.5,
+     num:C_KM, den:C_VIAG, desc:"distância média até a frente de corte (metade do percurso da viagem)"},
+    I_TVIAG, I_CUSTO];
+}
+
+var PAGINAS = [
+  {id:"colhedora", chave:"colhedora", num:"05", rotulo:"Colhedora", cor:"#2E86C1",
+   bruto:C_HORAS, viagens:false, inds:indsHora(),
+   titulo:"O que mudou na colhedora da CRV-MG",
+   sub:"Frota John Deere CH570 da CRV-MG, mês a mês nas duas safras. Cada ficha abaixo é uma disputa 2025 contra 2026 — clique numa delas para abrir o mês a mês daquele indicador. <b>Dia</b> é dia de máquina em operação, não dia de calendário."},
+  {id:"caminhao", chave:"caminhao", num:"06", rotulo:"Caminhão canavieiro", cor:"#C9A227",
+   bruto:C_KM, viagens:true, inds:indsKm(),
+   titulo:"O que mudou no caminhão canavieiro",
+   sub:"Frota de caminhões da CRV-MG que leva a cana da frente de corte à moenda. Aqui a máquina é medida em <b>quilômetro rodado</b>, e o raio médio entra junto porque explica boa parte do custo por tonelada."},
+  {id:"transbordo", chave:"transbordo", num:"07", rotulo:"Transbordo", cor:"#2E7D46",
+   bruto:C_HORAS, viagens:true, inds:indsHora([I_TVIAG]),
+   titulo:"O que mudou no transbordo",
+   sub:"Frota de transbordo da CRV-MG, que tira a cana da colhedora e abastece o caminhão. Como a colhedora, é medida em <b>horas de máquina</b>, não em quilômetro."}
+];
+PAGINAS.forEach(function(p){ p.inds.forEach(function(i){ i.calc = i.calc || calcDe(i); }); });
+
+var COR_COMB = {a:"#C9D6E4", b:"#5DADE2"};   // combustível: 2025 claro, 2026 cheio
+var COR_MAN  = {a:"#97A2B6", b:"#13406B"};   // manutenção
+
+// REGRA DA FROTA — quem entra na conta.
+// Sai a máquina que, somando os seis meses, movimentou menos de MIN_TON na
+// safra: são frotas de apontamento esporádico (dois dias de pesagem, R$ 300/t)
+// que sujam todo indicador por tonelada. O critério é por máquina-SAFRA, não
+// por máquina: uma frota com um ano ruim de apontamento sai só daquele ano e
+// continua no outro.
+var MIN_TON = 5000;
+
+// Os totais por mês saem daqui, do detalhe por máquina — nunca de um agregado
+// gravado à parte. Assim o gráfico, as fichas e o modal enxergam exatamente as
+// mesmas linhas, e mudar MIN_TON reajusta a página inteira.
+function preparaFrota(F){
+  var campos = F.campos;
+  var todas = F.maquinas.map(function(r){
+    var o={}; campos.forEach(function(c,i){ o[c]=r[i]; }); return o;
+  });
+
+  var tot = {};
+  todas.forEach(function(m){ var k=m.frota+"|"+m.ano; tot[k]=(tot[k]||0)+m.ton; });
+  function passa(m){ return tot[m.frota+"|"+m.ano] >= MIN_TON; }
+  F.linhas = todas.filter(passa);
+  F.fora   = todas.filter(function(m){ return !passa(m); });
+  F.foraPorAno = [[],[]];
+  Object.keys(tot).forEach(function(k){
+    if(tot[k] < MIN_TON){
+      var p=k.split("|");
+      F.foraPorAno[+p[1]].push({frota:+p[0], ton:tot[k]});
+    }
+  });
+  F.foraPorAno.forEach(function(l){ l.sort(function(a,b){ return b.ton-a.ton; }); });
+
+  var somaveis = campos.filter(function(c){ return c!=="frota" && c!=="ano" && c!=="mes"; });
+  var ag=[[],[]];
+  for(var a=0;a<2;a++) for(var m=0;m<6;m++){
+    var o={maq:0, _f:{}};
+    somaveis.forEach(function(c){ o[c]=0; });
+    ag[a][m]=o;
+  }
+  F.linhas.forEach(function(m){
+    var o=ag[m.ano][m.mes];
+    somaveis.forEach(function(c){ o[c]+=m[c]; });
+    o._f[m.frota]=1;
+  });
+  for(a=0;a<2;a++) for(m=0;m<6;m++){
+    ag[a][m].maq = Object.keys(ag[a][m]._f).length;
+    delete ag[a][m]._f;
+    somaveis.forEach(function(c){ ag[a][m][c] = Math.round(ag[a][m][c]*10)/10; });
+  }
+  F.a2025=ag[0]; F.a2026=ag[1];
+}
+
+function somaSafra(arr){
+  var o = {};
+  arr.forEach(function(a){
+    Object.keys(a).forEach(function(k){
+      o[k] = (k==="maq") ? Math.max(o[k]||0, a[k]) : (o[k]||0)+a[k];
+    });
+  });
+  return o;
+}
+function fmtInd(v,ind){ return ind.dec===0 ? E.fmtInt(v) : E.fmtDec(v,ind.dec); }
+function corDelta(ind,d){
+  if(ind.bomSobe===null) return null;              // contexto: sem juízo de valor
+  return (ind.bomSobe ? d>=0 : d<=0);
+}
+
+/* ---------- painel de detalhe: de onde saiu o número ---------- */
+function maquinasDe(F,ano,mes){
+  return F.linhas.filter(function(m){ return m.ano===ano && m.mes===mes; });
+}
+function fecharDetalhe(){ document.getElementById("mf").hidden = true; }
+function abreCaixa(titulo, sub, conta, corpo){
+  document.getElementById("mf-titulo").textContent = titulo;
+  document.getElementById("mf-sub").textContent = sub;
+  document.getElementById("mf-conta").innerHTML = conta;
+  document.getElementById("mf-corpo").innerHTML = corpo;
+  document.getElementById("mf-corpo").scrollTop = 0;
+  document.getElementById("mf").hidden = false;
+}
+function linhaConta(ind, ag, prefixo){
+  return (prefixo?"<b>"+prefixo+"</b> &nbsp;":"")+
+    "<span class='res'>"+fmtInd(ind.calc(ag),ind)+" "+ind.un+"</span>"+
+    "<span class='op'>=</span><b>"+E.fmtDec(ag[ind.num.k],ind.num.dec)+"</b> "+ind.num.un+
+    "<span class='op'>÷</span><b>"+E.fmtDec(ag[ind.den.k],ind.den.dec)+"</b> "+ind.den.un+
+    (ind.fator && ind.fator!==1 ? "<span class='op'>×</span><b>"+E.fmtDec(ind.fator,1)+"</b>" : "");
+}
+// quem o corte de MIN_TON tirou daquela safra, para constar no rodapé do modal
+function notaCorte(F,ano){
+  var fora = F.foraPorAno[ano];
+  if(!fora.length) return " Nenhuma máquina ficou fora do corte de "+E.fmtInt(MIN_TON)+
+    " t nesta safra.";
+  var n = fora.length;
+  return " Fora da conta nesta safra: <b>"+n+" máquina"+(n>1?"s":"")+"</b> que não "+
+    (n>1?"chegaram":"chegou")+" a "+E.fmtInt(MIN_TON)+" t no período (frota "+
+    fora.map(function(m){ return m.frota; }).join(", ")+").";
+}
+
+function colunasDe(cfg){
+  var c = [C_DIAS, cfg.bruto, C_LIT, C_TON];
+  if(cfg.viagens) c.push(C_VIAG);
+  return c.concat([{k:"comb",rot:"Combustível",dec:0},{k:"manut",rot:"Manutenção",dec:0},C_GASTO]);
+}
+
+function detalheMes(cfg, ind, ano, mes){
+  var F = window.FROTA[cfg.chave];
+  var ag = (ano?F.a2026:F.a2025)[mes];
+  var cols = colunasDe(cfg);
+  var ms = maquinasDe(F,ano,mes);
+  // do melhor para o pior naquele indicador: é a leitura de quem vai atrás da
+  // máquina fora da curva. Em indicador de contexto, do maior para o menor.
+  ms.sort(function(a,b){ return (ind.bomSobe===false) ? ind.calc(a)-ind.calc(b) : ind.calc(b)-ind.calc(a); });
+
+  var conta = linhaConta(ind, ag) +
+    "<em>"+ag.maq+" máquinas &middot; "+E.fmtInt(ag.dias)+" dias-máquina &middot; "+
+    E.fmtDec(ag[cfg.bruto.k],1)+" "+cfg.bruto.un+" &middot; "+E.fmtInt(ag.ton)+" t movimentadas</em>";
+
+  function celulas(o){ return cols.map(function(c){ return "<td>"+E.fmtDec(o[c.k],c.dec)+"</td>"; }).join(""); }
+  var corpo = "<table><thead><tr><th class='l'>Frota</th>"+
+    cols.map(function(c){ return "<th>"+E.esc(c.rot)+"</th>"; }).join("")+
+    "<th class='key'>"+E.esc(ind.un)+"</th></tr></thead><tbody>"+
+    ms.map(function(m){
+      return "<tr><td class='l'>"+m.frota+"</td>"+celulas(m)+
+             "<td class='key'>"+fmtInd(ind.calc(m),ind)+"</td></tr>";
+    }).join("")+
+    "<tr class='tot'><td class='l'>Total — "+ms.length+" máquinas</td>"+celulas(ag)+
+    "<td class='key'>"+fmtInd(ind.calc(ag),ind)+"</td></tr></tbody></table>"+
+    "<p style='font-size:11.5px;color:#5A6072;margin:10px 0 0;line-height:1.5'>"+
+    "O total é a razão entre as somas das colunas, não a média da última coluna — por isso uma "+
+    "máquina que rodou poucos dias não puxa o número da frota."+notaCorte(F,ano)+"</p>";
+
+  abreCaixa(ind.rot+" — "+MESES[mes]+" de "+(ano?2026:2025),
+            cfg.rotulo+" da CRV-MG, máquina a máquina", conta, corpo);
+}
+
+function detalheSafra(cfg, ind){
+  var F = window.FROTA[cfg.chave];
+  var s25=somaSafra(F.a2025), s26=somaSafra(F.a2026);
+  var conta = linhaConta(ind,s26,"Safra 2026")+"<br>"+linhaConta(ind,s25,"Safra 2025")+
+    "<em>variação de "+E.pct(ind.calc(s26)/ind.calc(s25)-1)+" entre as duas safras</em>";
+
+  function cols(ag){
+    return "<td>"+E.fmtDec(ag[ind.num.k],ind.num.dec)+"</td>"+
+           "<td>"+E.fmtDec(ag[ind.den.k],ind.den.dec)+"</td>"+
+           "<td class='key'>"+fmtInd(ind.calc(ag),ind)+"</td>";
+  }
+  function variacao(a,b){
+    var dv=ind.calc(b)/ind.calc(a)-1, bom=corDelta(ind,dv);
+    return "<td class='"+(bom===null?"":(bom?"pos":"neg"))+"'>"+E.pct(dv)+"</td>";
+  }
+  var corpo = "<table><thead>"+
+    "<tr><th class='l' rowspan='2'>Mês</th><th colspan='3'>Safra 2025</th>"+
+    "<th colspan='3'>Safra 2026</th><th rowspan='2'>Variação</th></tr>"+
+    "<tr><th>"+E.esc(ind.num.rot)+"</th><th>"+E.esc(ind.den.rot)+"</th><th class='key'>"+E.esc(ind.un)+"</th>"+
+    "<th>"+E.esc(ind.num.rot)+"</th><th>"+E.esc(ind.den.rot)+"</th><th class='key'>"+E.esc(ind.un)+"</th>"+
+    "</tr></thead><tbody>"+
+    MESES.map(function(mes,i){
+      return "<tr><td class='l'>"+mes+"</td>"+cols(F.a2025[i])+cols(F.a2026[i])+
+             variacao(F.a2025[i],F.a2026[i])+"</tr>";
+    }).join("")+
+    "<tr class='tot'><td class='l'>Safra (abr–set)</td>"+cols(s25)+cols(s26)+variacao(s25,s26)+"</tr>"+
+    "</tbody></table>"+
+    "<p style='font-size:11.5px;color:#5A6072;margin:10px 0 0;line-height:1.5'>"+
+    "A linha da safra não é a média dos meses: é "+E.esc(ind.num.rot.toLowerCase())+
+    " da safra inteira dividido por "+E.esc(ind.den.rot.toLowerCase())+" da safra inteira. "+
+    "Clique numa barra do gráfico para abrir o mês máquina a máquina.</p>";
+
+  abreCaixa(ind.rot+" — "+cfg.rotulo+", safra 2026 contra 2025",
+            "Como o número de cada mês se forma", conta, corpo);
+}
+
+(function(){
+  document.getElementById("mf-fechar").addEventListener("click",fecharDetalhe);
+  document.getElementById("mf-fundo").addEventListener("click",fecharDetalhe);
+  document.addEventListener("keydown",function(e){
+    if(e.key==="Escape" && !document.getElementById("mf").hidden){ e.preventDefault(); fecharDetalhe(); }
+  });
+})();
+
+/* ---------- a página ---------- */
+function slideHTML(cfg){
+  return "<article class='slide slide-dark' id='"+cfg.id+"' data-title='"+E.esc(cfg.rotulo)+" · CRV-MG'>"+
+    "<div class='s-head'><div>"+
+      "<div class='s-eyebrow'>"+cfg.num+" &middot; "+E.esc(cfg.rotulo)+" &middot; CRV Minas Gerais</div>"+
+      "<h2 class='s-title'>"+E.esc(cfg.titulo)+"</h2>"+
+      "<p class='s-sub'>"+cfg.sub+" <span class='js-cobertura'></span></p>"+
+    "</div><div class='s-right'><div class='s-chips'>"+
+      "<div class='s-chip'><div class='v js-chip-maq'>–</div><div class='k js-chip-maq-k'></div></div>"+
+      "<div class='s-chip'><div class='v js-chip-ton'>–</div><div class='k js-chip-ton-k'></div></div>"+
+      "<div class='s-chip'><div class='v js-chip-gasto'>–</div><div class='k js-chip-gasto-k'></div></div>"+
+    "</div></div></div>"+
+    "<div class='ind-bar js-inds'></div>"+
+    "<div class='s-card js-card'><svg class='js-svg'></svg><div class='quadro js-quadro' hidden></div></div>"+
+    "<div class='s-insight js-insight'>carregando&hellip;</div></article>";
+}
+
+function montaPaginaFrota(cfg){
+  var sl = document.getElementById(cfg.id);
+  var q = function(s){ return sl.querySelector(s); };
+  var F = window.FROTA[cfg.chave];
+  var s25 = somaSafra(F.a2025), s26 = somaSafra(F.a2026);
+  var sel = cfg.inds[cfg.inds.length-1].id;   // abre no custo, que é o que a diretoria pergunta
+
+  function fichas(){
+    q(".js-inds").innerHTML = cfg.inds.map(function(ind){
+      var v25=ind.calc(s25), v26=ind.calc(s26), d=v26/v25-1, bom=corDelta(ind,d);
+      return "<button type='button' class='ind"+(ind.id===sel?" on":"")+"' data-ind='"+ind.id+"'>"+
+        "<div class='ind-k'>"+E.esc(ind.rot)+" <u>"+E.esc(ind.un)+"</u></div>"+
+        "<div class='ind-vs'>"+
+          "<span class='iv'><i>2025</i><b>"+fmtInd(v25,ind)+"</b></span>"+
+          "<span class='ia'>&rarr;</span>"+
+          "<span class='iv on'><i>2026</i><b>"+fmtInd(v26,ind)+"</b></span>"+
+          "<span class='ind-pct "+(bom===null?"neutro":(bom?"bom":"ruim"))+"'>"+E.pct(d)+"</span>"+
+        "</div><span class='ind-lupa'>ver a conta</span></button>";
+    }).join("");
+
+    q(".js-chip-maq").textContent = s26.maq;
+    q(".js-chip-maq-k").innerHTML = "Máquinas na safra 2026 <b style='color:"+
+      (s26.maq>=s25.maq?"#7FD79B":"#F0897A")+"'>"+(s26.maq>=s25.maq?"+":"")+(s26.maq-s25.maq)+"</b>";
+    q(".js-chip-ton").textContent = E.fmtMilT(s26.ton);
+    q(".js-chip-ton-k").innerHTML = "Movimentado pela frota <b style='color:"+
+      (s26.ton>=s25.ton?"#7FD79B":"#F0897A")+"'>"+E.pct(s26.ton/s25.ton-1)+"</b>";
+    q(".js-chip-gasto").textContent = "R$ "+E.fmtDec(s26.gasto/1e6,1)+" mi";
+    q(".js-chip-gasto-k").innerHTML = "Custo da frota <b style='color:"+
+      (s26.gasto<=s25.gasto?"#7FD79B":"#F0897A")+"'>"+E.pct(s26.gasto/s25.gasto-1)+"</b>";
+
+    // a tonelada desta página é a da frota, não a moagem inteira da unidade:
+    // sem a ressalva o número bate de frente com a página 4
+    var mg = UN.filter(function(u){ return u.cod==="CRV-MG"; })[0];
+    q(".js-cobertura").innerHTML = "A frota que entrou na conta responde por <b>"+
+      E.pctAbs(s26.ton/E.total(mg.a2026),0)+"</b> da moagem da CRV-MG em 2026 ("+
+      E.pctAbs(s25.ton/E.total(mg.a2025),0)+" em 2025).";
+  }
+
+  function quadroCusto(mostra){
+    var card=q(".js-card"), box=q(".js-quadro");
+    card.classList.toggle("s-quadro", !!mostra);
+    box.hidden = !mostra;
+    if(!mostra) return;
+    function parte(nome, cor, a25, a26){
+      var rt25=a25/s25.ton, rt26=a26/s26.ton, d=rt26/rt25-1;
+      return "<div class='q-item'><div class='q-nome'><i style='background:"+cor+"'></i>"+nome+"</div>"+
+        "<div class='q-v'><b>R$ "+E.fmtDec(rt26,2)+"</b><u>por tonelada</u>"+
+        "<span style='color:"+(d<=0?E.GREEN:E.RED)+"'>"+E.pct(d)+"</span></div>"+
+        "<div class='q-sub'><b>R$ "+E.fmtDec(a26/1e6,1)+" mi</b> na safra, contra R$ "+
+        E.fmtDec(a25/1e6,1)+" mi ("+E.pct(a26/a25-1)+")<br><b>"+
+        E.pctAbs(a26/s26.gasto,0)+"</b> do custo, contra "+E.pctAbs(a25/s25.gasto,0)+" em 2025</div></div>";
+    }
+    var dT=(s26.gasto/s26.ton)/(s25.gasto/s25.ton)-1;
+    box.innerHTML = "<h4>Composição do custo &middot; 2026 x 2025</h4>"+
+      parte("Combustível",COR_COMB.b,s25.comb,s26.comb)+
+      parte("Manutenção",COR_MAN.b,s25.manut,s26.manut)+
+      "<div class='q-item q-tot'><div class='q-nome'>Custo total</div>"+
+      "<div class='q-v'><b>R$ "+E.fmtDec(s26.gasto/s26.ton,2)+"</b><u>por tonelada</u>"+
+      "<span style='color:"+(dT<=0?E.GREEN:E.RED)+"'>"+E.pct(dT)+"</span></div>"+
+      "<div class='q-sub'><b>R$ "+E.fmtDec(s26.gasto/1e6,1)+" mi</b> na safra, contra R$ "+
+      E.fmtDec(s25.gasto/1e6,1)+" mi ("+E.pct(s26.gasto/s25.gasto-1)+")</div></div>";
+
+    // encolhe até caber na altura do cartão; duas passadas convergem
+    box.style.setProperty("--qf","1");
+    for(var passo=0, f=1; passo<2; passo++){
+      if(box.scrollHeight <= box.clientHeight+1) break;
+      f = Math.max(0.68, f*box.clientHeight/box.scrollHeight);
+      box.style.setProperty("--qf", f.toFixed(3));
+    }
+  }
+
+  function desenha(){
+    var ind = cfg.inds.filter(function(x){ return x.id===sel; })[0];
+    var card=q(".js-card"), svg=q(".js-svg");
+    quadroCusto(ind.empilha);          // muda a largura que sobra para o gráfico
+    E.limpa(svg);
+    var rs=svg.getBoundingClientRect(), rc=card.getBoundingClientRect();
+    var W = Math.round(rs.width)>200 ? Math.round(rs.width)
+          : Math.max(520, Math.round(rc.width-24-(ind.empilha?250:0)));
+    var H = Math.max(260, Math.round(rc.height-16));
+    svg.setAttribute("viewBox","0 0 "+W+" "+H);
+    svg.setAttribute("preserveAspectRatio","xMidYMid meet");
+
+    var v25=F.a2025.map(ind.calc), v26=F.a2026.map(ind.calc);
+    var padL=84, padR=26, padT=48, padB=66;
+    if(H<330){ padT=40; padB=58; }
+    var plotW=W-padL-padR, plotH=H-padT-padB, base=padT+plotH;
+    var n=MESES.length, slot=plotW/n;
+
+    E.tituloSVG(svg,16,20,ind.rot+" ("+ind.un+") — mês a mês",null,W-180);
+    E.txt(svg,16,34,ind.desc+"; barra clara é 2025, barra cheia é 2026",{"font-size":10.5,fill:E.MUT});
+
+    if(!ind.empilha){
+      var lx=W-padR;
+      [{c:E.C25,n:"Safra 2025"},{c:cfg.cor,n:"Safra 2026"}].slice().reverse().forEach(function(it){
+        lx -= it.n.length*6.1+6;
+        E.txt(svg,lx,24,it.n,{"font-size":11,fill:"#2B2B2B"});
+        lx -= 16;
+        E.add(svg,"rect",{x:lx,y:15,width:11,height:11,rx:2.5,fill:it.c});
+        lx -= 12;
+      });
+    }
+
+    var max = E.niceAxis(Math.max.apply(null,v25.concat(v26))*1.22,4);
+    var casas = max<2 ? 2 : (max<20 ? 1 : 0);
+    var y = E.eixoY(svg,{max:max,min:0,x0:padL,x1:W-padR,yTop:padT,yBot:base,
+                         fmt:function(v){ return v?E.fmtDec(v,casas):"0"; }});
+
+    var barW=Math.min(slot*0.27,52), gap=Math.min(slot*0.05,9);
+    MESES.forEach(function(mes,i){
+      var cx = padL+i*slot+slot/2;
+      [[cx-gap/2-barW, F.a2025[i], v25[i], "a", 0],[cx+gap/2, F.a2026[i], v26[i], "b", 1]]
+      .forEach(function(b){
+        var x=b[0], ag=b[1], v=b[2], lado=b[3], ano=b[4];
+        var g = E.add(svg,"g",{class:"rc-clicavel"});
+        g.addEventListener("click",function(){ detalheMes(cfg,ind,ano,i); });
+        g.appendChild(E.ns("title")).textContent =
+          mes+" de "+(ano?2026:2025)+" — clique para ver máquina a máquina";
+
+        if(ind.empilha){
+          // custo empilhado: combustível na base, manutenção em cima
+          var rc2=ag.comb/ag.ton, rm=ag.manut/ag.ton, esc=v/(rc2+rm);
+          rc2*=esc; rm*=esc;
+          E.add(g,"rect",{x:x,y:y(rc2),width:barW,height:base-y(rc2),fill:COR_COMB[lado]});
+          E.add(g,"path",{d:E.barraTopo(x,y(rc2+rm),barW,y(rc2)-y(rc2+rm),4),fill:COR_MAN[lado]});
+          [[rc2, base-y(rc2), base-(base-y(rc2))/2, lado==="a"?"#2B2B2B":"#0B2545"],
+           [rm, y(rc2)-y(rc2+rm), y(rc2)-(y(rc2)-y(rc2+rm))/2, "#FFFFFF"]]
+          .forEach(function(seg){
+            if(seg[1]<13 || barW<26) return;   // não cabe o número dentro do segmento
+            E.txt(svg,x+barW/2,seg[2]+3.5,E.fmtDec(seg[0],2),
+                  {"text-anchor":"middle","font-size":9.5,"font-weight":"700",fill:seg[3],
+                   "pointer-events":"none"});
+          });
+        } else {
+          E.add(g,"path",{d:E.barraTopo(x,y(v),barW,base-y(v),4),fill:lado==="a"?E.C25:cfg.cor});
+        }
+        E.txt(svg,x+barW/2,y(v)-6,fmtInd(v,ind),
+              {"text-anchor":"middle","font-size":11,"font-weight":"700",fill:lado==="a"?E.MUT:E.NAVY});
+      });
+      E.txt(svg,cx,base+20,mes,{"text-anchor":"middle","font-size":12.5,"font-weight":"600",fill:"#2B2B2B"});
+      var dv=v26[i]/v25[i]-1, bom=corDelta(ind,dv);
+      var cor = bom===null ? E.MUT : (bom?E.GREEN:E.RED);
+      E.pilula(svg,cx,base+40,E.pct(dv),cor,bom===null?"#F1F3F8":(bom?"#EAF5EE":"#FBEDEB"));
+    });
+
+    texto(ind,v25,v26);
+  }
+
+  function texto(ind,v25,v26){
+    var a25=ind.calc(s25), a26=ind.calc(s26), dA=a26/a25-1, bomA=corDelta(ind,dA);
+    var bons = MESES.filter(function(_,i){
+      var dv=v26[i]/v25[i]-1; return ind.bomSobe===null ? false : (ind.bomSobe ? dv>0 : dv<0); }).length;
+    var ord = MESES.map(function(m,i){ return {m:m,d:v26[i]/v25[i]-1}; })
+                   .sort(function(x,z){ return ind.bomSobe===false ? x.d-z.d : z.d-x.d; });
+
+    var extra;
+    if(ind.id==="custo"){
+      extra = " <span class='sep'>|</span> Combustível: <strong>R$ "+E.fmtDec(s25.comb/s25.ton,2)+
+        "/t para R$ "+E.fmtDec(s26.comb/s26.ton,2)+"/t</strong> ("+
+        E.pct((s26.comb/s26.ton)/(s25.comb/s25.ton)-1)+"); manutenção: <strong>R$ "+
+        E.fmtDec(s25.manut/s25.ton,2)+"/t para R$ "+E.fmtDec(s26.manut/s26.ton,2)+"/t</strong> ("+
+        E.pct((s26.manut/s26.ton)/(s25.manut/s25.ton)-1)+").";
+    } else if(ind.bomSobe===null){
+      extra = " <span class='sep'>|</span> É um indicador de contexto: não é bom nem ruim por si, "+
+        "mas explica parte do custo por tonelada.";
+    } else {
+      extra = " <span class='sep'>|</span> A frota saiu de "+s25.maq+" para "+s26.maq+
+        " máquinas e movimentou "+E.fmtMilT(s26.ton)+" ("+E.pct(s26.ton/s25.ton-1)+"), com "+
+        E.fmtDec(s26[cfg.bruto.k],0)+" "+cfg.bruto.un+" e "+E.fmtInt(s26.litros/1000)+" mil litros.";
+    }
+    var f25=F.foraPorAno[0].length, f26=F.foraPorAno[1].length;
+    var corte = " <span class='sep'>|</span> " + (f25+f26===0
+      ? "Nenhuma máquina ficou fora do corte de "+E.fmtInt(MIN_TON)+" t na safra."
+      : "Fora da conta <strong>"+(f25+f26)+" máquina"+((f25+f26)>1?"s":"")+"</strong> que não "+
+        ((f25+f26)>1?"chegaram":"chegou")+" a "+E.fmtInt(MIN_TON)+" t na safra ("+
+        f26+" em 2026, "+f25+" em 2025).");
+    q(".js-insight").innerHTML =
+      "<strong>"+E.esc(ind.rot)+"</strong>: "+fmtInd(a26,ind)+" "+ind.un+" na safra 2026 contra "+
+      fmtInd(a25,ind)+" em 2025 — <strong>"+E.pct(dA)+"</strong>"+
+      (bomA===false?" (piora)":"")+"."+
+      (ind.bomSobe===null ? "" : " <span class='sep'>|</span> "+bons+" dos 6 meses vieram melhores que 2025"+
+        (ord[0]?", com destaque para "+ord[0].m+" ("+E.pct(ord[0].d)+")":"")+".")+extra+corte;
+  }
+
+  q(".js-inds").addEventListener("click",function(e){
+    var b=e.target.closest(".ind"); if(!b) return;
+    var ind = cfg.inds.filter(function(x){ return x.id===b.dataset.ind; })[0];
+    var lupa = !!e.target.closest(".ind-lupa");
+    if(lupa && b.dataset.ind===sel){ detalheSafra(cfg,ind); return; }
+    sel = b.dataset.ind;
+    Array.prototype.forEach.call(this.children,function(x){ x.classList.toggle("on",x===b); });
+    desenha();
+    if(lupa) detalheSafra(cfg,ind);
+  });
+
+  fichas();
+  return desenha;
+}
+
+// monta as três páginas e seus links no índice, na ordem de PAGINAS
+(function(){
+  var slot = document.getElementById("frota-slots");
+  var toc = document.getElementById("toc-frotas");
+  PAGINAS.forEach(function(cfg){
+    slot.insertAdjacentHTML("beforebegin", slideHTML(cfg));
+    toc.insertAdjacentHTML("beforebegin",
+      "<a href='#"+cfg.id+"'><b>"+parseInt(cfg.num,10)+"</b> "+E.esc(cfg.rotulo)+"</a>");
+  });
+  slot.parentNode.removeChild(slot);
+  toc.parentNode.removeChild(toc);
+  // este bloco roda antes do de REDESENHO, então o mapa pode ainda não existir
+  window.replay = window.replay || {};
+  PAGINAS.forEach(function(cfg){
+    preparaFrota(window.FROTA[cfg.chave]);          // aplica o corte e refaz os totais
+    window.replay[cfg.id] = montaPaginaFrota(cfg);
+  });
+})();
+
+/* ============================================================
+   REDESENHO
+   ============================================================ */
+function redesenhaTudo(){
+  Object.keys(window.replay).forEach(function(id){
+    if(document.getElementById(id).classList.contains("active")) window.replay[id]();
+  });
+}
+// as páginas de frota já se registraram em window.replay ao serem montadas,
+// num bloco que roda antes deste: aqui só somamos as páginas do grupo
+window.replay = window.replay || {};
+window.replay.panorama = graficoPanorama;
+window.replay.contribuicao = graficoContribuicao;
+window.replay.unidades = graficoUnidades;
+window.replay["mes-a-mes"] = graficoMesAMes;
+
+pintaCapa();
+
+var tmr;
+window.addEventListener("resize",function(){ clearTimeout(tmr); tmr=setTimeout(redesenhaTudo,140); });
+})();
+</script>
+
+<!-- ============================================================
+     DECK — navegação página a página
+     ============================================================ -->
+<script>(function(){
+"use strict";
+var deck=document.getElementById("deck"); if(!deck) return;
+var slides=Array.prototype.slice.call(deck.querySelectorAll(".slide"));
+var dotsBox=document.getElementById("deck-dots");
+var prevBtn=document.getElementById("deck-prev"), nextBtn=document.getElementById("deck-next");
+var countEl=document.getElementById("deck-count");
+var tocLinks=Array.prototype.slice.call(document.querySelectorAll("nav.toc a"));
+var cur=-1;
+
+function indexOfId(id){ for(var i=0;i<slides.length;i++){ if(slides[i].id===id) return i; } return -1; }
+
+slides.forEach(function(s,i){
+  var b=document.createElement("button");
+  b.type="button";
+  b.title=s.getAttribute("data-title")||("Página "+(i+1));
+  b.setAttribute("aria-label",b.title);
+  b.addEventListener("click",function(){ go(i); });
+  dotsBox.appendChild(b);
+});
+var dots=Array.prototype.slice.call(dotsBox.children);
+
+function go(i,skipHash){
+  i=Math.max(0,Math.min(slides.length-1,i));
+  if(i===cur) return;
+  cur=i;
+  slides.forEach(function(s,k){
+    var on=(k===i);
+    s.classList.toggle("active",on);
+    if(!on) s.scrollTop=0;
+  });
+  dots.forEach(function(d,k){ d.classList.toggle("on",k===i); });
+  var id=slides[i].id;
+  tocLinks.forEach(function(a){ a.classList.toggle("on",a.getAttribute("href")==="#"+id); });
+  prevBtn.disabled=(i===0); nextBtn.disabled=(i===slides.length-1);
+  countEl.textContent=(i+1)+" / "+slides.length;
+  if(!skipHash){ try{ history.replaceState(null,"","#"+id); }catch(e){} }
+  // o SVG só tem tamanho real depois de a página ficar visível: desenha aqui
+  if(window.replay && window.replay[id]) requestAnimationFrame(window.replay[id]);
+}
+function next(){ go(cur+1); }
+function prev(){ go(cur-1); }
+window.deckGoTo=function(id){ var i=indexOfId(id); if(i>=0) go(i); };
+
+nextBtn.addEventListener("click",next);
+prevBtn.addEventListener("click",prev);
+tocLinks.forEach(function(a){
+  a.addEventListener("click",function(e){
+    var i=indexOfId((a.getAttribute("href")||"").slice(1));
+    if(i>=0){ e.preventDefault(); go(i); }
+  });
+});
+
+document.addEventListener("keydown",function(e){
+  var t=e.target, tag=t&&t.tagName;
+  if(tag==="SELECT"||tag==="INPUT"||tag==="TEXTAREA") return;
+  if(e.altKey||e.ctrlKey||e.metaKey) return;
+  if(e.key==="ArrowRight"||e.key==="PageDown"||e.key===" "||e.key==="Spacebar"){ e.preventDefault(); next(); }
+  else if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); prev(); }
+  else if(e.key==="Home"){ e.preventDefault(); go(0); }
+  else if(e.key==="End"){ e.preventDefault(); go(slides.length-1); }
+});
+
+// toque (tablet na sala de reunião): ignora gesto que começou dentro de algo que rola
+var tsX=0,tsY=0,tsOk=false;
+function rolavel(el){
+  while(el&&el!==deck){ if(el.scrollHeight-el.clientHeight>4) return true; el=el.parentElement; }
+  return false;
+}
+deck.addEventListener("touchstart",function(e){
+  tsX=e.touches[0].clientX; tsY=e.touches[0].clientY; tsOk=!rolavel(e.target);
+},{passive:true});
+deck.addEventListener("touchend",function(e){
+  if(!tsOk) return;
+  var dx=e.changedTouches[0].clientX-tsX, dy=e.changedTouches[0].clientY-tsY;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.4){ if(dx<0) next(); else prev(); }
+},{passive:true});
+
+var start=indexOfId((location.hash||"").slice(1));
+go(start>=0?start:0,true);
+})();
+</script>
+</body></html>
