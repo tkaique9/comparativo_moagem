@@ -2415,29 +2415,30 @@ window.IRRIGACAO = {
 
 <!-- ============================================================
      DADOS DE DISPONIBILIDADE MECÂNICA — CRV-MG.
-     Fonte: "DISPONIBILIDADE MANUTENÇÃO - frente - 2025.xlsx" e "- 2026.xlsx":
-     abas ABR a SET (relatório de disponibilidade do veículo: horas do
-     período, horas em oficina) e aba Base (cadastro: especialidade). Janela
-     de 07/04 a 30/09 nos dois anos.
+     Fonte: "DISPONIBILIDADE MANUTENÇÃO - frente - 2025.xlsx" e "- 2026.xlsx".
+     O % de cada frota no mês vem da aba Base de cada ano — é onde a operação
+     corrige o número (em 2026: setembro das colhedoras 62504, 62513, 62514,
+     62515 e 62521, e julho da 62507). As abas ABR a SET (relatório de
+     disponibilidade do veículo) dizem quem esteve no relatório do mês e as
+     horas do período. Janela de 07/04 a 30/09 nos dois anos.
      "horasPer" são as horas do período de cada mês — iguais para toda frota.
-     Em "frotas", oficina2025/oficina2026 são as horas em oficina de cada mês;
-     null = a frota não aparece no relatório daquele mês e fica FORA da conta
-     (não é 0%). Ficam fora também os 40 a 52 equipamentos do relatório sem
-     cadastro (sopradores, geradores, motosserras). Uma frota com oficina
-     maior que o período (60906, jul/2026) foi limitada ao período.
-     O grupo é o prefixo da especialidade ("CAMINHAO - BOMBEIRO" -> CAMINHAO).
-     Só entram as frotas de 60000 a 69999, a faixa da CRV-MG: as 22xxx (tratores
-     e colhedoras de Goiás, que só aparecem no relatório de agosto) ficam fora.
-     Mês EM BRANCO na aba Base também fica fora (null), mesmo com a frota no
-     relatório: em 2026, a 62511 o ano todo, a 62507 de julho a setembro e a
-     62519 em setembro. As colhedoras 62500, 62502, 62508 e 62509 saem de 2026:
-     ficaram paradas, com 100% sem uma hora de oficina (em 2025 continuam).
-     Frota que ainda não existia também sai: só conta no mês se a data de
-     aquisição do cadastro é anterior ao início do período (07/04 em abril, dia
-     1 nos demais) — o relatório mostra a frota a 100% antes da compra. Isso
-     tira 87 frotas de parte de 2025 (colhedoras 62522 a 62529, tratores 62272
-     a 62284…) e 4 de 2026. Os caminhões 60551 a 60555 saem de 2025: 100% o ano
-     todo sem uma hora de oficina (60553-55 nem têm data de compra).
+     Em "frotas", oficina2025/oficina2026 são as horas em oficina de cada mês,
+     = horas do período × (1 − % da Base); null = fora da conta naquele mês.
+     Uma frota-mês fica FORA (não vale 0%) quando:
+       - o código não está entre 60000 e 69999 (as 22xxx são de Goiás);
+       - a frota não está na Base daquele ano (62500, 62502, 62508 e 62509
+         saíram da Base de 2026: paradas; em 2025 continuam);
+       - a frota não aparece no relatório do mês;
+       - o mês está EM BRANCO na Base (62511 o ano todo de 2026, 62507 em
+         agosto e setembro, 62519 em setembro);
+       - a frota ainda não tinha sido comprada no início do período (o
+         relatório a mostra a 100% antes da compra): 87 frotas em parte de
+         2025, 4 em 2026;
+       - pedido da operação: os caminhões 60551 a 60555 saem de 2025 (100% o
+         ano todo sem uma hora de oficina; 60553-55 nem têm data de compra).
+     Ficam fora também os equipamentos do relatório sem cadastro (sopradores,
+     geradores, motosserras). O grupo é o prefixo da especialidade
+     ("CAMINHAO - BOMBEIRO" -> CAMINHAO).
      ============================================================ -->
 <script>
 window.DISPONIBILIDADE = {
@@ -2747,23 +2748,23 @@ window.DISPONIBILIDADE = {
     [62500,"COLHEDORA JOHN DEERE CH570",14,[283.7,311.6,259.5,509.6,744.0,720.0],[null,null,null,null,null,null]],
     [62502,"COLHEDORA JOHN DEERE CH570",14,[191.7,225.8,325.0,636.3,321.1,266.6],[null,null,null,null,null,null]],
     [62503,"COLHEDORA JOHN DEERE CH570",14,[576.0,744.0,720.0,596.9,234.1,373.2],[247.2,169.4,222.2,347.8,322.7,247.3]],
-    [62504,"COLHEDORA JOHN DEERE CH570",14,[415.2,480.7,328.8,405.2,492.8,570.2],[489.8,343.5,287.9,280.4,195.2,409.7]],
+    [62504,"COLHEDORA JOHN DEERE CH570",14,[415.2,480.7,328.8,405.2,492.8,570.2],[489.8,343.5,287.9,280.4,195.2,234.0]],
     [62505,"COLHEDORA JOHN DEERE CH570",14,[185.4,299.6,289.8,576.9,657.4,475.5],[576.0,426.3,695.1,362.6,258.2,153.9]],
-    [62507,"COLHEDORA JOHN DEERE CH570",14,[576.0,532.7,419.0,453.9,464.3,720.0],[98.5,353.8,413.9,null,null,null]],
+    [62507,"COLHEDORA JOHN DEERE CH570",14,[576.0,532.7,419.0,453.9,464.3,720.0],[98.5,353.8,413.9,740.28,null,null]],
     [62508,"COLHEDORA JOHN DEERE CH570",14,[167.1,237.8,301.0,457.0,338.0,319.9],[null,null,null,null,null,null]],
     [62509,"COLHEDORA JOHN DEERE CH570",14,[237.5,228.9,248.4,305.0,324.9,328.4],[null,null,null,null,null,null]],
     [62510,"COLHEDORA JOHN DEERE CH570",14,[259.6,198.8,195.2,273.3,342.1,309.9],[309.5,326.2,359.5,161.1,213.8,181.2]],
     [62511,"COLHEDORA JOHN DEERE CH570",14,[161.9,221.8,240.8,397.6,373.4,720.0],[null,null,null,null,null,null]],
     [62512,"COLHEDORA JOHN DEERE CH570",14,[195.3,151.9,244.9,317.0,377.1,389.7],[332.3,400.0,450.6,303.9,190.9,283.9]],
-    [62513,"COLHEDORA JOHN DEERE CH570",14,[316.4,224.9,275.7,307.8,330.5,257.8],[340.2,207.6,255.5,120.0,275.4,305.9]],
-    [62514,"COLHEDORA JOHN DEERE CH570",14,[225.1,208.3,230.8,188.9,233.1,308.3],[204.7,421.6,289.1,369.2,310.2,329.3]],
-    [62515,"COLHEDORA JOHN DEERE CH570",14,[262.7,268.3,245.5,434.8,329.0,380.1],[305.6,192.4,161.6,247.6,253.4,342.2]],
+    [62513,"COLHEDORA JOHN DEERE CH570",14,[316.4,224.9,275.7,307.8,330.5,257.8],[340.2,207.6,255.5,120.0,275.4,225.86]],
+    [62514,"COLHEDORA JOHN DEERE CH570",14,[225.1,208.3,230.8,188.9,233.1,308.3],[204.7,421.6,289.1,369.2,310.2,263.16]],
+    [62515,"COLHEDORA JOHN DEERE CH570",14,[262.7,268.3,245.5,434.8,329.0,380.1],[305.6,192.4,161.6,247.6,253.4,284.76]],
     [62516,"COLHEDORA JOHN DEERE CH570",14,[205.9,169.2,375.2,249.9,228.5,383.5],[194.4,295.0,314.5,197.8,194.9,221.2]],
     [62517,"COLHEDORA JOHN DEERE CH570",14,[255.1,146.3,242.7,301.0,272.6,380.2],[182.6,304.4,198.9,345.3,350.2,255.7]],
     [62518,"COLHEDORA JOHN DEERE CH570",14,[576.0,744.0,720.0,744.0,656.8,337.6],[499.6,271.1,282.5,175.8,389.6,171.7]],
     [62519,"COLHEDORA JOHN DEERE CH570",14,[179.7,126.4,163.2,208.3,283.7,497.1],[188.7,209.5,205.1,145.7,185.7,null]],
     [62520,"COLHEDORA JOHN DEERE CH570",14,[207.4,167.4,168.5,192.5,268.8,267.9],[337.8,256.6,151.9,164.8,278.1,238.2]],
-    [62521,"COLHEDORA JOHN DEERE CH570",14,[120.1,183.4,135.8,183.4,214.4,309.5],[274.0,261.3,244.1,284.2,374.5,261.4]],
+    [62521,"COLHEDORA JOHN DEERE CH570",14,[120.1,183.4,135.8,183.4,214.4,309.5],[274.0,261.3,244.1,284.2,374.5,218.66]],
     [62522,"COLHEDORA JOHN DEERE CH570",14,[null,null,null,47.5,44.2,90.4],[276.2,148.2,252.0,199.9,150.1,144.4]],
     [62523,"COLHEDORA JOHN DEERE CH570",14,[null,null,null,null,185.3,98.2],[172.7,242.5,236.1,201.3,256.0,176.6]],
     [62524,"COLHEDORA JOHN DEERE CH570",14,[null,null,null,null,null,null],[39.3,60.5,56.7,61.3,90.6,75.4]],
@@ -5269,7 +5270,8 @@ var COR_DSP = "#2E86C1";
 
 // variação em pontos percentuais; abaixo de 0,05 não leva sinal (evita "−0,0")
 function dspPP(d){ return (Math.abs(d)<0.05?"":d>=0?"+":"−")+E.fmtDec(Math.abs(d),1)+" p.p."; }
-function dspPct(v){ return v==null ? "–" : E.fmtDec(v,1)+"%"; }
+// o 1e-9 desfaz o resto binário: 60,45% digitado na Base sai 60,5, como no Excel
+function dspPct(v){ return v==null ? "–" : E.fmtDec(v+1e-9,1)+"%"; }
 function dspEspGrupo(e){ return DSP.especialidades[e][1]; }
 function dspFrotas(f){
   return DSP.frotas.filter(function(r){
@@ -5321,7 +5323,7 @@ function dspDetalheMes(ano,i){
       return "<tr><td class='l'>"+x.r[0]+" <span style='color:#5A6072'>— "+E.esc(x.r[1])+"</span></td>"+
         "<td class='l'>"+E.esc(DSP.especialidades[x.r[2]][0])+"</td>"+
         "<td>"+E.fmtDec(x.o,1)+"</td>"+
-        "<td class='key' style='color:"+(x.d<DSP.meta?"#C0392B":"#2E7D46")+"'>"+E.fmtDec(x.d,1)+"%</td></tr>";
+        "<td class='key' style='color:"+(x.d<DSP.meta?"#C0392B":"#2E7D46")+"'>"+dspPct(x.d)+"</td></tr>";
     }).join("")+
     "<tr class='tot'><td class='l'>Total — "+m.n+" frotas</td><td></td><td>"+E.fmtInt(m.ofi)+"</td>"+
     "<td class='key'>"+dspPct(m.disp)+"</td></tr></tbody></table>"+
@@ -5453,8 +5455,9 @@ function dspTexto(frs){
     if(l.length) txt += "<span class='sep'>|</span> Mais longe da meta (com 3 frotas ou mais): "+
       l.slice(0,2).map(function(x){ return E.esc(x.nome)+" ("+dspPct(x.b)+")"; }).join(" e ")+". ";
   }
-  if(dspFiltro.tipo==="t") txt += "<span class='sep'>|</span> Só frotas de 60000 a 69999 presentes no relatório "+
-    "do mês. A aba GERAL inclui as de Goiás e conta as ausentes como 0%, por isso fica até 0,9 p.p. abaixo.";
+  if(dspFiltro.tipo==="t") txt += "<span class='sep'>|</span> Só frotas de 60000 a 69999, já compradas e presentes "+
+    "no relatório do mês; mês em branco na Base fica fora. Por isso não bate com a aba GERAL, que inclui "+
+    "Goiás, conta frota ausente como 0% e frota ainda não comprada como 100%.";
   document.getElementById("disp-insight").innerHTML = txt;
 }
 

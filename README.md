@@ -283,39 +283,45 @@ das frotas.
 - **Clicar numa barra** abre o mês frota a frota, da pior para a melhor, com a conta
   no topo e o total fechando com a barra.
 
-**Só as frotas de 60000 a 69999**, a faixa da CRV-MG. As 22xxx (tratores e colhedoras
-de Goiás, que só aparecem no relatório de agosto) ficam fora — no cadastro e no
-relatório. Sobram 947 frotas.
+**De onde vem o %.** O % de cada frota no mês é o da **aba `Base`** de cada ano — é
+ali que a operação corrige o número. A Base bate com o relatório mensal (abas ABR a
+SET) em todas as frotas, menos nas correções feitas à mão; em 2026: setembro das
+colhedoras 62504, 62513, 62514, 62515 e 62521, e julho da 62507. Onde a Base concorda,
+o arquivo guarda as horas do relatório; onde foi corrigida, as horas saem do % dela.
+O relatório mensal diz também quem esteve no relatório do mês e as horas do período.
 
-**Em branco não entra na conta.** Frota que não aparece no relatório do mês fica fora
-daquele mês — não vale 0%. Vale o mesmo para o mês **em branco na aba `Base`**,
-mesmo quando a frota aparece no relatório: em 2026, a 62511 sai do ano todo, a 62507
-de julho a setembro e a 62519 em setembro (em 2025 a Base não tem branco). E as
-colhedoras **62500, 62502, 62508 e 62509 saem de 2026** por decisão da operação:
-ficaram paradas, com 100% sem uma hora de oficina, e inflavam a colhedora; em 2025,
-quando trabalharam, continuam na conta.
+**Quem fica fora da conta** (fora = não vale 0%, simplesmente não entra naquele mês):
 
-**Frota que ainda não existia não conta.** O relatório mostra a frota a 100% nos meses
-antes da compra. Por isso ela só entra no mês se a **data de aquisição** do cadastro
-for anterior ao início do período (07/04 em abril, dia 1 nos demais) — o mês da compra,
-parcial, também fica fora. Isso tira 87 frotas de parte de 2025 (as colhedoras 62522
-a 62529, os tratores 62272 a 62284, caminhões, motos, implementos…) e 4 de 2026. Os
-caminhões canavieiros **60551 a 60555 saem de 2025**: 100% o ano todo sem uma hora de
-oficina, e os 60553-55 nem têm data de compra (placas novas, ativos a partir de
-julho/2026).
+- **Código fora de 60000 a 69999**, a faixa da CRV-MG. As 22xxx (tratores e
+  colhedoras de Goiás, que só aparecem no relatório de agosto) saem.
+- **Frota que não está na Base daquele ano.** As colhedoras 62500, 62502, 62508 e
+  62509 saíram da Base de 2026 (ficaram paradas, a 100% sem uma hora de oficina);
+  em 2025, quando trabalharam, continuam.
+- **Frota que não aparece no relatório do mês.**
+- **Mês em branco na Base**, mesmo com a frota no relatório: em 2026, a 62511 o ano
+  todo, a 62507 em agosto e setembro e a 62519 em setembro. Em 2025 a Base não tem
+  branco.
+- **Frota que ainda não existia.** O relatório mostra a frota a 100% nos meses antes
+  da compra, então ela só entra se a **data de aquisição** for anterior ao início do
+  período (07/04 em abril, dia 1 nos demais) — o mês da compra, parcial, também fica
+  fora. Isso tira 87 frotas de parte de 2025 (as colhedoras 62522 a 62529, os
+  tratores 62272 a 62284, caminhões, motos, implementos…) e 4 de 2026.
+- **Pedido da operação:** os caminhões canavieiros 60551 a 60555 saem de 2025 — 100% o
+  ano todo sem uma hora de oficina; os 60553-55 nem têm data de compra (placas novas,
+  ativos a partir de julho/2026).
+- Equipamentos do relatório **sem cadastro** (40 a 52 por mês: sopradores,
+  geradores, motosserras), porque não têm especialidade.
 
-Com essas regras, a safra 2025 fica em 79,6% e a 2026 em 81,2% (+1,6 p.p.). A aba `GERAL` da planilha faz o contrário (média simples
-das 954 frotas do cadastro, Goiás incluída, com as ausentes valendo 0) e por isso fica
-até 0,9 p.p. abaixo; a página diz isso no texto. Ficam fora também os
-equipamentos do relatório sem cadastro (40 a 52 por mês: sopradores, geradores,
-motosserras), porque não têm especialidade. Uma frota com mais horas de oficina que o
-período (60906, jul/2026) foi limitada ao período.
+Com essas regras, a safra 2025 fica em 79,6% e a 2026 em 81,2% (+1,6 p.p.). A aba
+`GERAL` da planilha faz a média simples das frotas do cadastro, com Goiás e com as
+ausentes valendo 0 e as ainda não compradas a 100% — por isso não bate com a página:
+em 2025 a página fica de 0,7 a 1,6 p.p. abaixo dela, em 2026 de 0,5 a 1,0 p.p. acima.
+A página diz isso no texto.
 
 Os dados ficam em `window.DISPONIBILIDADE`: horas do período por mês, a lista de
 grupos e especialidades e, por frota, as horas em oficina de cada mês nas duas safras
-(`null` = fora do relatório). Fonte: `DISPONIBILIDADE MANUTENÇÃO - frente - 2025.xlsx` e
-`- 2026.xlsx`, abas ABR a SET (relatório de disponibilidade do veículo) e `Base`
-(cadastro).
+(`null` = fora da conta naquele mês). Fonte: `DISPONIBILIDADE MANUTENÇÃO - frente -
+2025.xlsx` e `- 2026.xlsx`, aba `Base` (% e cadastro) e abas ABR a SET (relatório).
 
 ## Atualizar os dados
 
