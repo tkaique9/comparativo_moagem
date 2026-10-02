@@ -210,12 +210,13 @@ Cada puxada da convencional traz a lâmina na coluna `DESC. LAMINA` (`Água 2º 
 lâmina** — água e vinhaça juntas, e a bordadura (cerca de 1% da área) na lâmina do
 mesmo número. Só a convencional tem esse corte: a localizada não entra.
 
-- **Página 9:** as barras do mês são **empilhadas por lâmina** (1ª embaixo), em tons
-  de azul para 2026 e de cinza para 2025, com o número dentro do segmento quando
-  cabe e na dica do mouse quando não. A soma da pilha é o total do mês — o resíduo
-  de arredondamento fica na maior lâmina —, então o rótulo de cima e o modal não
-  mudam. A legenda traz o total de cada lâmina na safra 2026 e a variação, e o modal
-  do mês ganha a linha "Por lâmina". Funciona também no acumulado.
+- **Página 9:** as barras continuam uma cor por ano; a lâmina vai como
+  **observação** sob os meses — uma linha por lâmina, alinhada com cada mês, com
+  `2025 → 2026` da área daquela lâmina no mês (no modo acumulado, acumulada até o
+  mês). Na margem direita, a variação da lâmina na safra inteira. O modal do mês
+  ganha a linha "Por lâmina". A soma das lâminas de cada mês é o total do mês — o
+  resíduo de arredondamento fica na maior lâmina. (Já foi testado empilhar as
+  barras por lâmina; o gráfico ficou carregado demais e a observação ficou no lugar.)
 - **Página 10:** uma fila de fichas por região (2025 → 2026, peso na área da
   região), alinhada com o painel de baixo, no formato das fichas de frota. São só de
   leitura: não trocam o gráfico.
@@ -230,8 +231,7 @@ mesmo número. Só a convencional tem esse corte: a localizada não entra.
 A leitura vai no insight da página 9: a área de repetição (2ª lâmina em diante) passou
 de 33% para 44% do total. Os dados ficam em `IRRIGACAO.convencional.laminas` (safra),
 `laminasMes` (mês a mês) e `laminas` de cada região (posição 0 = 1ª lâmina); uma 5ª
-lâmina vira mais uma ficha e mais um segmento sozinha (a rampa de cores tem quatro
-tons — uma 5ª repetiria o último e pede um tom novo em `RAMPA_LAM`).
+lâmina vira mais uma ficha e mais uma linha da observação sozinha.
 
 ### As páginas 10 e 11 (irrigação convencional por região)
 
