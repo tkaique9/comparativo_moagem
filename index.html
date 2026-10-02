@@ -4912,7 +4912,10 @@ function montaPaginaFrota(cfg){
     var n=MESES.length, slot=plotW/n;
 
     E.tituloSVG(svg,16,20,ind.rot+" ("+ind.un+") — mês a mês",null,W-180);
-    E.txt(svg,16,34,ind.desc+"; barra clara é 2025, barra cheia é 2026",{"font-size":10.5,fill:E.MUT});
+    // em cartão baixo o padT encolhe e esta linha encostaria no rótulo do topo
+    // do eixo; a legenda no canto já diz o que é barra clara e barra cheia
+    if(H>=330)
+      E.txt(svg,16,34,ind.desc+"; barra clara é 2025, barra cheia é 2026",{"font-size":10.5,fill:E.MUT});
 
     if(!ind.empilha){
       var lx=W-padR;
@@ -5244,7 +5247,9 @@ function montaPaginaIrriga(cfg){
     E.tituloSVG(svg,16,20, acum
       ? "Área irrigada acumulada (ha) e "+tx.nome+" média do mês ("+tx.un+")"
       : "Área irrigada no mês (ha) e "+tx.nome+" média do mês ("+tx.un+")", null, W-200);
-    E.txt(svg,16,34, (acum
+    // em cartão baixo o padT encolhe e esta linha encostaria no rótulo do topo
+    // do eixo; a legenda já diz o que é barra clara e barra cheia
+    if(H>=330) E.txt(svg,16,34, (acum
       ? "barras: área acumulada desde o início da safra"
       : "barras: hectares aplicados no mês")+
       "; linhas: "+tx.nome+" média "+(acum?"de cada mês":"com que foram aplicados")+
