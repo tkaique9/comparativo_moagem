@@ -288,7 +288,12 @@ de Goiás, que só aparecem no relatório de agosto) ficam fora — no cadastro 
 relatório. Sobram 947 frotas.
 
 **Em branco não entra na conta.** Frota que não aparece no relatório do mês fica fora
-daquele mês — não vale 0%. A aba `GERAL` da planilha faz o contrário (média simples
+daquele mês — não vale 0%. Vale o mesmo para o mês **em branco na aba `Base`**,
+mesmo quando a frota aparece no relatório: em 2026, a 62511 sai do ano todo, a 62507
+de julho a setembro e a 62519 em setembro (em 2025 a Base não tem branco). E as
+colhedoras **62500, 62502, 62508 e 62509 saem de 2026** por decisão da operação:
+ficaram paradas, com 100% sem uma hora de oficina, e inflavam a colhedora; em 2025,
+quando trabalharam, continuam na conta. A aba `GERAL` da planilha faz o contrário (média simples
 das 954 frotas do cadastro, Goiás incluída, com as ausentes valendo 0) e por isso fica
 até 0,9 p.p. abaixo; a página diz isso no texto. Ficam fora também os
 equipamentos do relatório sem cadastro (40 a 52 por mês: sopradores, geradores,
