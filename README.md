@@ -395,6 +395,43 @@ grupos e especialidades e, por frota, as horas em oficina de cada mês nas duas 
 (`null` = fora da conta naquele mês). Fonte: `DISPONIBILIDADE MANUTENÇÃO - frente -
 2025.xlsx` e `- 2026.xlsx`, aba `Base` (% e cadastro) e abas ABR a SET (relatório).
 
+### A página 13 (simulador da reta final)
+
+Reproduz a `Projeção Safra.xlsx` em dois cenários lado a lado, para rodar ao vivo na
+reunião. Abril a setembro entram **travados**, com o realizado da CRV-MG (1.717.690 t
+em 177 dias). Outubro, novembro e dezembro são a projeção, com **dias** e
+**moagem/dia** editáveis; a **previsão da safra** também é editável. Tudo recalcula a
+cada tecla, e o botão do cabeçalho devolve os cenários aos valores da planilha.
+
+As contas são as mesmas do Excel:
+
+```
+Volume do mês = dias × moagem/dia
+Falta         = Previsão − Realizado (abr–set)
+Bisar         = Falta − Projetado (out+nov+dez)
+```
+
+**Bisar** é o que ainda falta para a previsão depois da reta final. Quando a projeção
+passa da previsão o número fica negativo: a página então troca o rótulo para "Sobra
+sobre a previsão" e pinta de verde, em vez de mostrar um bisar negativo.
+
+Cada cenário tem duas peças visuais:
+
+- Uma **barra de progresso** com realizado (cheio), projetado (esmaecido) e o que falta
+  (vermelho), e um traço marcando a previsão.
+- No pé da coluna, um gráfico de **moagem por dia de abril a dezembro**, com os seis
+  meses realizados ao lado dos três projetados e a linha tracejada do **ritmo que
+  zeraria o bisar** (`Falta ÷ dias da reta final`). É o que responde à pergunta
+  seguinte ao "bisa 120 mil t": dá para alcançar? Hoje são 10.294 t/dia, entre o ritmo
+  de agosto (10.946) e o de setembro (10.271).
+
+Esse gráfico ocupa só a folga da coluna: tem `flex:1 1 auto`, então estica no monitor
+grande e, quando sobra menos de 78px, não é desenhado em vez de espremer. Um segundo
+tier de CSS abaixo de 660px de altura mantém a coluna inteira sem corte.
+
+O realizado sai de `window.MOAGEM` (unidade CRV-MG), não de uma cópia: os dias de abril
+são contados da abertura da safra, igual à página 4.
+
 ## Atualizar os dados
 
 Todos os números saem de **um único bloco** no `index.html`, marcado com o comentário
