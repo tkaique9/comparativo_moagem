@@ -809,7 +809,7 @@ nav.toc a.on{color:var(--tm-ink);border-bottom-color:var(--accent);font-weight:6
 <div>
 <div class="s-eyebrow">01 &middot; Panorama do grupo</div>
 <h2 class="s-title">Quanto o grupo moeu</h2>
-<p class="s-sub">Em cada mês, duas colunas lado a lado: a safra 2025 e a safra 2026. A linha dourada é a variação do mês sobre o mesmo mês do ano anterior. O ganho começa em dois dígitos em abril e termina praticamente zerado em setembro.</p>
+<p class="s-sub">Em cada mês, duas colunas lado a lado: a safra 2025 e a safra 2026. Na faixa de cima, a moagem por dia de cada safra sobre o eixo da direita — a dourada é 2026 e a cinza tracejada, 2025. A vantagem começa em dois dígitos em abril e termina praticamente zerada em setembro.</p>
 </div>
 <div class="s-right">
 <div class="s-toggle" id="pan-modo">
@@ -4517,6 +4517,16 @@ function poe(id,texto){
   e.classList.toggle("neg", /^[-−]/.test(texto.trim()));
 }
 
+/* ---------- dias de cada mês da janela (páginas 1 e 4) ----------
+   Abril conta da abertura da safra até 30/04; nos demais meses, dias corridos.
+   A base não traz apontamento de parada, então o ritmo é "por dia de safra",
+   não por dia efetivamente moído. */
+var DIAS_MES = [30,31,30,31,31,30];
+function diasDoMes(i,dAbril){ return i===0 ? dAbril : DIAS_MES[i]; }
+// abril do grupo conta da PRIMEIRA abertura entre as quatro unidades até 30/04
+var D25_GRUPO = Math.max.apply(null,UN.map(function(u){ return u.d25; }));
+var D26_GRUPO = Math.max.apply(null,UN.map(function(u){ return u.d26; }));
+
 /* ============================================================
    CAPA
    ============================================================ */
@@ -4646,9 +4656,13 @@ function pintaCapa(){
 }
 
 /* ============================================================
-   1 · PANORAMA — pares 2025/2026 por mês + linha de variação
+   1 · PANORAMA — pares 2025/2026 por mês + linhas de t/dia
    ============================================================ */
 var panModo = "unidade";
+var LINHAS_TDIA = [
+  {tipo:"linha",cor:E.GRAY,tracejada:true,nome:"t/dia 2025",obs:"(eixo da direita)"},
+  {tipo:"linha",cor:E.GOLD,nome:"t/dia 2026",obs:"(eixo da direita)"}
+];
 
 function graficoPanorama(){
   var card = document.getElementById("panorama-card");
@@ -4663,19 +4677,47 @@ function graficoPanorama(){
   var plotW=W-padL-padR, plotH=H-padT-padB, base=padT+plotH;
   var n=MESES.length, slot=plotW/n;
 
-  var maxL = E.niceAxis(Math.max.apply(null,E.G26.concat(E.G25))*1.16,4);
   var vars = MESES.map(function(_,i){ return E.G26[i]/E.G25[i]-1; });
-  var maxR = E.niceAxis(Math.max.apply(null,vars.concat([0.02]))*1.55,4);
+  // moagem por dia do grupo: abril conta da primeira abertura entre as quatro
+  // unidades até 30/04, os demais meses são dias corridos
+  var dia25 = MESES.map(function(_,i){ return E.G25[i]/diasDoMes(i,D25_GRUPO); });
+  var dia26 = MESES.map(function(_,i){ return E.G26[i]/diasDoMes(i,D26_GRUPO); });
 
-  var y = E.eixoY(svg,{max:maxL,min:0,x0:padL,x1:W-padR,yTop:padT,yBot:base,
-                       fmt:function(v){ return v?E.fmtInt(v/1000)+" mil":"0"; }});
-  // eixo direito: variação
-  for(var i=0;i<=4;i++){
-    var vv=maxR*i/4, yy=base-(vv/maxR)*plotH;
-    E.txt(svg,W-padR+10,yy+4,E.pctAbs(vv,0),{"font-size":11,fill:E.GOLD,"font-weight":"600"});
+  // DUAS FAIXAS NO MESMO QUADRO, como na página 4: as barras ficam embaixo e as
+  // linhas de t/dia em cima, cada uma com sua escala. Num quadro só as duas
+  // curvas passariam por dentro das barras — elas andam coladas.
+  var topoBarras = padT + plotH*0.46;
+  var baseLinhas = padT + plotH*0.36;
+  var hBarras = base - topoBarras;
+
+  var maxL = E.niceAxis(Math.max.apply(null,E.G26.concat(E.G25))*1.06,4);
+  function y(v){ return base-(v/maxL)*hBarras; }
+  for(var k=0;k<=4;k++){
+    var vL=maxL*k/4, yL=y(vL);
+    E.add(svg,"line",{x1:padL,x2:W-padR,y1:yL,y2:yL,stroke:E.GRID});
+    E.txt(svg,padL-8,yL+4,vL?E.fmtInt(vL/1000)+" mil":"0",
+          {"text-anchor":"end","font-size":11,fill:E.MUT});
   }
-  E.txt(svg,padL-8,padT-10,"toneladas",{"text-anchor":"end","font-size":10.5,fill:E.MUT});
-  E.txt(svg,W-padR+10,padT-10,"variação",{"font-size":10.5,fill:E.GOLD});
+  E.txt(svg,padL-8,topoBarras-9,"toneladas no mês",{"text-anchor":"end","font-size":10.5,fill:E.MUT});
+
+  // --- faixa de cima: t/dia, com escala própria para a diferença aparecer ---
+  var todos = dia25.concat(dia26);
+  var dMin=Math.min.apply(null,todos), dMax=Math.max.apply(null,todos);
+  var amp = (dMax-dMin) || dMax*0.2;
+  // abril é um mês de abertura e puxa o minimo bem para baixo: com o passo de
+  // metade da amplitude a faixa sobrava demais, então aqui ela é dividida em
+  // três — são seis linhas de grade, que ainda cabem sem os rótulos se tocarem
+  var passo = E.passoNice(amp/3);
+  var maxR = Math.ceil((dMax+amp*0.12)/passo)*passo;
+  var minR = Math.max(0, Math.floor((dMin-amp*0.12)/passo)*passo);
+  if(maxR<=minR) maxR = minR+passo;
+  function yR(v){ return baseLinhas-((v-minR)/(maxR-minR))*(baseLinhas-(padT+15)); }
+  for(var vR=minR; vR<=maxR+passo*0.001; vR+=passo){
+    var yy=yR(vR);
+    E.add(svg,"line",{x1:padL,x2:W-padR,y1:yy,y2:yy,stroke:"#F3EBD9"});
+    E.txt(svg,W-padR+10,yy+4,E.fmtInt(vR),{"font-size":11,fill:E.GOLD,"font-weight":"600"});
+  }
+  E.txt(svg,W-padR+10,padT+2,"t/dia",{"font-size":10.5,fill:E.GOLD});
 
   var barW = Math.min(slot*0.30, 58), gap = Math.min(slot*0.05, 9);
   MESES.forEach(function(mes,i){
@@ -4709,12 +4751,28 @@ function graficoPanorama(){
     if(H>=360) E.txt(svg,cx,base+60,E.sinalMil(E.G26[i]-E.G25[i]),{"text-anchor":"middle","font-size":10.5,fill:E.MUT});
   });
 
-  // linha de variação sobre o eixo direito
-  var pts = vars.map(function(v,i){ return [padL+i*slot+slot/2, base-(v/maxR)*plotH]; });
-  E.add(svg,"path",{d:pts.map(function(p,i){ return (i?"L":"M")+p[0].toFixed(1)+","+p[1].toFixed(1); }).join(" "),
-                    fill:"none",stroke:E.GOLD,"stroke-width":"2.8"});
-  pts.forEach(function(p,i){
-    E.add(svg,"circle",{cx:p[0],cy:p[1],r:5,fill:"#fff",stroke:E.GOLD,"stroke-width":"2.6"});
+  // linhas de t/dia sobre o eixo da direita
+  function xC(i){ return padL+i*slot+slot/2; }
+  [[dia25,E.GRAY,true],[dia26,E.GOLD,false]].forEach(function(cfg){
+    var vals=cfg[0], cor=cfg[1], velha=cfg[2];
+    var pts = vals.map(function(v,i){ return [xC(i), yR(v)]; });
+    var at = {d:pts.map(function(p,i){ return (i?"L":"M")+p[0].toFixed(1)+","+p[1].toFixed(1); }).join(" "),
+              fill:"none", stroke:cor, "stroke-width":velha?"2.2":"3"};
+    if(velha) at["stroke-dasharray"]="6,4";
+    E.add(svg,"path",at);
+    pts.forEach(function(p){
+      E.add(svg,"circle",{cx:p[0],cy:p[1],r:velha?3.6:5,fill:velha?"#fff":cor,
+                          stroke:cor,"stroke-width":velha?2:2.4});
+    });
+  });
+  // os rótulos vêm depois das duas curvas, cada ano para o lado oposto ao do
+  // outro: nos meses em que as curvas se cruzam os dois números cairiam juntos
+  MESES.forEach(function(_,i){
+    var y26=yR(dia26[i]), y25=yR(dia25[i]), acima=(dia26[i]>=dia25[i]);
+    E.txt(svg,xC(i), acima? y26-11 : y26+19, E.fmtInt(dia26[i]),
+          {"text-anchor":"middle","font-size":11.5,"font-weight":"700",fill:E.GOLD});
+    E.txt(svg,xC(i), acima? y25+17 : y25-10, E.fmtInt(dia25[i]),
+          {"text-anchor":"middle","font-size":9.5,"font-weight":"700",fill:E.GRAY});
   });
 
   var varG = E.T26/E.T25-1;
@@ -4724,17 +4782,23 @@ function graficoPanorama(){
 
   E.legenda(document.getElementById("pan-legend"),
     panModo==="grupo"
-      ? [{cor:E.C25,nome:"Safra 2025"},{cor:E.GOLD,nome:"Safra 2026"},
-         {tipo:"linha",cor:E.GOLD,nome:"Variação do mês",obs:"(eixo da direita)"}]
-      : UN.map(function(u){ return {cor:u.cor,nome:u.nome}; })
-          .concat([{tipo:"linha",cor:E.GOLD,nome:"Variação do mês",obs:"(eixo da direita)"}]));
+      ? [{cor:E.C25,nome:"Safra 2025"},{cor:E.GOLD,nome:"Safra 2026"}].concat(LINHAS_TDIA)
+      : UN.map(function(u){ return {cor:u.cor,nome:u.nome}; }).concat(LINHAS_TDIA));
 
+  var totDias25=0, totDias26=0;
+  MESES.forEach(function(_,i){ totDias25+=diasDoMes(i,D25_GRUPO); totDias26+=diasDoMes(i,D26_GRUPO); });
+  var md25=E.T25/totDias25, md26=E.T26/totDias26;
+  var iMelhor=dia26.indexOf(Math.max.apply(null,dia26));
   document.getElementById("panorama-insight").innerHTML =
     "O grupo abriu a safra moendo <strong>"+E.pct(vars[0])+"</strong> acima de 2025 e fechou setembro com <strong>"+
     E.pct(vars[5])+"</strong>. <span class='sep'>|</span> A barra de 2026 é maior em todos os seis meses, mas a vantagem encolhe mês a mês: de <strong>"+
     E.sinalMil(E.G26[0]-E.G25[0])+"</strong> em abril para <strong>"+E.sinalMil(E.G26[5]-E.G25[5])+
     "</strong> em setembro. <span class='sep'>|</span> No consolidado, <strong>"+E.fmtMt(E.T26)+"</strong> contra "+
-    E.fmtMt(E.T25)+" — "+E.pct(varG)+".";
+    E.fmtMt(E.T25)+" — "+E.pct(varG)+", a <strong>"+E.fmtInt(md26)+" t/dia</strong> contra "+
+    E.fmtInt(md25)+" t/dia ("+E.pct(md26/md25-1)+"). O melhor ritmo de 2026 foi "+MESES[iMelhor]+
+    ", com "+E.fmtInt(dia26[iMelhor])+" t/dia. <span class='sep'>|</span> Abril conta os dias a partir da "+
+    "primeira abertura entre as quatro unidades ("+D26_GRUPO+" dias em 2026, "+D25_GRUPO+
+    " em 2025); nos demais meses, dias corridos.";
 }
 
 document.getElementById("pan-modo").addEventListener("click",function(e){
@@ -4927,11 +4991,6 @@ document.getElementById("uni-escala").addEventListener("click",function(e){
 /* ============================================================
    4 · MÊS A MÊS POR EMPRESA — total do mês + ritmo diário
    ============================================================ */
-// Dias de cada mês da janela. Abril conta da abertura da safra até 30/04; nos
-// demais meses, dias corridos. A base não traz apontamento de parada, então o
-// ritmo é "por dia de safra", não por dia efetivamente moído — e é assim que
-// ele aparece no rodapé da página.
-var DIAS_MES = [30,31,30,31,31,30];
 var mesSel = "grupo";
 
 function selecao(cod){
@@ -4939,8 +4998,7 @@ function selecao(cod){
     // abril do grupo conta da PRIMEIRA abertura entre as quatro unidades até
     // 30/04 — o maior nº de dias é justamente o da unidade que abriu antes
     return {nome:"Grupo CRV", cor:E.NAVY, a:E.G25, b:E.G26,
-            d25:Math.max.apply(null,UN.map(function(u){ return u.d25; })),
-            d26:Math.max.apply(null,UN.map(function(u){ return u.d26; }))};
+            d25:D25_GRUPO, d26:D26_GRUPO};
   }
   var u = UN.filter(function(x){ return x.cod===cod; })[0];
   // a CRV-GO é dourada e a linha de t/dia também: escurece a barra para as duas
@@ -4948,7 +5006,7 @@ function selecao(cod){
   return {nome:u.nome, cor:(u.cor===E.GOLD?"#8A6D14":u.cor), a:u.a2025, b:u.a2026,
           d25:u.d25, d26:u.d26};
 }
-function diasDe(s,i,ano){ return i===0 ? (ano==="a"?s.d25:s.d26) : DIAS_MES[i]; }
+function diasDe(s,i,ano){ return diasDoMes(i, ano==="a"?s.d25:s.d26); }
 
 function graficoMesAMes(){
   var card = document.getElementById("mes-card");

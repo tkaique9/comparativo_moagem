@@ -29,7 +29,7 @@ do `index.html` — uma página nova entra no módulo acrescentando o id dela al
 | Módulo | # | Página | O que responde |
 |---|---|---|---|
 | — | — | Capa | Números-chave da safra e curva de moagem acumulada do grupo |
-| **Moagem** | 1 | Panorama do grupo | Quanto o grupo moeu mês a mês e como a vantagem sobre 2025 encolhe |
+| **Moagem** | 1 | Panorama do grupo | Quanto o grupo moeu mês a mês, com a moagem/dia das duas safras, e como a vantagem sobre 2025 encolhe |
 | | 2 | Variação por unidade | Quanto cada unidade somou ou subtraiu; o grupo com e sem a CRV-MG |
 | | 3 | Unidade a unidade | Os quatro painéis na mesma escala, mês a mês |
 | | 4 | Mês a mês por empresa | Com filtro de empresa: moagem do mês em barras e moagem média por dia em linha |
@@ -397,6 +397,23 @@ Os dados ficam em `window.DISPONIBILIDADE`: horas do período por mês, a lista 
 grupos e especialidades e, por frota, as horas em oficina de cada mês nas duas safras
 (`null` = fora da conta naquele mês). Fonte: `DISPONIBILIDADE MANUTENÇÃO - frente -
 2025.xlsx` e `- 2026.xlsx`, aba `Base` (% e cadastro) e abas ABR a SET (relatório).
+
+### Moagem por dia (páginas 1 e 4)
+
+As duas páginas usam o mesmo denominador, no helper `diasDoMes(i, dAbril)`:
+abril conta **da abertura da safra até 30/04**, os demais meses são dias corridos.
+Para o **grupo**, abril conta da *primeira* abertura entre as quatro unidades
+(24 dias em 2026, 23 em 2025). A base não traz apontamento de parada, então o
+ritmo é "por dia de safra", não por dia efetivamente moído.
+
+> **Leitura de abril.** Como as unidades abrem em datas diferentes (CRV-MG 07/04,
+> Uruaçu 14/04, CRV-GO 15/04, Rubiataba 16/04), o t/dia do grupo em abril
+> (20.457) fica abaixo da soma dos ritmos de cada unidade com ela já aberta
+> (27.293). É um efeito de abertura escalonada, não de ritmo.
+
+Nas duas páginas o quadro é dividido em **duas faixas**: as barras de tonelada
+embaixo, com eixo próprio a partir do zero, e as linhas de t/dia em cima, com
+escala zoomada. Num quadro só, as duas curvas passariam por dentro das barras.
 
 ### A página 13 (custo por ordem de produção)
 
