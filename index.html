@@ -6801,6 +6801,19 @@ function montaSimulador(){
             ociosa:ociosa, diaFim:diaFim, dias:diaCorr};
   }
 
+  // Moagem/dia que de fato sai, ao lado da digitada. Verde/vermelho quando a
+  // diferença vem do ajuste em %; cinza quando vem do teto de cana ou da
+  // capacidade que migra entre as regiões — nesse caso não é escolha de ritmo.
+  function marca(el,efet,teto,f){
+    var difPct = Math.abs(f-1)>=1e-9, difTeto = Math.abs(efet-teto)>=0.5;
+    el.textContent = (difPct||difTeto) ? "→ "+E.fmtInt(efet) : "";
+    el.style.color = difTeto ? E.MUT
+                             : (f>1.0001 ? E.GREEN : (f<0.9999 ? E.RED : ""));
+    el.title = difTeto ? "Moagem/dia que de fato sai: a cana da região acaba ou "+
+                         "ela recebe a capacidade de uma vizinha que já fechou"
+                       : "";
+  }
+
   function calcula(){
     var resumo=[];
     SIM_CEN.forEach(function(c,ci){
@@ -6813,7 +6826,7 @@ function montaSimulador(){
       // o ritmo em % multiplica a moagem/dia de todas as regiões, para os dois
       // lados: 10 acelera, -20 desacelera. O piso é -100%, que zera o ritmo.
       var rit = Math.max(0, 1 + numSig(p.querySelector(".js-rit").value)/100);
-      var dias=[], taxa=[], pDias=0, cap=0;
+      var dias=[], taxa=[], fator=[], mesBase=[], pDias=0, cap=0;
       SIM_FIM.forEach(function(_,i){
         var mtr = p.querySelector("tr.cen-mes[data-mes='"+i+"']");
         var d = numBR(mtr.querySelector(".js-dias").value);
@@ -6827,41 +6840,48 @@ function montaSimulador(){
           var t = base*f;
           somaBase += base;
           linha.push(t); cap += d*t;
-          // fora de 100%, o valor de fato usado fica ao lado do campo digitado
-          tr.querySelector(".js-ef").textContent =
-            Math.abs(f-1)<1e-9 ? "" : "→ "+E.fmtInt(t);
         });
-        taxa.push(linha);
+        taxa.push(linha); fator.push(f); mesBase.push(somaBase);
         // o total do mes acompanha a soma das regioes, menos enquanto o campo
         // esta sendo digitado: reescrever ali apagaria o que a pessoa escreve
         var mtot = mtr.querySelector(".js-mtot");
         if(document.activeElement!==mtot) mtot.value = E.fmtInt(somaBase);
-        var mef = mtr.querySelector(".js-mef");
-        mef.textContent = Math.abs(f-1)<1e-9 ? "" : "→ "+E.fmtInt(somaBase*f);
-        mef.style.color = f>1.0001 ? E.GREEN : (f<0.9999 ? E.RED : "");
       });
 
       var aColher = SIM_REG.map(function(r){ return r.estimado*(1+aum)-r.colhido; });
       var sim = projeta(dias, taxa, aColher);
       var pVol = sim.feito.reduce(function(a,b){ return a+b; },0);
 
-      // escreve o que cada região e cada mês de fato colhem, já com o teto
+      // escreve o que cada região e cada mês de fato colhem, já com o teto,
+      // e ao lado do campo a moagem/dia que de fato sai: ela se afasta da
+      // digitada pelo ajuste em %, mas também quando a cana da região acaba
+      // (cai) ou quando ela recebe a capacidade de uma vizinha que fechou
+      // (sobe). Sem esse número, dias × moagem/dia não fecha com o volume.
       SIM_FIM.forEach(function(_,i){
+        var dv = dias[i] || 1;
         SIM_REG.forEach(function(r,ri){
           var tr = p.querySelector("tr.cen-reg[data-mes='"+i+"'][data-reg='"+ri+"']");
           tr.querySelector(".reg-dias").textContent = E.fmtInt(dias[i]);
           tr.querySelector(".js-rvol").textContent = E.fmtInt(sim.porMesReg[i][ri]);
+          marca(tr.querySelector(".js-ef"), sim.porMesReg[i][ri]/dv,
+                taxa[i][ri], fator[i]);
         });
         var mtr = p.querySelector("tr.cen-mes[data-mes='"+i+"']");
         mtr.querySelector(".js-mvol").textContent = E.fmtInt(sim.porMes[i]);
+        marca(mtr.querySelector(".js-mef"), sim.porMes[i]/dv,
+              mesBase[i]*fator[i], fator[i]);
       });
 
       var total=SIM_REAL_TON+pVol, falta=prev-SIM_REAL_TON;
       var bisar=sim.resta.reduce(function(a,b){ return a+b; },0);
+      // o ritmo do topo é a média diária da capacidade montada nos campos
+      // (cap = soma de dias × moagem/dia), e não mais o padrão de origem:
+      // assim ele acompanha o que a diretoria digita nos meses e nas regiões
       var ritEl = p.querySelector(".js-rit-ef");
-      ritEl.textContent =
-        E.fmtInt(SIM_REG.reduce(function(a,r){ return a+simPadrao(c,r); },0)*rit)+" t/dia";
-      ritEl.style.color = rit>1.0001 ? E.GREEN : (rit<0.9999 ? E.RED : "");
+      var ritEf = pDias ? cap/pDias : 0, ritBase = simSomaPadrao(c);
+      ritEl.textContent = pDias ? E.fmtInt(ritEf)+" t/dia" : "–";
+      ritEl.style.color = ritEf>ritBase+0.5 ? E.GREEN
+                        : (ritEf<ritBase-0.5 ? E.RED : "");
       var prevEl = p.querySelector(".js-prev");
       prevEl.style.color = aum>0.0001 ? E.GREEN : (aum<-0.0001 ? E.RED : "");
       p.querySelector(".js-pdias").textContent = E.fmtInt(pDias);
@@ -6882,8 +6902,13 @@ function montaSimulador(){
       el.style.color = fecha ? E.GREEN : E.RED;
       p.querySelector(".cf-bisar").style.background = fecha ? "#EAF5EE" : "#FBEDEB";
 
+      // À colher nunca é negativa: a região que já passou da estimativa dela
+      // está fechada. É o mesmo teto que a projeção usa, e por isso
+      // À colher = Projetado + Bisar fecha em qualquer cenário.
       var regs = SIM_REG.map(function(r,ri){
-        return {nome:r.nome, prev:r.estimado*(1+aum), colhido:r.colhido,
+        var pr = r.estimado*(1+aum);
+        return {nome:r.nome, prev:pr, colhido:r.colhido,
+                aColher:Math.max(0,pr-r.colhido),
                 proj:sim.feito[ri], bisar:sim.resta[ri]};
       });
       barra(p.querySelector(".js-barra"), c, prev, pVol, total);
@@ -6902,7 +6927,7 @@ function montaSimulador(){
     function cel(g){
       var fecha = g.bisar<1;     // a região não colhe além da estimativa dela
       return "<td class='sep'>"+E.fmtInt(g.prev)+"</td>"+
-        "<td>"+E.fmtInt(g.prev-g.colhido)+"</td>"+
+        "<td>"+E.fmtInt(g.aColher)+"</td>"+
         "<td>"+E.fmtInt(g.proj)+"</td>"+
         "<td class='bis' style='color:"+(fecha?E.GREEN:E.RED)+"'>"+
         E.fmtInt(g.bisar)+"</td>";
@@ -6915,8 +6940,9 @@ function montaSimulador(){
         "<td>"+E.fmtInt(reg.colhido)+"</td>"+cel(a)+cel(b)+"</tr>";
     }).join("");
     function tot(k){
-      var g={prev:0,colhido:0,proj:0,bisar:0};
+      var g={prev:0,colhido:0,aColher:0,proj:0,bisar:0};
       r[k].regs.forEach(function(x){ g.prev+=x.prev; g.colhido+=x.colhido;
+                                     g.aColher+=x.aColher;
                                      g.proj+=x.proj; g.bisar+=x.bisar; });
       return g;
     }
@@ -6927,7 +6953,8 @@ function montaSimulador(){
       cel(t0)+cel(t1)+"</tr>";
     card.querySelector(".js-qcorpo").innerHTML = corpo;
     card.querySelector(".q-nota").innerHTML =
-      "Previsão da região = Estimado × (1 + aumento). Bisar = Previsão − Colhido − Projetado. "+
+      "Previsão da região = Estimado × (1 + aumento). À colher = Previsão − Colhido, "+
+      "nunca negativa. Bisar = À colher − Projetado. "+
       "O cenário 1 parte da média diária da safra de cada região e o cenário 2 do ritmo de "+
       "agosto e setembro ("+E.fmtInt(SIM_ULT_TDIA)+" t/dia contra "+
       E.fmtInt(SIM_REAL_TON/SIM_REAL_DIAS)+" t/dia), aplicado às regiões na mesma proporção — "+
