@@ -1,9 +1,8 @@
 # Comparativo de Indicadores — Unidades do Grupo
 
 Apresentação de diretoria com a moagem das quatro unidades do Grupo CRV, safra 2026
-contra safra 2025, na mesma janela nos dois anos: **abril a 15 de outubro**. Só o
-realizado do simulador (página 15) fica em abril a setembro, porque ele projeta de
-outubro em diante.
+contra safra 2025, na mesma janela nos dois anos: **abril a 15 de outubro**. O
+simulador (página 15) parte desse realizado e projeta de 16/10 a dezembro.
 
 Mesmo padrão visual e de navegação do relatório `comparativo_colhedora`: página única,
 uma tela por tópico, sem rolagem de documento.
@@ -45,7 +44,7 @@ do `index.html` — uma página nova entra no módulo acrescentando o id dela al
 | **Manutenção** | 12 | Disponibilidade mecânica | Disponibilidade % da frota mês a mês (abril a 15/10), 2025 x 2026, com filtro de especialidades |
 | | 13 | Custo por ordem de produção | Consumo em R$ por ordem de produção, 2025 x 2026: economia ou aumento, por preço e por volume |
 | | 14 | Custo por família de equipamento | O custo da página 13 aberto por família e especialidade, com o resumo por ordem de produção |
-| **Projeção** | 15 | Simulador da reta final | Dois cenários editáveis de outubro a dezembro, com o quanto ainda bisa |
+| **Projeção** | 15 | Simulador da reta final | Dois cenários editáveis de 16/10 a dezembro, com o quanto ainda bisa |
 
 ### A capa
 
@@ -491,10 +490,37 @@ brutos ficam em `window.CUSTO_ESP`; o rateio é feito ao carregar a página.
 ### A página 15 (simulador da reta final)
 
 Reproduz a `Projeção Safra.xlsx` em dois cenários lado a lado, para rodar ao vivo na
-reunião. Abril a setembro entram **travados**, com o realizado da CRV-MG (1.717.690 t
-em 177 dias). Outubro, novembro e dezembro são a projeção, com **dias** e
-**moagem/dia** editáveis; a **previsão da safra** também é editável. Tudo recalcula a
-cada tecla, e o botão do cabeçalho devolve os cenários aos valores da planilha.
+reunião. Abril a 15 de outubro entram **travados**, com o realizado da CRV-MG
+(1.830.353 t em 192 dias, 9.533 t/dia). A reta final é a projeção: **outubro de 16 a
+31** (16 dias), novembro (30) e dezembro (15), com **dias** e **moagem/dia**
+editáveis; a **previsão da safra** também é editável. Tudo recalcula a cada tecla, e o
+botão do cabeçalho devolve os cenários aos valores de origem.
+
+O realizado é tudo o que está em `window.MOAGEM` para a CRV-MG: quando a moagem
+ganhar mais dias, o simulador acompanha sozinho, e a reta final começa no dia seguinte
+ao `fimDia`.
+
+**Os dois cenários:** o 1 parte do ritmo da safra (9.533 t/dia); o 2 do ritmo recente,
+os dois últimos meses do realizado — setembro e 1 a 15/10, 9.351 t/dia. Até 15/10 o
+cenário 2 era agosto–setembro.
+
+**Regiões.** Estimado e colhido de cada região vêm do Power BI "Acompanhamento de
+entrega de matéria prima" (`SIM_REG`, hoje o de 16/10/2026 05:34). O Power BI fecha
+num horário diferente da moagem — o de 16/10 05:34 já contava 1.684,92 t do dia 16 —,
+então o colhido das regiões é **ajustado para somar exatamente o realizado**, rateando
+a diferença na proporção do colhido (maior resto). A coluna do quadro se chama "Colhido
+até 15/10".
+
+> **Erro corrigido em 16/10.** Até aqui, *Falta* saía da moagem (1.717.690 t) e *À
+> colher* do colhido das regiões digitado à parte (1.717.553 t). Com as duas bases, o
+> total da safra saía 2.443.311 t, 137 t acima da previsão, com bisar zero, e Falta
+> (725.484) ≠ Projetado (725.621) + Bisar (0). Com um realizado só, Falta = Σ À colher
+> = Projetado + Bisar, sempre. Também o ritmo do topo (soma das regiões arredondadas,
+> 9.703) e o do texto (realizado ÷ dias, 9.704) agora são o mesmo número: as taxas das
+> regiões são arredondadas com maior resto para somar o t/dia do grupo.
+
+Para atualizar as regiões, troque `colhidoBI` (e `estimado`, se mudar) em `SIM_REG` e a
+data em `SIM_REG_FONTE`.
 
 #### Como se mexe na moagem/dia
 
@@ -524,30 +550,26 @@ As contas são as mesmas do Excel:
 
 ```
 Volume do mês = dias × moagem/dia
-Falta         = Previsão − Realizado (abr–set)
-Bisar         = Falta − Projetado (out+nov+dez)
+Falta         = Previsão − Realizado (abril a 15/10)
+Bisar         = Falta − Projetado (16/10 a dezembro)
 ```
 
-**Bisar** é o que ainda falta para a previsão depois da reta final. Quando a projeção
-passa da previsão o número fica negativo: a página então troca o rótulo para "Sobra
-sobre a previsão" e pinta de verde, em vez de mostrar um bisar negativo.
+**Bisar** é o que ainda falta para a previsão depois da reta final. Nenhuma região
+colhe além da própria estimativa: quando uma zera, a moagem/dia dela passa para a
+região seguinte (na ordem da lista) que ainda tem cana. Por isso o bisar nunca fica
+negativo — quando toda a cana acaba antes do fim, o rótulo diz em que dia ("cana acaba
+no dia 65 de 66"). Consequência da ordem: a região que fica com o bisar é a última da
+fila que ainda tem cana (hoje, a Região 3), não necessariamente a mais lenta.
 
-Cada cenário tem duas peças visuais:
+A **barra de progresso** de cada cenário mostra realizado (cheio), projetado
+(esmaecido) e o que falta (vermelho), com um traço na previsão. O texto de baixo traz o
+ritmo que zeraria o bisar (`Falta ÷ dias da reta final`): hoje 10.046 t/dia nos 61 dias,
+contra 9.533 t/dia da safra. Com o ritmo da safra, a cana acaba por volta de 19/12 — o
+Power BI dá "fim safra ritmo atual 20/12/2026" —, então com dezembro até o dia 15 o
+cenário 1 bisa 31.308 t.
 
-- Uma **barra de progresso** com realizado (cheio), projetado (esmaecido) e o que falta
-  (vermelho), e um traço marcando a previsão.
-- No pé da coluna, um gráfico de **moagem por dia de abril a dezembro**, com os seis
-  meses realizados ao lado dos três projetados e a linha tracejada do **ritmo que
-  zeraria o bisar** (`Falta ÷ dias da reta final`). É o que responde à pergunta
-  seguinte ao "bisa 120 mil t": dá para alcançar? Hoje são 10.294 t/dia, entre o ritmo
-  de agosto (10.946) e o de setembro (10.271).
-
-Esse gráfico ocupa só a folga da coluna: tem `flex:1 1 auto`, então estica no monitor
-grande e, quando sobra menos de 78px, não é desenhado em vez de espremer. Um segundo
-tier de CSS abaixo de 660px de altura mantém a coluna inteira sem corte.
-
-O realizado sai de `window.MOAGEM` (unidade CRV-MG), não de uma cópia: os dias de abril
-são contados da abertura da safra, igual à página 4.
+Os dias de abril do realizado são contados da abertura da safra, igual à página 4, e
+outubro conta 15 dias.
 
 ## Atualizar os dados
 
@@ -583,10 +605,9 @@ frases ("a barra de 2026 é maior em 6 dos 7 meses", "subindo forte no fim da ja
 são montadas a partir dos números.
 
 **A manutenção tem listas de meses próprias** (`DSP.meses`, `COP.meses`) e é
-atualizada à parte, fora do script. **O simulador segue em abril a setembro:** usa
-`MESES_AS` (os seis primeiros meses), não `MESES`, e o realizado dele soma só abril a
-setembro da CRV-MG — ele projeta de outubro em diante. Se o pedaço de outubro for virar
-realizado, é ali que se mexe.
+atualizada à parte, fora do script. **O simulador acompanha a moagem:** o realizado
+dele é toda a CRV-MG em `MOAGEM` e a reta final começa no dia seguinte ao `fimDia`; só
+o colhido por região (`SIM_REG`, do Power BI) é atualizado à mão.
 
 ### O bloco da moagem
 

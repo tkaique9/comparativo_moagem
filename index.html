@@ -1020,7 +1020,7 @@ nav.toc a.on{color:var(--tm-ink);border-bottom-color:var(--accent);font-weight:6
 <div>
 <div class="s-eyebrow">15 &middot; Simulador da reta final &middot; CRV Minas Gerais</div>
 <h2 class="s-title">Quanto falta para fechar a previsão</h2>
-<p class="s-sub">Abril a setembro entram travados, com o que já foi moído. Outubro, novembro e dezembro são a projeção: mude os dias, a moagem por dia ou a própria previsão da safra e os dois cenários recalculam na hora. <b>Bisar</b> é o que ainda falta para a previsão depois da reta final.</p>
+<p class="s-sub"><span class="js-sim-janela">Abril a 15 de outubro entram travados, com o que já foi moído. De 16/10 a dezembro é a projeção</span>: mude os dias, a moagem por dia ou a própria previsão da safra e os dois cenários recalculam na hora. <b>Bisar</b> é o que ainda falta para a previsão depois da reta final.</p>
 </div>
 <div class="s-right">
 <button type="button" class="sim-reset" id="sim-reset">Restaurar cenários</button>
@@ -4789,10 +4789,7 @@ window.MoagemEngine = {
 "use strict";
 var E = window.MoagemEngine;
 var UN=E.UN, MESES=E.MESES, MC=E.MC;
-// O realizado do simulador (página 15) segue em abril a setembro: ele projeta
-// de outubro em diante, então não usa o pedaço de outubro que já está em
-// MOAGEM. A manutenção tem as próprias listas (DSP.meses, COP.meses).
-var MESES_AS = MESES.slice(0,6);
+// A manutenção tem as próprias listas de meses (DSP.meses, COP.meses).
 
 // escreve um número num KPI/chip marcando o negativo: o dourado sozinho faria
 // "-4,4%" parecer um resultado positivo de relance
@@ -6923,59 +6920,103 @@ function dspAplica(sel){
 
 /* ============================================================
    SIMULADOR DA RETA FINAL — CRV-MG, por região
-   Abril a setembro entram travados com o realizado; outubro, novembro e
-   dezembro são a projeção, com os dias do mês e a moagem/dia de CADA
-   REGIÃO editáveis. Clicar no mês abre as regiões.
+   Toda a moagem da CRV-MG que está em MOAGEM entra travada como realizado
+   (abril a 15/10). A reta final começa no dia seguinte — o resto de outubro,
+   novembro e dezembro —, com os dias do mês e a moagem/dia de CADA REGIÃO
+   editáveis. Clicar no mês abre as regiões.
 
      Previsão da região = Estimado × (1 + aumento%)
      Falta              = Previsão − Realizado
-     Bisar              = Falta − Projetado (out+nov+dez)
+     Bisar              = Falta − Projetado
 
-   "Bisar" é o que ainda falta para a previsão depois da reta final;
-   negativo quer dizer que a projeção passa da previsão.
+   "Bisar" é o que ainda falta para a previsão depois da reta final.
+
+   O realizado é UM número só, a moagem da CRV-MG, e o colhido das regiões é
+   ajustado para somar exatamente ele (ver SIM_REG). Antes, Falta saía da
+   moagem e À colher do colhido das regiões, que fecham em horários
+   diferentes: o total da safra passava da previsão com bisar zero.
    ============================================================ */
 var SIM_MG = UN.filter(function(u){ return u.cod==="CRV-MG"; })[0];
-var SIM_DIAS_MES = [30,31,30,31,31,30];          // abril..setembro
-var SIM_FIM = [{mes:"Outubro",dias:31},{mes:"Novembro",dias:30},{mes:"Dezembro",dias:15}];
+var SIM_NOMES = ["Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+var SIM_DIAS_CHEIO = [30,31,30,31,31,30,31,30,31];
+var SIM_DEZ_DIAS = 15;                  // a safra fecha em meados de dezembro
 
-// Acompanhamento por região (estimativa). O Estimado é a previsão de cada
-// região e o Colhido é o que ela já entregou de abril a setembro.
+// dias de cada mês do realizado: abril conta da abertura da safra até 30/04;
+// o último mês, se parcial, só os dias da janela (outubro: 15)
+function simDiasRealizado(i){
+  return i===0 ? (30-parseInt(SIM_MG.ini2026.slice(8,10),10)+1) : E.diasMes(i);
+}
+var SIM_REAL_TON  = E.total(SIM_MG.a2026);       // moagem da CRV-MG: é ela que manda
+var SIM_REAL_DIAS = MESES.reduce(function(a,_,i){ return a+simDiasRealizado(i); },0);
+var SIM_TDIA_SAFRA = SIM_REAL_TON/SIM_REAL_DIAS;
+
+// Reta final: o resto do último mês do realizado (16 a 31/10) e os meses
+// seguintes até dezembro.
+var SIM_FIM = (function(){
+  var f=[], u=E.ULT;
+  if(E.FIM_DIA) f.push({mes:SIM_NOMES[u]+" ("+(E.FIM_DIA+1)+"–"+SIM_DIAS_CHEIO[u]+")",
+                        dias:SIM_DIAS_CHEIO[u]-E.FIM_DIA});
+  for(var m=u+1; m<SIM_NOMES.length; m++)
+    f.push({mes:SIM_NOMES[m], dias: m===SIM_NOMES.length-1 ? SIM_DEZ_DIAS : SIM_DIAS_CHEIO[m]});
+  return f;
+})();
+// "16/10" — onde a reta final começa
+var SIM_INI_TXT = E.FIM_DIA ? (E.FIM_DIA+1)+"/"+("0"+(E.ULT+4)).slice(-2)
+                            : "01/"+("0"+(E.ULT+5)).slice(-2);
+
+// Maior resto: arredonda cada parcela para inteiro sem que a soma saia do alvo.
+function maiorResto(bruto, alvo){
+  var ints  = bruto.map(function(v){ return Math.floor(v); });
+  var falta = Math.round(alvo) - ints.reduce(function(a,b){ return a+b; },0);
+  bruto.map(function(v,i){ return {i:i, r:v-Math.floor(v)}; })
+       .sort(function(a,b){ return b.r-a.r; })
+       .slice(0, Math.max(0, Math.min(falta, bruto.length)))
+       .forEach(function(o){ ints[o.i]++; });
+  return ints;
+}
+
+// Acompanhamento por região (estimativa), do Power BI "Acompanhamento de
+// entrega de matéria prima" atualizado em 16/10/2026 05:34. O Estimado é a
+// previsão de cada região; colhidoBI é o que o Power BI mostra como colhido.
+var SIM_REG_FONTE = "Power BI de 16/10/2026 05:34";
 var SIM_REG = [
-  {id:"1",      nome:"Região 1", ha:11593, estimado:1084758, colhido:917281},
-  {id:"2",      nome:"Região 2", ha:9354,  estimado:619781,  colhido:335593},
-  {id:"3",      nome:"Região 3", ha:8779,  estimado:564037,  colhido:336993},
-  {id:"CARGIL", nome:"Cargil",   ha:2608,  estimado:174598,  colhido:127686}
+  {id:"1",      nome:"Região 1", ha:11593, estimado:1084758, colhidoBI:961219},
+  {id:"2",      nome:"Região 2", ha:9354,  estimado:619781,  colhidoBI:378544},
+  {id:"3",      nome:"Região 3", ha:8779,  estimado:564037,  colhidoBI:355616},
+  {id:"CARGIL", nome:"Cargil",   ha:2608,  estimado:174598,  colhidoBI:136658}
 ];
-// cenário 2 começa com a estimativa 5% acima, para os dois já nascerem diferentes
-// os dois cenários nascem com ritmos diferentes: o da safra inteira e o dos
-// dois últimos meses fechados
+// O Power BI fecha num horário diferente da moagem: o de 16/10 05:34 já conta
+// 1.684,92 t do dia 16. O colhido de cada região é ajustado para somar
+// exatamente o realizado, rateando a diferença na proporção do colhido (maior
+// resto). Assim Falta = Σ À colher, e Falta = Projetado + Bisar em qualquer cenário.
+var SIM_REG_COLH_BI = SIM_REG.reduce(function(a,r){ return a+r.colhidoBI; },0);
+maiorResto(SIM_REG.map(function(r){ return r.colhidoBI*SIM_REAL_TON/SIM_REG_COLH_BI; }), SIM_REAL_TON)
+  .forEach(function(v,i){ SIM_REG[i].colhido = v; });
+var SIM_REG_COLH  = SIM_REG.reduce(function(a,r){ return a+r.colhido; },0);   // = SIM_REAL_TON
+var SIM_REG_EST   = SIM_REG.reduce(function(a,r){ return a+r.estimado; },0);
+
+// Dois padrões por região: a média diária da safra inteira e o ritmo recente —
+// os dois últimos meses do realizado (setembro e 1 a 15/10). A base só traz o
+// colhido TOTAL de cada região, então o ritmo recente é aplicado pelo fator do
+// grupo — a razão entre o t/dia recente e o t/dia da safra —, assumindo que as
+// regiões mudaram de ritmo na mesma proporção. Está dito na nota do quadro.
+var SIM_ULT_I = [E.ULT-1, E.ULT];
+var SIM_ULT_TDIA = (SIM_MG.a2026[SIM_ULT_I[0]]+SIM_MG.a2026[SIM_ULT_I[1]]) /
+                   (simDiasRealizado(SIM_ULT_I[0])+simDiasRealizado(SIM_ULT_I[1]));
+var SIM_ULT_ROT = MC[SIM_ULT_I[0]].toLowerCase()+"–"+
+                  (E.FIM_DIA ? E.FIM_DIA+"/" : "")+MC[SIM_ULT_I[1]].toLowerCase();   // "set–15/out"
+var SIM_FATOR_ULT = SIM_ULT_TDIA / SIM_TDIA_SAFRA;
+// a soma das regiões fecha no t/dia do grupo (maior resto): o ritmo do topo e o
+// texto mostram o mesmo número
+var SIM_P1 = maiorResto(SIM_REG.map(function(r){ return r.colhido/SIM_REAL_DIAS; }), SIM_TDIA_SAFRA);
+var SIM_P2 = maiorResto(SIM_REG.map(function(r){ return r.colhido/SIM_REAL_DIAS*SIM_FATOR_ULT; }), SIM_ULT_TDIA);
+SIM_REG.forEach(function(r,i){ r.padrao = SIM_P1[i]; r.padrao2 = SIM_P2[i]; });
+
+// os dois cenários nascem com ritmos diferentes: o da safra inteira e o recente
 var SIM_CEN = [
   {rot:"Cenário 1", sub:"ritmo da safra", cor:"#2E86C1", aumento:0, base:"safra"},
-  {rot:"Cenário 2", sub:"ritmo de ago–set", cor:"#C9A227", aumento:0, base:"ult"}
+  {rot:"Cenário 2", sub:"ritmo de "+SIM_ULT_ROT, cor:"#C9A227", aumento:0, base:"ult"}
 ];
-
-// dias de cada mês do realizado: abril conta da abertura da safra até 30/04
-function simDiasRealizado(i){
-  return i===0 ? (30-parseInt(SIM_MG.ini2026.slice(8,10),10)+1) : SIM_DIAS_MES[i];
-}
-// só abril a setembro: o simulador projeta de outubro em diante, então o
-// realizado dele não inclui o pedaço de outubro que já está em MOAGEM
-var SIM_REAL_TON  = E.total(SIM_MG.a2026.slice(0,6));   // moagem da CRV-MG: é ela que manda
-var SIM_REAL_DIAS = MESES_AS.reduce(function(a,_,i){ return a+simDiasRealizado(i); },0);
-var SIM_REG_COLH  = SIM_REG.reduce(function(a,r){ return a+r.colhido; },0);
-var SIM_REG_EST   = SIM_REG.reduce(function(a,r){ return a+r.estimado; },0);
-// Dois padrões por região: a média diária da safra inteira e a dos dois últimos
-// meses fechados (agosto e setembro). A base só traz o colhido TOTAL de cada
-// região, então o ritmo recente é aplicado pelo fator do grupo — a razão entre
-// o t/dia de ago+set e o t/dia da safra —, assumindo que as regiões
-// aceleraram na mesma proporção. Está dito na nota do quadro.
-var SIM_ULT_TDIA = (SIM_MG.a2026[4]+SIM_MG.a2026[5]) /
-                   (simDiasRealizado(4)+simDiasRealizado(5));
-var SIM_FATOR_ULT = SIM_ULT_TDIA / (SIM_REAL_TON/SIM_REAL_DIAS);
-SIM_REG.forEach(function(r){
-  r.padrao  = Math.round(r.colhido/SIM_REAL_DIAS);
-  r.padrao2 = Math.round(r.padrao*SIM_FATOR_ULT);
-});
 function simPadrao(c,r){ return c.base==="ult" ? r.padrao2 : r.padrao; }
 function simSomaPadrao(c){
   return SIM_REG.reduce(function(a,r){ return a+simPadrao(c,r); },0);
@@ -6984,16 +7025,8 @@ function simSomaPadrao(c){
 // cada uma colheu no historico do cenario. Maior resto para a soma das quatro
 // fechar exatamente no numero que a diretoria digitou.
 function simRateia(c,total){
-  var base = SIM_REG.map(function(r){ return simPadrao(c,r); });
   var soma = simSomaPadrao(c) || 1;
-  var bruto = base.map(function(v){ return total*v/soma; });
-  var ints  = bruto.map(function(v){ return Math.floor(v); });
-  var falta = Math.round(total) - ints.reduce(function(a,b){ return a+b; },0);
-  bruto.map(function(v,i){ return {i:i, r:v-Math.floor(v)}; })
-       .sort(function(a,b){ return b.r-a.r; })
-       .slice(0, Math.max(0, Math.min(falta, SIM_REG.length)))
-       .forEach(function(o){ ints[o.i]++; });
-  return ints;
+  return maiorResto(SIM_REG.map(function(r){ return total*simPadrao(c,r)/soma; }), total);
 }
 
 function numBR(txt){
@@ -7010,6 +7043,9 @@ function numSig(txt){
 
 function montaSimulador(){
   var card = document.querySelector("#simulador .js-card");
+  document.querySelector("#simulador .js-sim-janela").textContent =
+    E.JANELA.charAt(0).toUpperCase()+E.JANELA.slice(1)+" entra travado, com o que já foi moído. De "+
+    SIM_INI_TXT+" a dezembro é a projeção";
 
   function painel(c,ci){
     function campo(cls,val,larg,dica){
@@ -7047,11 +7083,11 @@ function montaSimulador(){
           "<i class='cen-pipe'>|</i>Ritmo"+
           "<i>&plusmn;</i>"+campo("js-rit",0,36)+"%"+
           "<i>=</i><b class='js-rit-ef'>–</b></span></div>"+
-      "<div class='cen-real'>Realizado de abril a setembro <b>"+E.fmtInt(SIM_REAL_TON)+" t</b>"+
+      "<div class='cen-real'>Realizado de "+E.JANELA+" <b>"+E.fmtInt(SIM_REAL_TON)+" t</b>"+
         "<i>"+SIM_REAL_DIAS+" dias &middot; "+E.fmtInt(SIM_REAL_TON/SIM_REAL_DIAS)+" t/dia</i></div>"+
       "<div class='cen-tabwrap'><table class='cen-tab'><thead><tr><th class='l'>Reta final</th><th>Dias</th>"+
         "<th>Moagem/dia</th><th>Volume do mês</th></tr></thead><tbody>"+linhas+
-        "<tr class='cen-sub'><td class='l'>Projetado out–dez</td><td class='js-pdias'>–</td>"+
+        "<tr class='cen-sub'><td class='l'>Projetado "+SIM_INI_TXT+"–dez</td><td class='js-pdias'>–</td>"+
         "<td class='js-ptdia'>–</td><td class='js-pvol'>–</td></tr>"+
       "</tbody></table></div>"+
       "<svg class='js-barra cen-barra'></svg>"+
@@ -7065,9 +7101,9 @@ function montaSimulador(){
     "<div class='q-reg'><h4>Quanto vai bisar por região</h4>"+
     "<table class='q-tab'><thead>"+
       "<tr><th class='l' rowspan='2'>Região</th><th rowspan='2'>ha</th>"+
-        "<th rowspan='2'>TCH</th><th rowspan='2'>Colhido</th>"+
-        "<th class='c1 sep' colspan='4'>Cenário 1 &middot; ritmo da safra</th>"+
-        "<th class='c2 sep' colspan='4'>Cenário 2 &middot; ritmo de ago–set</th></tr>"+
+        "<th rowspan='2'>TCH</th><th rowspan='2'>Colhido<br>até "+E.FIM_DATA+"</th>"+
+        "<th class='c1 sep' colspan='4'>"+E.esc(SIM_CEN[0].rot)+" &middot; "+E.esc(SIM_CEN[0].sub)+"</th>"+
+        "<th class='c2 sep' colspan='4'>"+E.esc(SIM_CEN[1].rot)+" &middot; "+E.esc(SIM_CEN[1].sub)+"</th></tr>"+
       "<tr><th class='c1 sep'>Previsão</th><th class='c1'>À colher</th>"+
         "<th class='c1'>Projetado</th><th class='c1'>Bisar</th>"+
         "<th class='c2 sep'>Previsão</th><th class='c2'>À colher</th>"+
@@ -7269,15 +7305,17 @@ function montaSimulador(){
       "Previsão da região = Estimado × (1 + aumento). À colher = Previsão − Colhido, "+
       "nunca negativa. Bisar = À colher − Projetado. "+
       "O cenário 1 parte da média diária da safra de cada região e o cenário 2 do ritmo de "+
-      "agosto e setembro ("+E.fmtInt(SIM_ULT_TDIA)+" t/dia contra "+
-      E.fmtInt(SIM_REAL_TON/SIM_REAL_DIAS)+" t/dia), aplicado às regiões na mesma proporção — "+
+      SIM_ULT_ROT+" ("+E.fmtInt(SIM_ULT_TDIA)+" t/dia contra "+
+      E.fmtInt(SIM_TDIA_SAFRA)+" t/dia), aplicado às regiões na mesma proporção — "+
       "a base traz só o colhido total de cada uma. "+
       "Nenhuma região colhe além da estimativa: ao zerar, a moagem/dia dela passa "+
       "para a região seguinte que ainda tem cana, e por isso o projetado de uma "+
       "região pode passar da sua própria capacidade diária. "+
-      "O colhido somado das regiões é "+E.fmtInt(SIM_REG_COLH)+" t, "+
-      E.fmtInt(SIM_REAL_TON-SIM_REG_COLH)+" t abaixo da moagem da CRV-MG ("+
-      E.fmtInt(SIM_REAL_TON)+" t) usada no total de cada cenário — defasagem de fechamento.";
+      "Colhido até "+E.FIM_DATA+": o do "+SIM_REG_FONTE+" ("+E.fmtInt(SIM_REG_COLH_BI)+" t) ajustado à moagem "+
+      "da CRV-MG até "+E.FIM_DATA+" ("+E.fmtInt(SIM_REAL_TON)+" t); a diferença de "+
+      E.fmtInt(Math.abs(SIM_REG_COLH_BI-SIM_REAL_TON))+" t — o que o Power BI já contava do dia seguinte — "+
+      "é rateada entre as regiões na proporção do colhido. Assim o realizado é um número só, e "+
+      "Falta = À colher = Projetado + Bisar.";
   }
 
   // barra de progresso: realizado + projetado contra a previsão
@@ -7329,7 +7367,7 @@ function montaSimulador(){
       " <span class='sep'>|</span> Para zerar o bisar seria preciso <strong>"+
       (r[0].pDias ? E.fmtInt((r[0].prev-SIM_REAL_TON)/r[0].pDias)+" t/dia" : "–")+
       "</strong> nos "+E.fmtInt(r[0].pDias)+" dias da reta final, contra "+
-      E.fmtInt(SIM_REAL_TON/SIM_REAL_DIAS)+" t/dia de abril a setembro.";
+      E.fmtInt(SIM_TDIA_SAFRA)+" t/dia de "+E.JANELA+".";
   }
 
   // abrir e fechar o mês: só um aberto por vez, para a coluna não estourar
