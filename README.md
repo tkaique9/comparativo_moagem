@@ -408,8 +408,8 @@ ritmo é "por dia de safra", não por dia efetivamente moído.
 
 > **Leitura de abril.** Como as unidades abrem em datas diferentes (CRV-MG 07/04,
 > Uruaçu 14/04, CRV-GO 15/04, Rubiataba 16/04), o t/dia do grupo em abril
-> (20.457) fica abaixo da soma dos ritmos de cada unidade com ela já aberta
-> (27.293). É um efeito de abertura escalonada, não de ritmo.
+> (21.287) fica abaixo da soma dos ritmos de cada unidade com ela já aberta
+> (28.575). É um efeito de abertura escalonada, não de ritmo.
 
 Nas duas páginas o quadro é dividido em **duas faixas**: as barras de tonelada
 embaixo, com eixo próprio a partir do zero, e as linhas de t/dia em cima, com
@@ -560,7 +560,17 @@ por mês com `maq`, `dias`, `horas` ou `km`, `litros`, `ton`, `gasto`, `comb`, `
 e (nas duas de transporte) `viagens`. Um equipamento novo entra como mais uma chave
 aqui e mais uma entrada em `PAGINAS`, no JS — a página se monta sozinha.
 
-Fonte dos dados: `MOAGEM COMPARATIVO.xlsx` (UGS), abas `Planilha1`, `colhedora`,
+Fonte dos dados: a **moagem mensal** (`window.MOAGEM`, `a2025` / `a2026`) vem de
+`pesagem 2025 e 2026.xlsx` — pesagem por empresa e mês, arredondada para tonelada
+inteira. O arquivo identifica a empresa só pelo `id_empresa`: **8 = CRV-MG, 4 = CRV-GO,
+2 = Rubiataba, 6 = Uruaçu** (conferido pelos valores). Em 2026 essa pesagem é igual à
+moagem do boletim industrial (`vw_boletim_industrial_unificado_mensal`). Antes, a moagem
+vinha da aba `Planilha1` da `MOAGEM COMPARATIVO.xlsx`; a troca mudou Rubiataba (+10,4% em
+2025 e +12,5% em 2026, abril a setembro), Uruaçu (+4,3% e +3,9%) e três meses da CRV-GO
+(abril e junho de 2025, setembro de 2026). A CRV-MG ficou igual. As datas de abertura
+(`ini2025` / `ini2026`) continuam da `Planilha1` da `MOAGEM COMPARATIVO.xlsx`.
+
+Os demais dados: `MOAGEM COMPARATIVO.xlsx` (UGS), abas `colhedora`,
 `caminhão` e `transbordo`; `Produção localizada - SAFRA 2025/2026.xlsx`, aba
 `Banco Localizada`, para a irrigação localizada; e `FECHAMENTO FINAL SAFRA 2025.xlsx`
 e `FECHAMENTO IRRIGAÇÃO SAFRA 2026.xlsx`, aba `banco de dados`, para a convencional.
