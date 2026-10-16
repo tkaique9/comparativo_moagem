@@ -452,23 +452,22 @@ que cai é bom: economia em verde, aumento em vermelho.
 - **Ao lado:** os cards do acumulado 2025, 2026 e da diferença, aberta em **efeito
   preço** e **efeito volume**: diferença = (R$ médio 26 − R$ médio 25) × qtd 26 +
   (qtd 26 − qtd 25) × R$ médio 25, ordem a ordem — as duas parcelas somam exatamente
-  a diferença. Ex.: o aumento de pneus é sobretudo volume (1.098 → 1.843 unidades); o
-  de lubrificantes é preço (R$ 13,06 → R$ 16,83 por unidade).
+  a diferença. Ex.: o aumento de pneus é sobretudo volume (1.073 → 1.814 unidades); o
+  de lubrificantes é preço (R$ 13,10 → R$ 16,80 por unidade).
 
-No total, as seis ordens foram de R$ 35,46 mi para R$ 34,94 mi — economia de R$ 516
-mil (−1,5%): o volume tirou R$ 3,87 mi e o preço somou +R$ 3,35 mi.
+No total, as seis ordens foram de R$ 38,52 mi para R$ 34,33 mi — economia de R$ 4,19
+mi (−10,9%): o volume tirou R$ 5,40 mi e o preço somou +R$ 1,21 mi.
 
 A quantidade está na unidade de cada ordem (litros, peças, pneus, horas…) e por isso
 não se soma entre ordens. Fonte: `consumo ordem produção.xlsx`, aba `mes`, com as
-colunas **A = 2026 e B = 2025** — atenção: na versão de 16/10 a planilha inverteu as
-colunas (antes A era 2025); os meses fechados de 2025 batem com a versão anterior na
-coluna B. A aba `especialidade` entra só na página 14. Os dados ficam em
+colunas **A = 2026 e B = 2025** (abril a setembro batem exatamente com a versão
+anterior da página). A aba `especialidade` entra só na página 14. Os dados ficam em
 `window.CUSTO_OP`.
 
 ### A página 14 (custo por família de equipamento)
 
-O **mesmo custo da página 13** — R$ 35,46 mi em 2025 e R$ 34,94 mi em 2026 (abril a
-15/10), economia de R$ 516 mil — aberto por **família de equipamento** (o prefixo da especialidade:
+O **mesmo custo da página 13** — R$ 38,52 mi em 2025 e R$ 34,33 mi em 2026 (abril a
+15/10), economia de R$ 4,19 mi — aberto por **família de equipamento** (o prefixo da especialidade:
 COLHEDORA, CAMINHAO, TRATOR…) e, dentro dela, por especialidade.
 
 - **À esquerda:** a tabela por família, da maior economia ao maior aumento, com 2025,
@@ -477,17 +476,16 @@ COLHEDORA, CAMINHAO, TRATOR…) e, dentro dela, por especialidade.
 - **À direita:** o **resumo por ordem de produção**, igual ao da página 13. Clicar numa
   ordem (ou usar o seletor) filtra a tabela; clicar de novo, ou no Total, volta.
 
-**Como sai o número (rateio).** A aba `especialidade` da planilha, sem a linha
-"(Em branco)" (ajustes sem frota, com valor negativo), soma R$ 35,55 mi e R$ 34,74 mi —
-perto, mas não igual à aba `mes`. Por isso ela entra só com a
+**Como sai o número (rateio).** A aba `especialidade` da planilha fecha com a aba
+`mes` (diferença de poucos reais, de arredondamento). Mesmo assim ela entra só com a
 **divisão**: o total de cada ordem de produção, em cada safra, é o da página 13, e ele
 é dividido entre as especialidades pela participação de cada uma naquela ordem e safra
 na aba de especialidades. Assim o total e o resumo por ordem batem com a página 13, e a
 página avisa isso embaixo do resumo.
 
-Com a versão de 16/10 as duas abas ficam próximas, e o rateio quase não mexe na
-leitura: a colhedora tem a maior economia (−R$ 2,55 mi) e o caminhão o maior aumento
-(+R$ 2,47 mi). Célula vazia na planilha = sem consumo (vale 0). Os dados
+Como as duas abas fecham, o rateio não mexe na leitura: a colhedora tem a maior
+economia (−R$ 3,86 mi), seguida do trator (−R$ 1,88 mi), e o caminhão o maior aumento
+(+R$ 1,79 mi). Célula vazia na planilha = sem consumo (vale 0). Os dados
 brutos ficam em `window.CUSTO_ESP`; o rateio é feito ao carregar a página.
 
 ### A página 15 (simulador da reta final)
