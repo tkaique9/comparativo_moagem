@@ -1,7 +1,9 @@
 # Comparativo de Indicadores — Unidades do Grupo
 
 Apresentação de diretoria com a moagem das quatro unidades do Grupo CRV, safra 2026
-contra safra 2025, na janela de **abril a setembro** nos dois anos.
+contra safra 2025, na mesma janela nos dois anos: **abril a 15 de outubro** para moagem,
+frota e irrigação, e **abril a setembro** para a manutenção (páginas 12 a 14) e para o
+realizado do simulador (página 15), que ainda não receberam outubro.
 
 Mesmo padrão visual e de navegação do relatório `comparativo_colhedora`: página única,
 uma tela por tópico, sem rolagem de documento.
@@ -60,7 +62,7 @@ curta (respeita `prefers-reduced-motion`). Os tamanhos escalam com a janela, do 
 - **Base:** os quatro números da safra.
 
 Tudo é calculado em tempo de execução a partir de `window.MOAGEM`, e a janela ("abril a
-setembro") sai de `meses`.
+15 de outubro") sai de `meses` e `fimDia` (ver *Mês parcial*).
 
 **A logo.** É a logo azul oficial da CRV Industrial (`LOGOMARCA CRV AZUL.png`, do pacote de
 logos da marca), sem recolorir, direto sobre o fundo escuro, sem painel em volta. O original
@@ -145,14 +147,14 @@ ruim subir — aparece com selo neutro e sem "melhorou/piorou". Sai de
 
 ### Quem entra na conta
 
-Sai da conta a máquina que, somando os seis meses, **não chegou a `MIN_TON` (5.000 t)
+Sai da conta a máquina que, somando os meses da janela, **não chegou a `MIN_TON` (5.000 t)
 na safra** — frotas de apontamento esporádico, com dois dias de pesagem e R$ 300/t,
 que sujavam todo indicador por tonelada. O critério é por **máquina-safra**, não por
 máquina: uma frota com um ano ruim de apontamento sai só daquele ano e continua no
 outro.
 
-Efeito do corte: colhedora não perde nenhuma máquina (todas passam dos 5.000 t),
-caminhão perde 11 máquinas-safra (0,8% do volume) e transbordo perde 11 (0,4%). A
+Efeito do corte, na janela até 15/10: colhedora perde 1 máquina-safra (0,0% do volume),
+caminhão perde 18 (1,3%) e transbordo perde 12 (0,4%). A
 regra aparece na faixa de insight de cada página e no rodapé de cada modal, com os
 números das frotas que ficaram de fora.
 
@@ -183,7 +185,7 @@ Dois níveis de abertura, no mesmo espírito do `comparativo_colhedora`:
 No topo de cada painel vai a conta explícita — por exemplo
 `33,80 t/h = 302.905 t ÷ 8.960,5 h`. Fecha no botão, no fundo escuro ou com Esc.
 
-O detalhe por máquina são 1.163 registros (249 da colhedora, 437 do caminhão e 477
+O detalhe por máquina são 1.366 registros (289 da colhedora, 528 do caminhão e 549
 do transbordo), embutidos em `FROTA.<equipamento>.maquinas` em formato de array
 posicional — o campo `campos` de cada frota descreve a ordem das posições.
 
@@ -212,9 +214,11 @@ As contas do conjunto medido em horas (colhedora e transbordo):
 No caminhão, `horas` dá lugar a `km`: km/dia, l/km e t/km. Raio médio é
 `Σ km ÷ Σ viagens × 0,5` e tonelada por viagem é `Σ tonelada ÷ Σ viagens`.
 
-**Cobertura:** nenhuma das três frotas cobre a moagem inteira da unidade — a
-colhedora responde por 90% da moagem da CRV-MG em 2026, o caminhão por 91% e o
-transbordo por 87%. Por isso a tonelada dessas páginas não bate com a da página 4.
+**Cobertura:** nenhuma das três frotas cobre a moagem inteira da unidade — até setembro,
+a colhedora respondia por 90% da moagem da CRV-MG em 2026, o caminhão por 91% e o
+transbordo por 87%. Em outubro (1 a 15) a cobertura cai para cerca de 70%: o
+apontamento da frota de 2026 vai até uns 11/10 (no máximo 11 dias-máquina no mês,
+contra 13 em 2025). Por isso a tonelada dessas páginas não bate com a da página 4.
 A ressalva saiu da tela junto com o subtítulo — as páginas 5 a 7 têm só o título
 ("Desempenho Colhedora CRV-MG" e equivalentes) — e fica registrada aqui.
 
@@ -235,14 +239,24 @@ mês — a mesma data aparece em várias fazendas.
 
 A vazão é a **média ponderada pela área aplicada** — `Σ(ha × vazão) ÷ Σha` — e não
 a média simples das linhas do apontamento: é a vazão com que aqueles hectares
-foram de fato irrigados. Na safra, a ponderação usa a área de cada mês. A janela vai do início de cada safra até **30/09** nos dois anos — o
-que a base traz de outubro fica de fora, porque outubro/2025 está fechado e
-outubro/2026 tem um dia só.
+foram de fato irrigados. Na safra, a ponderação usa a área de cada mês. A janela vai do início de cada safra até **15/10** nos dois anos — o
+que a base de 2025 traz depois de 15/10 fica de fora, para outubro comparar os mesmos
+quinze dias.
 
 Abril não compara desempenho, compara calendário: a safra 2026 abriu em 14/04 e a
-2025 em 19/04, o que explica o salto de +465% no mês. Por isso abril fica fora do
+2025 em 19/04, o que explica o salto de +445% no mês. Por isso abril fica fora do
 ranking de melhor e pior mês do insight, e o texto traz também a variação de maio em
-diante (+1,1%).
+diante (−3,0%).
+
+**Outubro/2026 na localizada:** a base não tem apontamento de 5 a 11/10 (zero hectare
+nesses sete dias; em 2025 houve aplicação todos os dias). Por isso outubro sai −58%.
+Se a lacuna for lançamento pendente, e não parada, rodar o script de novo com a
+planilha completa corrige o mês.
+
+**Números digitados como texto contam.** A planilha traz algumas áreas e tanques como
+texto (`'5.20'`, `'7,25'`, `'14'`); a extração anterior os descartava, e abril/2025
+perdia 5,2 ha. Vazão digitada como faixa (`45/50`, `75/65`) entra pelo **maior** valor.
+Célula vazia ou com erro do Excel fica fora da média de vazão, mas a área conta.
 
 Os dados ficam em `window.IRRIGACAO`, uma chave por tipo (`localizada` e
 `convencional`), e cada página é uma entrada em `PAGINAS_IRRIGA` — a página se
@@ -253,7 +267,7 @@ velocidade do carretel em m/h na convencional) e `qtd` qual contagem vai no moda
 
 ### A página 9 (irrigação convencional)
 
-Mesmo molde da página 8: mesma janela (início da safra até 30/09), mesmas duas
+Mesmo molde da página 8: mesma janela (início da safra até 15/10), mesmas duas
 faixas, mesmo alternador e mesmo modal por fazenda. Cada registro da planilha é
 uma **puxada de carretel**, e a área é `puxada × espaçamento ÷ 10.000`.
 
@@ -262,11 +276,13 @@ uma **puxada de carretel**, e a área é `puxada × espaçamento ÷ 10.000`.
   planilha traz velocidade zero quando falta a hora final e valores absurdos
   (negativos, milhares de m/h) quando a hora foi digitada errada. A área dessas
   puxadas continua nas barras; só sai da média de velocidade. Isso cobre **94% da
-  área em 2025 e só 71% em 2026** — muita puxada de 2026 está sem hora final — e o
-  insight e o rodapé do modal dizem isso. Na safra, a média pondera pela área que
-  entrou na conta (`haVel`), não pela área total.
+  área em 2025 e 93% em 2026** — até a planilha de 02/10 eram só 71% em 2026, porque
+  muita puxada estava sem hora final; a operação completou as horas na de 15/10, e a
+  velocidade de 2026 caiu (maio, de 25,7 para 24,1 m/h). O insight e o rodapé do
+  modal dizem a cobertura. Na safra, a média pondera pela área que entrou na conta
+  (`haVel`), não pela área total.
 - **Água × vinhaça:** o modal traz a coluna de vinhaça por fazenda, e o insight a
-  participação da vinhaça na área (39% em 2026 contra 26% em 2025).
+  participação da vinhaça na área (40% em 2026 contra 27% em 2025).
 - **Abril:** aqui a safra 2026 abriu *depois* (07/04 contra 04/04) e mesmo assim
   abril subiu, então o texto não atribui o salto ao calendário. O insight escolhe a
   frase conforme a data de abertura e o sinal da variação.
@@ -291,13 +307,13 @@ mesmo número. Só a convencional tem esse corte: a localizada não entra.
 
 | Lâmina | 2025 (ha) | 2026 (ha) | Variação |
 |---|---|---|---|
-| 1ª | 9.561 | 7.524 | −21% |
-| 2ª | 3.525 | 3.110 | −12% |
-| 3ª | 809 | 1.445 | +79% |
-| 4ª | 342 | 1.339 | +292% |
+| 1ª | 10.172 | 7.818 | −23% |
+| 2ª | 3.909 | 3.262 | −17% |
+| 3ª | 1.081 | 1.432 | +32% |
+| 4ª | 468 | 1.374 | +193% |
 
-A leitura vai no insight da página 9: a área de repetição (2ª lâmina em diante) passou
-de 33% para 44% do total. Os dados ficam em `IRRIGACAO.convencional.laminas` (safra),
+(Até 15/10 nos dois anos.) A leitura vai no insight da página 9: a área de repetição
+(2ª lâmina em diante) passou de 35% para 44% do total. Os dados ficam em `IRRIGACAO.convencional.laminas` (safra),
 `laminasMes` (mês a mês) e `laminas` de cada região (posição 0 = 1ª lâmina); uma 5ª
 lâmina vira mais uma ficha e mais uma linha da observação sozinha.
 
@@ -401,7 +417,8 @@ grupos e especialidades e, por frota, as horas em oficina de cada mês nas duas 
 ### Moagem por dia (páginas 1 e 4)
 
 As duas páginas usam o mesmo denominador, no helper `diasDoMes(i, dAbril)`:
-abril conta **da abertura da safra até 30/04**, os demais meses são dias corridos.
+abril conta **da abertura da safra até 30/04**, os demais meses são dias corridos, e o
+último mês, quando parcial, conta só os dias da janela (outubro: **15 dias**).
 Para o **grupo**, abril conta da *primeira* abertura entre as quatro unidades
 (24 dias em 2026, 23 em 2025). A base não traz apontamento de parada, então o
 ritmo é "por dia de safra", não por dia efetivamente moído.
@@ -532,8 +549,46 @@ são contados da abertura da safra, igual à página 4.
 
 ## Atualizar os dados
 
-Todos os números saem de **um único bloco** no `index.html`, marcado com o comentário
-`DADOS — moagem mensal por unidade`:
+Moagem, frota e irrigação se atualizam com **um comando**, que lê as planilhas e
+reescreve os blocos `window.MOAGEM`, `window.FROTA` (listas de máquinas) e
+`window.IRRIGACAO` do `index.html`. A manutenção não é tocada. Precisa de `openpyxl`.
+
+```bash
+python scripts/atualiza_dados.py --fim 2026-10-15 --moagem "MOAGEM COMPARATIVO - base.xlsx" --loc2025 "Produção localizada - SAFRA 2025.xlsx" --loc2026 "Produção localizada - SAFRA 2026.xlsx" --conv2025 "FECHAMENTO FINAL SAFRA 2025.xlsx" --conv2026 "FECHAMENTO IRRIGAÇÃO SAFRA 2026.xlsx" --gravar
+```
+
+`--fim` é o último dia da janela de 2026; o mesmo dia e mês vale para 2025. Sem
+`--gravar`, o script só confere e mostra o resumo (área, fazendas, primeira e última
+data de cada base, cobertura da velocidade). Ele para com erro quando aparece lâmina
+que não reconhece, fazenda da convencional sem região na aba `faz.` ou máquina repetida
+no mesmo mês. Validação feita ao escrevê-lo: com `--fim 2026-09-30` ele reproduz a
+versão anterior da página — a convencional de 2025 linha a linha, lâminas e regiões —, e
+as diferenças que sobram são da própria base (ver *Fonte dos dados*).
+
+### Mês parcial
+
+`MOAGEM.fimDia` diz até que dia vai o último mês da janela, nos **dois** anos (15 =
+outubro de 1 a 15; `null` = mês inteiro). Com ele:
+
+- os rótulos do mês viram **"Outubro (1–15)"**; nos eixos estreitos, "Out 1–15" ou
+  "Out\*" com a explicação na legenda (helpers `rotMes` e `rotCurto` do motor);
+- o t/dia do mês divide por 15 dias (`diasMes`);
+- os textos dizem a janela ("abril a 15 de outubro", "até 15/10") e terminam com a nota
+  "Outubro conta de 1 a 15 nos dois anos".
+
+Nenhum texto das páginas de moagem, frota e irrigação cita mês ou número fixo: as
+frases ("a barra de 2026 é maior em 6 dos 7 meses", "subindo forte no fim da janela")
+são montadas a partir dos números.
+
+**Manutenção e simulador seguem em abril a setembro.** Eles usam `MESES_AS` / `MC_AS`
+(os seis primeiros meses), não `MESES`, e o realizado do simulador soma só abril a
+setembro da CRV-MG — ele projeta de outubro em diante. Quando a manutenção receber
+outubro, troque `MESES_AS` por `MESES` nas páginas 12 a 14 e estenda os dados delas; o
+simulador precisa decidir se o pedaço de outubro vira realizado.
+
+### O bloco da moagem
+
+O bloco `window.MOAGEM`, marcado com o comentário `DADOS — moagem mensal por unidade`:
 
 ```js
 window.MOAGEM = {
@@ -546,8 +601,8 @@ window.MOAGEM = {
 };
 ```
 
-Para incluir outubro e os meses seguintes, acrescente o nome em `meses` e `mesesCurto`
-e mais um valor em cada `a2025` / `a2026`. **Todo o resto é calculado em tempo de
+Um mês a mais é mais um nome em `meses` e `mesesCurto` e mais um valor em cada
+`a2025` / `a2026` (o script faz isso sozinho). **Todo o resto é calculado em tempo de
 execução** — KPIs, variações, insights, tabelas e gráficos se ajustam sozinhos, e os
 textos das faixas douradas são montados a partir dos próprios números.
 
@@ -560,20 +615,34 @@ por mês com `maq`, `dias`, `horas` ou `km`, `litros`, `ton`, `gasto`, `comb`, `
 e (nas duas de transporte) `viagens`. Um equipamento novo entra como mais uma chave
 aqui e mais uma entrada em `PAGINAS`, no JS — a página se monta sozinha.
 
-Fonte dos dados: a **moagem mensal** (`window.MOAGEM`, `a2025` / `a2026`) vem de
-`pesagem 2025 e 2026.xlsx` — pesagem por empresa e mês, arredondada para tonelada
-inteira. O arquivo identifica a empresa só pelo `id_empresa`: **8 = CRV-MG, 4 = CRV-GO,
-2 = Rubiataba, 6 = Uruaçu** (conferido pelos valores). Em 2026 essa pesagem é igual à
-moagem do boletim industrial (`vw_boletim_industrial_unificado_mensal`). Antes, a moagem
-vinha da aba `Planilha1` da `MOAGEM COMPARATIVO.xlsx`; a troca mudou Rubiataba (+10,4% em
-2025 e +12,5% em 2026, abril a setembro), Uruaçu (+4,3% e +3,9%) e três meses da CRV-GO
-(abril e junho de 2025, setembro de 2026). A CRV-MG ficou igual. As datas de abertura
-(`ini2025` / `ini2026`) continuam da `Planilha1` da `MOAGEM COMPARATIVO.xlsx`.
+### Fonte dos dados
 
-Os demais dados: `MOAGEM COMPARATIVO.xlsx` (UGS), abas `colhedora`,
-`caminhão` e `transbordo`; `Produção localizada - SAFRA 2025/2026.xlsx`, aba
-`Banco Localizada`, para a irrigação localizada; e `FECHAMENTO FINAL SAFRA 2025.xlsx`
-e `FECHAMENTO IRRIGAÇÃO SAFRA 2026.xlsx`, aba `banco de dados`, para a convencional.
+A **moagem mensal** (`window.MOAGEM`, `a2025` / `a2026`) vem da aba `Moagem` da
+`MOAGEM COMPARATIVO - base.xlsx`, e as datas de abertura da aba `Início safra`. De abril a
+setembro, a aba traz a mesma pesagem por empresa de `pesagem 2025 e 2026.xlsx` (que
+identifica a empresa só pelo `id_empresa`: **8 = CRV-MG, 4 = CRV-GO, 2 = Rubiataba,
+6 = Uruaçu**; em 2026 ela é igual à moagem do boletim industrial,
+`vw_boletim_industrial_unificado_mensal`), arredondada para tonelada inteira — com uma
+exceção: **Uruaçu, junho/2026, vem 147.663 na base e 147.632,51 na pesagem**, o que parece
+erro de digitação. O script corrige para 147.633 (lista `CORRECOES_MOAGEM`); se a base
+for corrigida, a entrada pode sair. Outubro vem só da base, de 1 a 15 nos dois anos.
+
+Histórico: até 02/10 a moagem vinha da aba `Planilha1` da `MOAGEM COMPARATIVO.xlsx`; a
+troca para a pesagem mudou Rubiataba (+10,4% em 2025 e +12,5% em 2026, abril a
+setembro), Uruaçu (+4,3% e +3,9%) e três meses da CRV-GO (abril e junho de 2025,
+setembro de 2026). A CRV-MG ficou igual.
+
+A **frota** vem da mesma base, abas `Colhedora`, `Caminhão` e `Transbordo` (uma linha
+por máquina e mês). A coluna `Mês` vem como texto (`out-2025`) em quase tudo, mas
+setembro e outubro de 2026 da colhedora vieram como data do Excel — o script aceita os
+dois. Em relação à planilha de 02/10, a base de 15/10 revisou a tonelada de maio e de
+setembro de 2026 (colhedora e transbordo) e o gasto de setembro/2026 do caminhão, e
+trouxe frotas de caminhão que não estavam na anterior (60505, 60506, 60540 e 46113).
+
+A **irrigação**: `Produção localizada - SAFRA 2025/2026.xlsx`, aba `Banco Localizada`,
+para a localizada; e `FECHAMENTO FINAL SAFRA 2025.xlsx` e `FECHAMENTO IRRIGAÇÃO SAFRA
+2026.xlsx`, aba `banco de dados`, para a convencional (região e blocos da aba `faz.` do
+fechamento de 2026; código combinado como `9343/44/64` vale para cada fazenda).
 A aba `COMPARATIVO MES` dessas planilhas não serve de conferência: os meses finais
 de 2025 trazem valores redondos (3.000, 2.800) que não batem com o banco de dados.
 
@@ -595,6 +664,6 @@ de 2025 trazem valores redondos (3.000, 2.800) que não batem com o banco de dad
 
 ## Observação sobre o período
 
-A safra 2026 segue em andamento. Toda comparação deste material usa a **mesma janela de
-seis meses** nos dois anos (abril a setembro) — não há projeção nem estimativa de
-fechamento.
+A safra 2026 segue em andamento. Toda comparação deste material usa a **mesma janela**
+nos dois anos — abril a 15 de outubro em moagem, frota e irrigação; abril a setembro na
+manutenção. Fora o simulador, não há projeção nem estimativa de fechamento.
