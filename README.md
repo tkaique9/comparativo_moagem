@@ -40,7 +40,7 @@ do `index.html` — uma página nova entra no módulo acrescentando o id dela al
 | | 9 | Irrigação convencional | Mesma página para o carretel: área por mês, velocidade na linha e parte em vinhaça |
 | | 10 | Irrigação por região | A convencional aberta por região, 2025 contra 2026, painéis na mesma escala |
 | | 11 | Região x região | Duas regiões escolhidas lado a lado numa safra, com a diferença mês a mês |
-| **Manutenção** | 12 | Disponibilidade mecânica | Disponibilidade % da frota mês a mês, 2025 x 2026, com filtro de especialidades |
+| **Manutenção** | 12 | Disponibilidade mecânica | Disponibilidade % da frota mês a mês (abril a 15/10), 2025 x 2026, com filtro de especialidades |
 | | 13 | Custo por ordem de produção | Consumo em R$ por ordem de produção, 2025 x 2026: economia ou aumento, por preço e por volume |
 | | 14 | Custo por família de equipamento | O custo da página 13 aberto por família e especialidade, com o resumo por ordem de produção |
 | **Projeção** | 15 | Simulador da reta final | Dois cenários editáveis de outubro a dezembro, com o quanto ainda bisa |
@@ -333,8 +333,9 @@ célula mesclada, e vale até o próximo).
 ### A página 12 (disponibilidade mecânica)
 
 **Disponibilidade % = horas fora da oficina ÷ horas do período**, somadas sobre as
-frotas do filtro, de 07/04 a 30/09 nos dois anos. Como toda frota tem as mesmas horas
-no mês (576 h em abril, 744 ou 720 nos demais), a razão entre somas é também a média
+frotas do filtro, de 07/04 a 15/10 nos dois anos (outubro entra só até o dia 15).
+Como toda frota tem as mesmas horas no mês (576 h em abril, 744 ou 720 nos demais,
+360 h em outubro), a razão entre somas é também a média
 das frotas.
 
 - **Seletor de várias especialidades:** uma lista com caixas de marcar, agrupada
@@ -347,7 +348,7 @@ das frotas.
 - **Gráfico:** barras de 2025 e 2026 em escala de 0 a 100%, a meta de 85% tracejada e,
   sob cada mês, a diferença em pontos percentuais. Alternador mês a mês / acumulado (o
   acumulado é a disponibilidade da safra até aquele mês).
-- **Quadro ao lado:** só os três cards do **acumulado da safra** (07/04 a 30/09) do
+- **Quadro ao lado:** só os três cards do **acumulado da safra** (07/04 a 15/10) do
   filtro, empilhados — 2025, 2026 e a diferença em p.p., em % sobre 2025 e em horas
   de oficina. A página não tem fichas no topo nem lista de grupos/frotas no quadro;
   filtrar é só pelo seletor. O ranking das especialidades mais longe da meta segue no
@@ -360,9 +361,10 @@ das frotas.
 
 **De onde vem o %.** O % de cada frota no mês é o da **aba `Base`** de cada ano — é
 ali que a operação corrige o número. A Base bate com o relatório mensal (abas ABR a
-SET) em todas as frotas, menos nas correções feitas à mão; em 2026: setembro das
-colhedoras 62504, 62513, 62514, 62515 e 62521, e julho da 62507. Onde a Base concorda,
-o arquivo guarda as horas do relatório; onde foi corrigida, as horas saem do % dela.
+OUT) em todas as frotas, menos nas correções feitas à mão; em 2026: setembro das
+colhedoras 62504, 62513, 62514, 62515 e 62521, e julho da 62507. A versão da Base de 16/10 voltou
+essas seis células ao valor do relatório; as correções foram mantidas na página e só
+outubro entrou da versão nova. Onde a Base concorda, o arquivo guarda as horas do relatório; onde foi corrigida, as horas saem do % dela.
 O relatório mensal diz também quem esteve no relatório do mês e as horas do período.
 
 **Quem fica fora da conta** (fora = não vale 0%, simplesmente não entra naquele mês):
@@ -371,10 +373,11 @@ O relatório mensal diz também quem esteve no relatório do mês e as horas do 
   colhedoras de Goiás, que só aparecem no relatório de agosto) saem.
 - **Frota que não está na Base daquele ano.** As colhedoras 62500, 62502, 62508 e
   62509 saíram da Base de 2026 (ficaram paradas, a 100% sem uma hora de oficina);
-  em 2025, quando trabalharam, continuam.
+  em 2025, quando trabalharam, continuam. (Na Base de 16/10 elas voltaram, ainda
+  paradas; seguem fora de 2026 por regra da página.)
 - **Frota que não aparece no relatório do mês.**
 - **Mês em branco na Base**, mesmo com a frota no relatório: em 2026, a 62511 o ano
-  todo, a 62507 em agosto e setembro e a 62519 em setembro. Em 2025 a Base não tem
+  todo, a 62507 de agosto a outubro e a 62519 em setembro e outubro. Em 2025 a Base não tem
   branco.
 - **Frota que ainda não existia.** O relatório mostra a frota a 100% nos meses antes
   da compra, então ela só entra se a **data de aquisição** for anterior ao início do
@@ -387,7 +390,8 @@ O relatório mensal diz também quem esteve no relatório do mês e as horas do 
 - Equipamentos do relatório **sem cadastro** (40 a 52 por mês: sopradores,
   geradores, motosserras), porque não têm especialidade.
 
-Com essas regras, a safra 2025 fica em 79,6% e a 2026 em 81,2% (+1,6 p.p.). A aba
+Com essas regras, de 07/04 a 15/10 a safra 2025 fica em 79,7% e a 2026 em 81,2% (+1,5 p.p.);
+a colhedora vai de 53,2% para 69,0%. A aba
 `GERAL` da planilha faz a média simples das frotas do cadastro, com Goiás e com as
 ausentes valendo 0 e as ainda não compradas a 100% — por isso não bate com a página:
 em 2025 a página fica de 0,7 a 1,6 p.p. abaixo dela, em 2026 de 0,5 a 1,0 p.p. acima.
@@ -396,7 +400,7 @@ A página diz isso no texto.
 Os dados ficam em `window.DISPONIBILIDADE`: horas do período por mês, a lista de
 grupos e especialidades e, por frota, as horas em oficina de cada mês nas duas safras
 (`null` = fora da conta naquele mês). Fonte: `DISPONIBILIDADE MANUTENÇÃO - frente -
-2025.xlsx` e `- 2026.xlsx`, aba `Base` (% e cadastro) e abas ABR a SET (relatório).
+2025.xlsx` e `- 2026.xlsx`, aba `Base` (% e cadastro) e abas ABR a OUT (relatório; OUT = 01 a 15/10).
 
 ### Moagem por dia (páginas 1 e 4)
 
@@ -418,7 +422,7 @@ escala zoomada. Num quadro só, as duas curvas passariam por dentro das barras.
 ### A página 13 (custo por ordem de produção)
 
 Consumo da manutenção em R$ por **ordem de produção** (lubrificantes, peças, pneus,
-recapagens, serviços de terceiros, material de uso e consumo), de abril a setembro,
+recapagens, serviços de terceiros, material de uso e consumo), de abril a 15 de outubro,
 2025 contra 2026 — para ver onde houve **economia** e onde houve **aumento**. Aqui custo
 que cai é bom: economia em verde, aumento em vermelho.
 
@@ -431,23 +435,23 @@ que cai é bom: economia em verde, aumento em vermelho.
 - **Ao lado:** os cards do acumulado 2025, 2026 e da diferença, aberta em **efeito
   preço** e **efeito volume**: diferença = (R$ médio 26 − R$ médio 25) × qtd 26 +
   (qtd 26 − qtd 25) × R$ médio 25, ordem a ordem — as duas parcelas somam exatamente
-  a diferença. Ex.: o aumento de pneus é quase todo volume (982 → 1.759 unidades); o
-  de lubrificantes é preço (R$ 13,18 → R$ 16,64 por unidade).
+  a diferença. Ex.: o aumento de pneus é sobretudo volume (1.098 → 1.843 unidades); o
+  de lubrificantes é preço (R$ 13,06 → R$ 16,83 por unidade).
 
-No total, as seis ordens foram de R$ 35,75 mi para R$ 31,52 mi — economia de R$ 4,23
-mi (−11,8%), quase toda de volume (−R$ 4,38 mi; o preço somou +R$ 143 mil).
+No total, as seis ordens foram de R$ 35,46 mi para R$ 34,94 mi — economia de R$ 516
+mil (−1,5%): o volume tirou R$ 3,87 mi e o preço somou +R$ 3,35 mi.
 
 A quantidade está na unidade de cada ordem (litros, peças, pneus, horas…) e por isso
 não se soma entre ordens. Fonte: `consumo ordem produção.xlsx`, aba `mes`, com as
-colunas **A = 2025 e B = 2026** (a planilha traz a diferença como B − A). A aba
-`especialidade` da mesma planilha **não fecha** com a `mes` (soma R$ 30,9 mi e R$ 23,7
-mi, contra R$ 35,8 mi e R$ 31,5 mi) e por isso não entra na página. Os dados ficam em
+colunas **A = 2026 e B = 2025** — atenção: na versão de 16/10 a planilha inverteu as
+colunas (antes A era 2025); os meses fechados de 2025 batem com a versão anterior na
+coluna B. A aba `especialidade` entra só na página 14. Os dados ficam em
 `window.CUSTO_OP`.
 
 ### A página 14 (custo por família de equipamento)
 
-O **mesmo custo da página 13** — R$ 35,75 mi em 2025 e R$ 31,52 mi em 2026, economia de
-R$ 4,23 mi — aberto por **família de equipamento** (o prefixo da especialidade:
+O **mesmo custo da página 13** — R$ 35,46 mi em 2025 e R$ 34,94 mi em 2026 (abril a
+15/10), economia de R$ 516 mil — aberto por **família de equipamento** (o prefixo da especialidade:
 COLHEDORA, CAMINHAO, TRATOR…) e, dentro dela, por especialidade.
 
 - **À esquerda:** a tabela por família, da maior economia ao maior aumento, com 2025,
@@ -456,17 +460,17 @@ COLHEDORA, CAMINHAO, TRATOR…) e, dentro dela, por especialidade.
 - **À direita:** o **resumo por ordem de produção**, igual ao da página 13. Clicar numa
   ordem (ou usar o seletor) filtra a tabela; clicar de novo, ou no Total, volta.
 
-**Como sai o número (rateio).** A aba `especialidade` da planilha soma outro total
-(R$ 30,87 mi e R$ 23,67 mi) e não fecha com a aba `mes`. Por isso ela entra só com a
+**Como sai o número (rateio).** A aba `especialidade` da planilha, sem a linha
+"(Em branco)" (ajustes sem frota, com valor negativo), soma R$ 35,55 mi e R$ 34,74 mi —
+perto, mas não igual à aba `mes`. Por isso ela entra só com a
 **divisão**: o total de cada ordem de produção, em cada safra, é o da página 13, e ele
 é dividido entre as especialidades pela participação de cada uma naquela ordem e safra
 na aba de especialidades. Assim o total e o resumo por ordem batem com a página 13, e a
 página avisa isso embaixo do resumo.
 
-Consequência do rateio: onde a aba de especialidades e a de mês divergem muito numa
-ordem, a família muda de leitura. Ex.: pneus e peças pesam no caminhão; na aba crua o
-caminhão economiza R$ 1,39 mi, rateado ele sobe R$ 436 mil. A colhedora fica com a
-maior economia (−R$ 2,99 mi). "(Em branco)" na planilha = sem consumo (vale 0). Os dados
+Com a versão de 16/10 as duas abas ficam próximas, e o rateio quase não mexe na
+leitura: a colhedora tem a maior economia (−R$ 2,55 mi) e o caminhão o maior aumento
+(+R$ 2,47 mi). Célula vazia na planilha = sem consumo (vale 0). Os dados
 brutos ficam em `window.CUSTO_ESP`; o rateio é feito ao carregar a página.
 
 ### A página 15 (simulador da reta final)
