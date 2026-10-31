@@ -1,0 +1,8 @@
+{
+  "name": "comparativo-moagem",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Apresentação comparativa de moagem servida como web service no Render",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}

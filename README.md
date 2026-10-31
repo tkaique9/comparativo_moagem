@@ -690,3 +690,12 @@ de 2025 trazem valores redondos (3.000, 2.800) que não batem com o banco de dad
 A safra 2026 segue em andamento. Toda comparação deste material usa a **mesma janela**
 nos dois anos — abril a 15 de outubro. Fora o simulador, não há projeção nem estimativa
 de fechamento.
+
+## Publicar no Render
+
+O repositório já traz `render.yaml`, `package.json` e `server.js` (servidor estático
+em Node, sem dependências). No Render: **New → Blueprint** e aponte para este
+repositório — ou **New → Web Service** com *Build Command* `true` e *Start Command*
+`node server.js`. A porta vem da variável `PORT` do Render; `/healthz` é o health check.
+
+Localmente: `npm start` (abre em http://localhost:10000).
